@@ -2,34 +2,54 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Book {
+type Appointment {
   _id: String!
-  author: User!
-  categories: [Category!]!
+  clinic: Clinic
 
   """Created at timestamp"""
   createdAt: Date!
-  description: String!
+  doctors: [Doctor!]!
   file: String
-  isDraft: Boolean!
-  language: Language
-  slug: String!
-  summary: String!
+  notify: Date!
+  online: Boolean!
+  specialCheck: Boolean!
+  status: String!
+  timeEnd: Date!
+  timeStart: Date!
   title: String!
 
   """Updated at timestamp"""
   updatedAt: Date!
+  user: User
 }
 
-type Category {
+type Clinic {
   _id: String!
-  parent: Category!
-  slug: String!
-  title: String!
-}
+  address: String!
+  adminFirstName: String!
+  adminLastName: String!
+  adminNumber: String!
+  appointments: [Appointment!]!
+  avatar: String
+  country: Country
 
-input CategoryInput {
+  """Created at timestamp"""
+  createdAt: Date!
+  description: String!
+  email: String!
+  emplouyees: Int
+  endTime: Int!
+  isVerfied: Boolean!
+  news: [News!]!
+  number: String!
+  rating: Float!
+  specialization: String!
+  startTime: Int!
   title: String!
+
+  """Updated at timestamp"""
+  updatedAt: Date!
+  workDays: String!
 }
 
 type Country {
@@ -38,17 +58,39 @@ type Country {
   title: String!
 }
 
-input CreateBookInput {
-  description: String!
-  file: Upload
-  isDraft: Boolean = false
-  summary: String!
-  title: String!
+input CreateAppointmentInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
 }
 
-input CreateReviewInput {
-  rating: Float!
-  text: String!
+input CreateClinicInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateDoctorInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateLikeInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateNewsInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateSavedInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateServiceInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
 }
 
 input CreateUserInput {
@@ -67,103 +109,187 @@ input CreateUserInput {
 """Date type"""
 scalar Date
 
-type Favorite {
+type Doctor {
   _id: String!
-  book: Book!
+  avatar: String
+  clinic: Clinic!
+  country: Country
 
   """Created at timestamp"""
   createdAt: Date!
+  email: String!
+  firstName: String!
+  lastName: String!
+  mainStatus: Boolean!
+  number: String!
+  online: Boolean!
+  specialization: String
+  surname: String!
 
   """Updated at timestamp"""
   updatedAt: Date!
-  user: User!
-}
-
-type Language {
-  _id: String!
-  slug: String!
-  title: String!
+  workExp: Float
 }
 
 type Like {
   _id: String!
-  author: User!
 
   """Created at timestamp"""
   createdAt: Date!
-  isPositive: Boolean!
-  review: Review!
+  news: News!
 
   """Updated at timestamp"""
   updatedAt: Date!
 }
 
 type Mutation {
-  createBook(authorId: String!, categories: [CategoryInput!]!, createBookInput: CreateBookInput!, languageTitle: String!): Book!
-  createFavorite(authorId: String!, bookId: String!): Favorite!
-  createLike(authorId: String!, isPositive: Boolean!, reviewId: String!): Like!
-  createReview(authorId: String!, bookId: String!, createReviewInput: CreateReviewInput!): Review!
+  createAppointment(createAppointmentInput: CreateAppointmentInput!): Appointment!
+  createClinic(createClinicInput: CreateClinicInput!): Clinic!
+  createDoctor(createDoctorInput: CreateDoctorInput!): Doctor!
+  createLike(createLikeInput: CreateLikeInput!): Like!
+  createNews(createNewsInput: CreateNewsInput!): News!
+  createSaved(createSavedInput: CreateSavedInput!): Saved!
+  createService(createServiceInput: CreateServiceInput!): Service!
   createUser(countryTitle: String!, createUserInput: CreateUserInput!): User!
-  removeBook(_id: String!): Book!
-  removeFavorite(id: String!): Favorite!
-  removeLike(_id: String!): Like!
-  removeReview(_id: String!): Review!
+  removeAppointment(id: Int!): Appointment!
+  removeClinic(id: Int!): Clinic!
+  removeDoctor(id: Int!): Doctor!
+  removeLike(id: Int!): Like!
+  removeNews(id: Int!): News!
+  removeSaved(id: Int!): Saved!
+  removeService(id: Int!): Service!
   removeUser(_id: String!): User!
-  updateBook(categories: [CategoryInput!]!, updateBookInput: UpdateBookInput!): Book!
-  updateLike(_id: String!, isPositive: Boolean!): Like!
-  updateReview(updateReviewInput: UpdateReviewInput!): Review!
+  updateAppointment(updateAppointmentInput: UpdateAppointmentInput!): Appointment!
+  updateClinic(updateClinicInput: UpdateClinicInput!): Clinic!
+  updateDoctor(updateDoctorInput: UpdateDoctorInput!): Doctor!
+  updateLike(updateLikeInput: UpdateLikeInput!): Like!
+  updateNews(updateNewsInput: UpdateNewsInput!): News!
+  updateSaved(updateSavedInput: UpdateSavedInput!): Saved!
+  updateService(updateServiceInput: UpdateServiceInput!): Service!
   updateUser(countryTitle: String, updateUserInput: UpdateUserInput!): User!
 }
 
-type Query {
-  book(_id: String!): Book!
-  books(skip: Int! = 0, take: Int! = 25): [Book!]!
-  categories: [Category!]!
-  category(slug: String!): Category!
-  countries: [Country!]!
-  country(slug: String!): Country!
-  favorite(_id: String!): Favorite!
-  favoriteByUserId(userId: String!): Favorite!
-  favorites(skip: Int! = 0, take: Int! = 25): [Favorite!]!
-  language(slug: String!): Language!
-  languages: [Language!]!
-  like(_id: String!): Like!
-  likes(skip: Int! = 0, take: Int! = 25): [Like!]!
-  review(_id: String!): Review!
-  reviews(skip: Int! = 0, take: Int! = 25): [Review!]!
-  reviewsByBookId(bookId: String!): [Review!]!
-  user(_id: ID!): User!
-  users(skip: Int! = 0, take: Int! = 25): [User!]!
-}
-
-type Review {
+type News {
   _id: String!
-  author: User!
-  book: Book!
 
   """Created at timestamp"""
   createdAt: Date!
-  likes: [Like!]!
-  rating: Float!
+  likes: Int!
+  newsImages: [NewsImage!]!
+  newsVideos: [NewsVideo!]!
+  saved: Int!
   text: String!
+  title: String!
 
   """Updated at timestamp"""
   updatedAt: Date!
 }
 
-input UpdateBookInput {
+type NewsImage {
   _id: String!
-  description: String
-  file: Upload
-  isDraft: Boolean = false
-  summary: String
-  title: String
+
+  """Created at timestamp"""
+  createdAt: Date!
+
+  """Updated at timestamp"""
+  updatedAt: Date!
 }
 
-input UpdateReviewInput {
+type NewsVideo {
   _id: String!
-  rating: Float
-  text: String
+
+  """Created at timestamp"""
+  createdAt: Date!
+
+  """Updated at timestamp"""
+  updatedAt: Date!
+}
+
+type Query {
+  appointment(id: Int!): Appointment!
+  appointments: [Appointment!]!
+  clinic(id: Int!): Clinic!
+  clinics: [Clinic!]!
+  countries: [Country!]!
+  country(slug: String!): Country!
+  doctor(id: Int!): Doctor!
+  doctors: [Doctor!]!
+  like(id: Int!): Like!
+  likes(skip: Int! = 0, take: Int! = 25): [Like!]!
+  news(id: Int!): News!
+  saved(id: Int!): Saved!
+  service(id: Int!): Service!
+  services: [Service!]!
+  user(_id: ID!): User!
+  users(skip: Int! = 0, take: Int! = 25): [User!]!
+}
+
+type Saved {
+  _id: String!
+
+  """Created at timestamp"""
+  createdAt: Date!
+  news: News!
+
+  """Updated at timestamp"""
+  updatedAt: Date!
+}
+
+type Service {
+  _id: String!
+
+  """Created at timestamp"""
+  createdAt: Date!
+  description: String!
+  duration: Int!
+  online: Boolean!
+  price: Float!
+  title: String!
+
+  """Updated at timestamp"""
+  updatedAt: Date!
+}
+
+input UpdateAppointmentInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateClinicInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateDoctorInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateLikeInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateNewsInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateSavedInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateServiceInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }
 
 input UpdateUserInput {
@@ -185,19 +311,24 @@ scalar Upload
 
 type User {
   _id: String!
+  address: String!
+  appointments: [Appointment!]!
   avatar: String
   birthday: Date
   country: Country
 
   """Created at timestamp"""
   createdAt: Date!
-  deletedAt: Date
   email: String!
   firstName: String!
+  isStaff: Boolean!
   isVerfied: Boolean!
   lastName: String!
   login: String!
+  number: String!
+  online: Boolean!
   sex: Boolean!
+  surname: String!
 
   """Updated at timestamp"""
   updatedAt: Date!

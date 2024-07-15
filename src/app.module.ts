@@ -8,22 +8,21 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AcceptLanguageResolver, HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { DataSource } from 'typeorm';
 import { S3Module } from 'nestjs-s3';
 import { S3Config, TypeOrmCfgService, GqlConfig } from './config';
 import { MinioService } from './config/s3/minio.service';
 import { IsUnique } from './common/shared/unique.validator';
 import { CountriesModule } from './countries/countries.module';
-import { LanguagesModule } from './languages/languages.module';
-import { CategoriesModule } from './categories/categories.module';
-import { BooksModule } from './books/books.module';
 import { addTransactionalDataSource } from 'typeorm-transactional';
-import { LikesModule } from './likes/likes.module';
-import { ReviewsModule } from './reviews/reviews.module';
 import { IsExist } from './common/shared/exist.validator';
-import { FavoritesModule } from './favorites/favorites.module';
-import * as path from 'path';
+import { ServicesModule } from './services/services.module';
+import { AppointmentsModule } from './appointments/appointments.module';
+import { LikesModule } from './likes/likes.module';
+import { NewsModule } from './news/news.module';
+import { SavedModule } from './saved/saved.module';
+import { ClinicsModule } from './clinics/clinics.module';
+import { DoctorsModule } from './doctors/doctors.module';
 
 @Module({
     imports: [
@@ -35,26 +34,12 @@ import * as path from 'path';
             isGlobal: true,
             envFilePath: ['.env'],
         }),
-        I18nModule.forRoot({
-            fallbackLanguage: 'en',
-            loaderOptions: {
-                path: path.join(__dirname, '/i18n/'),
-                watch: true,
-            },
-            resolvers: [
-                { use: QueryResolver, options: ['lang'] },
-                AcceptLanguageResolver,
-                new HeaderResolver(['x-lang']),
-            ],
-        }),
 
         TypeOrmModule.forRootAsync({
             useClass: TypeOrmCfgService,
-            async dataSourceFactory(options) {
-                if (!options) {
-                    throw new Error('Invalid options passed');
-                }
-                return addTransactionalDataSource(new DataSource(options));
+            dataSourceFactory: async (options) => {
+                const dataSource = await new DataSource(options).initialize();
+                return dataSource;
             },
         }),
         S3Module.forRootAsync({
@@ -62,12 +47,13 @@ import * as path from 'path';
         }),
         UsersModule,
         CountriesModule,
-        LanguagesModule,
-        CategoriesModule,
-        BooksModule,
+        ServicesModule,
+        AppointmentsModule,
         LikesModule,
-        ReviewsModule,
-        FavoritesModule,
+        NewsModule,
+        SavedModule,
+        ClinicsModule,
+        DoctorsModule,
     ],
     controllers: [AppController],
     providers: [
@@ -81,4 +67,4 @@ import * as path from 'path';
         MinioService,
     ],
 })
-export class AppModule {}
+export class AppModule { }

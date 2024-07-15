@@ -1,12 +1,10 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 import { CommonEntity } from '../../common/common.entity';
-import { BeforeInsert, BeforeUpdate, Column, DeleteDateColumn, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Country } from 'src/countries/entities/country.entity';
-import { Book } from 'src/books/entities/book.entity';
-import { Review } from 'src/reviews/entities/review.entity';
-import { Like } from 'src/likes/entities/like.entity';
-import { Favorite } from 'src/favorites/entities/favorite.entity';
+import { IsPhoneNumber } from 'class-validator';
+import { Appointment } from 'src/appointments/entities/appointment.entity';
 
 const BCRYPT_HASH_ROUNDS = 10;
 
@@ -18,32 +16,46 @@ export class User extends CommonEntity {
     public login: string;
 
     @Field()
+    @IsPhoneNumber('UZ')
+    @Column({ name: 'number' })
+    public number: string;
+
+    @Field()
+    @Column({ default: false, name: 'is_staff' })
+    isStaff: boolean;
+
+    @Field()
+    @Column({ default: false })
+    online: boolean;
+
+    @Field()
+    @Column({ name: 'address', length: 225 })
+    public address: string;
+
+    @Field()
     @Column({ name: 'first_name', length: 30 })
     public firstName: string;
-
-    @Field({ nullable: true })
-    @ManyToOne(() => Country, (country) => country.users, { onDelete: 'SET NULL' })
-    public country: Country;
-
-    @OneToMany(() => Book, (book) => book.author)
-    public books: Book[];
-
-    @OneToMany(() => Review, (review) => review.author)
-    public reviews: Review[];
-
-    @OneToMany(() => Like, (like) => like.author)
-    public likes: Like[];
-
-    @OneToMany(() => Favorite, (fav) => fav.user)
-    public favorites: Favorite[];
 
     @Field()
     @Column({ name: 'last_name', length: 30 })
     public lastName: string;
 
     @Field()
+    @Column({ name: 'surname', length: 30 })
+    public surname: string;
+
+    @Field(() => [Appointment])
+    @OneToMany(() => Appointment, (appmt) => appmt.user, { onDelete: 'SET NULL' })
+    public appointments: Appointment[];
+
+    @Field({ nullable: true })
+    @ManyToOne(() => Country, (country) => country.users, { onDelete: 'SET NULL' })
+    public country: Country;
+
+    @Field()
     @Column({ length: 225, unique: true })
     public email: string;
+
 
     @HideField()
     @Column({})
@@ -64,10 +76,6 @@ export class User extends CommonEntity {
     @Field()
     @Column({ nullable: true })
     public sex: boolean;
-
-    @Field({ nullable: true })
-    @DeleteDateColumn({ name: 'deleted_at', nullable: true, type: 'timestamp with time zone' })
-    public deletedAt: Date;
 
     @BeforeInsert()
     @BeforeUpdate()

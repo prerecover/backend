@@ -3,8 +3,6 @@ import { AppModule } from './app.module';
 import { SwaggerConfig } from './config/swagger';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
-import helmet from 'helmet';
-import * as csurf from 'csurf';
 import { useContainer } from 'class-validator';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 

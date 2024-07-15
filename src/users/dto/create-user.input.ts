@@ -1,5 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { IsNotEmpty, MaxLength, MinLength, IsStrongPassword, IsEmail, Validate } from 'class-validator';
+import { IsNotEmpty, MaxLength, MinLength, IsStrongPassword, IsEmail, Validate, IsPhoneNumber } from 'class-validator';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 import { FileUpload } from 'src/common/shared/file.interface';
 import { IsUnique } from 'src/common/shared/unique.validator';
@@ -18,6 +18,9 @@ export class CreateUserInput {
     @MinLength(2)
     @Field()
     firstName: string;
+
+    @IsPhoneNumber('UZ')
+    number: string;
 
     @Field(() => GraphQLUpload, { nullable: true })
     avatar: Promise<FileUpload>;

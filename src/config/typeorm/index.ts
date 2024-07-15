@@ -15,6 +15,7 @@ export class TypeOrmCfgService implements TypeOrmOptionsFactory {
             database: process.env.POSTGRES_DB,
             entities: [`${__dirname}/../**/*.entity.{ts,js}`],
             synchronize: true,
+            
         };
     }
 }

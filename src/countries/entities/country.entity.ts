@@ -1,5 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql';
+import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { slugify } from 'src/common/shared/slug';
+import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { User } from 'src/users/entities/user.entity';
 import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -16,6 +18,12 @@ export class Country {
 
     @OneToMany(() => User, (user) => user.country)
     public users: User[];
+
+    @OneToMany(() => Clinic, (clinic) => clinic.country)
+    public clinics: Clinic[];
+
+    @OneToMany(() => Doctor, (doctor) => doctor.country)
+    public doctors: Doctor[];
 
     @Field()
     @Column()
