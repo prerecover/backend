@@ -1,0 +1,204 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Book {
+  _id: String!
+  author: User!
+  categories: [Category!]!
+
+  """Created at timestamp"""
+  createdAt: Date!
+  description: String!
+  file: String
+  isDraft: Boolean!
+  language: Language
+  slug: String!
+  summary: String!
+  title: String!
+
+  """Updated at timestamp"""
+  updatedAt: Date!
+}
+
+type Category {
+  _id: String!
+  parent: Category!
+  slug: String!
+  title: String!
+}
+
+input CategoryInput {
+  title: String!
+}
+
+type Country {
+  _id: String!
+  slug: String!
+  title: String!
+}
+
+input CreateBookInput {
+  description: String!
+  file: Upload
+  isDraft: Boolean = false
+  summary: String!
+  title: String!
+}
+
+input CreateReviewInput {
+  rating: Float!
+  text: String!
+}
+
+input CreateUserInput {
+  avatar: Upload
+  birthday: Date
+  email: String!
+  firstName: String!
+  lastName: String!
+  login: String!
+  password: String!
+
+  """User's gender"""
+  sex: Boolean
+}
+
+"""Date type"""
+scalar Date
+
+type Favorite {
+  _id: String!
+  book: Book!
+
+  """Created at timestamp"""
+  createdAt: Date!
+
+  """Updated at timestamp"""
+  updatedAt: Date!
+  user: User!
+}
+
+type Language {
+  _id: String!
+  slug: String!
+  title: String!
+}
+
+type Like {
+  _id: String!
+  author: User!
+
+  """Created at timestamp"""
+  createdAt: Date!
+  isPositive: Boolean!
+  review: Review!
+
+  """Updated at timestamp"""
+  updatedAt: Date!
+}
+
+type Mutation {
+  createBook(authorId: String!, categories: [CategoryInput!]!, createBookInput: CreateBookInput!, languageTitle: String!): Book!
+  createFavorite(authorId: String!, bookId: String!): Favorite!
+  createLike(authorId: String!, isPositive: Boolean!, reviewId: String!): Like!
+  createReview(authorId: String!, bookId: String!, createReviewInput: CreateReviewInput!): Review!
+  createUser(countryTitle: String!, createUserInput: CreateUserInput!): User!
+  removeBook(_id: String!): Book!
+  removeFavorite(id: String!): Favorite!
+  removeLike(_id: String!): Like!
+  removeReview(_id: String!): Review!
+  removeUser(_id: String!): User!
+  updateBook(categories: [CategoryInput!]!, updateBookInput: UpdateBookInput!): Book!
+  updateLike(_id: String!, isPositive: Boolean!): Like!
+  updateReview(updateReviewInput: UpdateReviewInput!): Review!
+  updateUser(countryTitle: String, updateUserInput: UpdateUserInput!): User!
+}
+
+type Query {
+  book(_id: String!): Book!
+  books(skip: Int! = 0, take: Int! = 25): [Book!]!
+  categories: [Category!]!
+  category(slug: String!): Category!
+  countries: [Country!]!
+  country(slug: String!): Country!
+  favorite(_id: String!): Favorite!
+  favoriteByUserId(userId: String!): Favorite!
+  favorites(skip: Int! = 0, take: Int! = 25): [Favorite!]!
+  language(slug: String!): Language!
+  languages: [Language!]!
+  like(_id: String!): Like!
+  likes(skip: Int! = 0, take: Int! = 25): [Like!]!
+  review(_id: String!): Review!
+  reviews(skip: Int! = 0, take: Int! = 25): [Review!]!
+  reviewsByBookId(bookId: String!): [Review!]!
+  user(_id: ID!): User!
+  users(skip: Int! = 0, take: Int! = 25): [User!]!
+}
+
+type Review {
+  _id: String!
+  author: User!
+  book: Book!
+
+  """Created at timestamp"""
+  createdAt: Date!
+  likes: [Like!]!
+  rating: Float!
+  text: String!
+
+  """Updated at timestamp"""
+  updatedAt: Date!
+}
+
+input UpdateBookInput {
+  _id: String!
+  description: String
+  file: Upload
+  isDraft: Boolean = false
+  summary: String
+  title: String
+}
+
+input UpdateReviewInput {
+  _id: String!
+  rating: Float
+  text: String
+}
+
+input UpdateUserInput {
+  _id: String!
+  avatar: Upload
+  birthday: Date
+  email: String
+  firstName: String
+  lastName: String
+  login: String
+  password: String
+
+  """User's gender"""
+  sex: Boolean
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+type User {
+  _id: String!
+  avatar: String
+  birthday: Date
+  country: Country
+
+  """Created at timestamp"""
+  createdAt: Date!
+  deletedAt: Date
+  email: String!
+  firstName: String!
+  isVerfied: Boolean!
+  lastName: String!
+  login: String!
+  sex: Boolean!
+
+  """Updated at timestamp"""
+  updatedAt: Date!
+}
