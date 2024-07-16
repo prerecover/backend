@@ -25,11 +25,11 @@ export class User extends CommonEntity {
 
     @Field()
     @Column({ default: false, name: 'is_staff' })
-    isStaff: boolean;
+    public isStaff: boolean;
 
     @Field()
     @Column({ default: false })
-    online: boolean;
+    public online: boolean;
 
     @Field({ nullable: true })
     @Column({ name: 'address', length: 225, nullable: true })
@@ -54,6 +54,10 @@ export class User extends CommonEntity {
     @Field({ nullable: true })
     @ManyToOne(() => Country, (country) => country.users, { onDelete: 'SET NULL' })
     public country: Country;
+
+    @Field({ nullable: true })
+    @Column({ name: 'verification_code', nullable: true })
+    public verificationCode: number;
 
     @Field()
     @Validate(IsUnique, ['users', 'email'])

@@ -1,33 +1,86 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { RegistrationUser } from './dto/registration-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
-import { MailerService } from '@nestjs-modules/mailer';
-import { MailService } from 'src/config/smtp/mail.service';
+import { InjectQueue } from '@nestjs/bull';
+import { QUEUE_NAME } from 'src/config/bull/queue.interface';
+import { Queue } from 'bull';
+import { VerifyCodeInput } from './dto/verify-code.input';
+import { UsersService } from '../users.service';
+import { ForgotPasswordInput } from './dto/forgot-password.input';
+import { NewPasswordInput } from './dto/new-password.input';
 
 @Injectable()
 export class RegistrationService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-        private readonly mailService: MailService,
+        @InjectQueue(QUEUE_NAME.mail) private msgQueue: Queue,
+        private readonly userService: UsersService,
     ) { }
     async createUser(registrationInput: RegistrationUser): Promise<User> {
-        const user = await this.userRepository.save(this.userRepository.create(registrationInput));
-        await this.mailService.registrationMessage(registrationInput.email);
-        return user;
+        const user = this.userRepository.create(registrationInput);
+        const code = this.generateCode();
+        user.verificationCode = code;
+        const resultUser = await this.userRepository.save(user);
+        await this.msgQueue.add('registrationMessage', { email: registrationInput.email, code: code });
+        return resultUser;
     }
 
-    findAll() {
-        return `This action returns all registration`;
+    async verifyCode(verifyCodeInput: VerifyCodeInput) {
+        const user = await this.userService.findOneByEmail(verifyCodeInput.email);
+        const isSuccess = user.verificationCode == verifyCodeInput.code;
+        if (isSuccess) {
+            user.isVerfied = true;
+            await this.userRepository.save(user);
+        }
+        return isSuccess;
     }
 
-    findOne(id: number) {
-        return `This action returns a #${id} registration`;
+    async resendVerifyCode(email: string) {
+        const code = this.generateCode();
+        await this.setVerificationCode(email, null, code);
+        return Boolean(await this.msgQueue.add('registrationMessage', { email: email, code: code }));
     }
 
-    remove(id: number) {
-        return `This action removes a #${id} registration`;
+    async forgotPassword(forgotPassword: ForgotPasswordInput) {
+        if (forgotPassword.email) {
+            const code = this.generateCode();
+            await this.setVerificationCode(forgotPassword.email, null, code);
+            return Boolean(
+                await this.msgQueue.add('forgotPasswordMessage', { email: forgotPassword.email, code: code }),
+            );
+        }
+        if (forgotPassword.number) {
+            return true;
+        }
+    }
+
+    async resendForgotCode(email: string) {
+        const code = this.generateCode();
+        await this.setVerificationCode(email, null, code);
+        return Boolean(await this.msgQueue.add('forgotPasswordMessage', { email: email, code: code }));
+    }
+
+    async newPassword(newPasswordInput: NewPasswordInput) {
+        const user = await this.userService.findOneByEmail(newPasswordInput.email);
+        user.password = newPasswordInput.password;
+        return Boolean(await this.userRepository.save(user));
+    }
+
+    private generateCode(): number {
+        return Math.floor(1000 + Math.random() * 9000);
+    }
+    private async setVerificationCode(email: string, number: string = null, code: number) {
+        let user = null;
+        if (email) {
+            user = await this.userService.findOneByEmail(email);
+        }
+        if (number) {
+            user = await this.userService.findOneByNumber(number);
+        }
+        user.verificationCode = code;
+        return await this.userRepository.save(user);
     }
 }

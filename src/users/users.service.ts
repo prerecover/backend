@@ -18,7 +18,7 @@ export class UsersService {
         private readonly countryRepository: Repository<Country>,
         @Inject()
         private readonly minioService: MinioService,
-    ) {}
+    ) { }
 
     @Transactional()
     async create(createUserInput: CreateUserInput, countryTitle: string): Promise<User> {
@@ -40,35 +40,19 @@ export class UsersService {
 
     async findOne(id: string) {
         const user = await this.userRepository.findOne({ where: { _id: id }, relations: { country: true } });
-        if (!user) throw new NotFoundException('User not found!');
+        if (!user) throw new NotFoundException('User with that id not found!');
         return user;
     }
 
-    private readonly users = [
-        {
-            userId: 1,
-            username: 'john',
-            password: 'changeme',
-            email: 'ternyavsky2016@yandex.ru',
-            number: '+79086007431',
-        },
-        {
-            userId: 2,
-            username: 'maria',
-            password: 'guess',
-            number: '+79086007430',
-            email: 'pppoker2015@gmail.com',
-        },
-    ];
-
     async findOneByNumber(number: string) {
-        return this.users.find((user) => user.number === number);
+        const user = await this.userRepository.findOneBy({ number: number });
+        if (!user) throw new NotFoundException('User with that number not found!');
+        return user;
     }
     async findOneByEmail(email: string) {
-        return this.users.find((user) => user.email === email);
-    }
-    async findOneU(username: string) {
-        return this.users.find((user) => user.username === username);
+        const user = await this.userRepository.findOneBy({ email: email });
+        if (!user) throw new NotFoundException('User with that email not found!');
+        return user;
     }
 
     @Transactional()

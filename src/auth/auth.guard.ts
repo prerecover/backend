@@ -8,7 +8,7 @@ export class AuthGuard implements CanActivate {
     constructor(
         private jwtService: JwtService,
         private readonly userService: UsersService,
-    ) {}
+    ) { }
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const ctx = GqlExecutionContext.create(context);
         const request = ctx.getContext().req;
@@ -20,7 +20,7 @@ export class AuthGuard implements CanActivate {
             const payload = await this.jwtService.verifyAsync(token, {
                 secret: process.env.JWT_SECRET,
             });
-            request['user'] = await this.userService.findOneU(payload.username);
+            request['user'] = await this.userService.findOne(payload._id);
         } catch {
             throw new UnauthorizedException();
         }

@@ -132,6 +132,11 @@ type Doctor {
   workExp: Float
 }
 
+input ForgotPasswordInput {
+  email: String
+  number: Int
+}
+
 type Like {
   _id: String!
 
@@ -175,6 +180,11 @@ type Mutation {
   updateSaved(updateSavedInput: UpdateSavedInput!): Saved!
   updateService(updateServiceInput: UpdateServiceInput!): Service!
   updateUser(countryTitle: String, updateUserInput: UpdateUserInput!): User!
+}
+
+input NewPasswordInput {
+  email: String!
+  password: String!
 }
 
 type News {
@@ -226,21 +236,20 @@ type Query {
   country(slug: String!): Country!
   doctor(id: Int!): Doctor!
   doctors: [Doctor!]!
+  forgotPassword(forgotPasswordInput: ForgotPasswordInput!): Boolean!
   like(id: Int!): Like!
   likes(skip: Int! = 0, take: Int! = 25): [Like!]!
+  newPassword(newPasswordInput: NewPasswordInput!): Boolean!
   news(id: Int!): News!
-  registration: [Registration!]!
+  resendForgotCode(email: String!): Boolean!
+  resendVerifyCode(email: String!): Boolean!
   saved(id: Int!): Saved!
   service(id: Int!): Service!
   services: [Service!]!
   signIn(signIn: LoginInput!): TokenResponse!
   user(_id: ID!): User!
   users(skip: Int! = 0, take: Int! = 25): [User!]!
-}
-
-type Registration {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  verifyCode(verifyCodeInput: VerifyCodeInput!): Boolean!
 }
 
 input RegistrationUser {
@@ -361,4 +370,10 @@ type User {
 
   """Updated at timestamp"""
   updatedAt: Date!
+  verificationCode: Int
+}
+
+input VerifyCodeInput {
+  code: Int!
+  email: String!
 }

@@ -9,7 +9,7 @@ export class AuthService {
     constructor(
         private userService: UsersService,
         private readonly jwtService: JwtService,
-    ) {}
+    ) { }
     async signIn({ email, number, password }: LoginInput): Promise<any> {
         let user = null;
         const payload = {
@@ -17,29 +17,18 @@ export class AuthService {
         };
         if (email) {
             user = await this.userService.findOneByEmail(email);
-            if (user == null) {
-                throw new NotFoundException('User with that email not found!');
-            }
             payload['email'] = user.email;
         }
         if (number) {
             user = await this.userService.findOneByNumber(number);
-            if (user == null) {
-                throw new NotFoundException('User with that number not found!');
-            }
             payload['number'] = user.number;
         }
-        // const comparePassword = await bcrypt.compare(password, user.password);
-        // if (!comparePassword) {
-        //     throw new UnauthorizedException('No valid password!');
-        // }
-        console.log(user);
-        if (user.password !== password) {
+        const comparePassword = await bcrypt.compare(password, user.password);
+        if (!comparePassword) {
             throw new UnauthorizedException('No valid password!');
         }
         payload['sub'] = user.userId;
 
-        console.log(await this.jwtService.signAsync(payload));
         return {
             access_token: await this.jwtService.signAsync(payload),
         };
