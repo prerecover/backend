@@ -7,6 +7,7 @@ import { IsPhoneNumber } from 'class-validator';
 import { Country } from 'src/countries/entities/country.entity';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
+import { Service } from 'src/services/entities/service.entity';
 
 const BCRYPT_HASH_ROUNDS = 12;
 
@@ -54,7 +55,7 @@ export class Clinic extends CommonEntity {
 
     @Field(() => Int, { nullable: true })
     @Column({ nullable: true, default: 0 })
-    public emplouyees: number;
+    public employees: number;
     @Field()
     @Column({ length: 225 })
     public description: string;
@@ -92,6 +93,10 @@ export class Clinic extends CommonEntity {
     @HideField()
     @Column()
     public password: string;
+
+    @Field(() => [Service])
+    @OneToMany(() => Service, (service) => service.clinic)
+    public services: Service[];
 
     @Field(() => [News])
     @OneToMany(() => News, (news) => news.clinic)

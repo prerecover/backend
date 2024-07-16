@@ -3,21 +3,24 @@ import { CommonEntity } from '../../common/common.entity';
 import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Country } from 'src/countries/entities/country.entity';
-import { IsPhoneNumber } from 'class-validator';
+import { IsPhoneNumber, Validate } from 'class-validator';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
+import { IsUnique } from 'src/common/shared/unique.validator';
 
 const BCRYPT_HASH_ROUNDS = 10;
 
 @ObjectType()
 @Entity({ name: 'users' })
 export class User extends CommonEntity {
-    @Field()
-    @Column({ unique: true, length: 30 })
+    @Field({ nullable: true })
+    @Validate(IsUnique, ['users', 'login'])
+    @Column({ unique: true, length: 30, nullable: true })
     public login: string;
 
-    @Field()
+    @Field({ nullable: true })
     @IsPhoneNumber('UZ')
-    @Column({ name: 'number' })
+    @Validate(IsUnique, ['users', 'number'])
+    @Column({ name: 'number', nullable: true })
     public number: string;
 
     @Field()
@@ -28,23 +31,23 @@ export class User extends CommonEntity {
     @Column({ default: false })
     online: boolean;
 
-    @Field()
-    @Column({ name: 'address', length: 225 })
+    @Field({ nullable: true })
+    @Column({ name: 'address', length: 225, nullable: true })
     public address: string;
 
-    @Field()
-    @Column({ name: 'first_name', length: 30 })
+    @Field({ nullable: true })
+    @Column({ name: 'first_name', length: 30, nullable: true })
     public firstName: string;
 
-    @Field()
-    @Column({ name: 'last_name', length: 30 })
+    @Field({ nullable: true })
+    @Column({ name: 'last_name', length: 30, nullable: true })
     public lastName: string;
 
-    @Field()
-    @Column({ name: 'surname', length: 30 })
+    @Field({ nullable: true })
+    @Column({ name: 'surname', length: 30, nullable: true })
     public surname: string;
 
-    @Field(() => [Appointment])
+    @Field(() => [Appointment], { nullable: true })
     @OneToMany(() => Appointment, (appmt) => appmt.user, { onDelete: 'SET NULL' })
     public appointments: Appointment[];
 
@@ -53,9 +56,9 @@ export class User extends CommonEntity {
     public country: Country;
 
     @Field()
+    @Validate(IsUnique, ['users', 'email'])
     @Column({ length: 225, unique: true })
     public email: string;
-
 
     @HideField()
     @Column({})

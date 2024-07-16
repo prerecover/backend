@@ -44,6 +44,34 @@ export class UsersService {
         return user;
     }
 
+    private readonly users = [
+        {
+            userId: 1,
+            username: 'john',
+            password: 'changeme',
+            email: 'ternyavsky2016@yandex.ru',
+            number: '+79086007431',
+        },
+        {
+            userId: 2,
+            username: 'maria',
+            password: 'guess',
+            number: '+79086007430',
+            email: 'pppoker2015@gmail.com',
+        },
+    ];
+
+    async findOneByNumber(number: string) {
+        return this.users.find((user) => user.number === number);
+    }
+    async findOneByEmail(email: string) {
+        return this.users.find((user) => user.email === email);
+    }
+    async findOneU(username: string) {
+        return this.users.find((user) => user.username === username);
+    }
+
+    @Transactional()
     async update(id: string, updateUserInput: UpdateUserInput, countryTitle: string) {
         const user = await this.findOne(id);
         const { avatar, ...data } = updateUserInput;

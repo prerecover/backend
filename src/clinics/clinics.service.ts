@@ -4,23 +4,23 @@ import { UpdateClinicInput } from './dto/update-clinic.input';
 
 @Injectable()
 export class ClinicsService {
-  create(createClinicInput: CreateClinicInput) {
-    return 'This action adds a new clinic';
-  }
+    create(createClinicInput: CreateClinicInput) {
+        return 'This action adds a new clinic';
+    }
 
-  findAll() {
-    return `This action returns all clinics`;
-  }
+    findAll() {
+        return `This action returns all clinics`;
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} clinic`;
-  }
+    findOne(id: number) {
+        return `This action returns a #${id} clinic`;
+    }
 
-  update(id: number, updateClinicInput: UpdateClinicInput) {
-    return `This action updates a #${id} clinic`;
-  }
+    update(id: number, updateClinicInput: UpdateClinicInput) {
+        return `This action updates a #${id} clinic`;
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} clinic`;
-  }
+    remove(id: number) {
+        return `This action removes a #${id} clinic`;
+    }
 }

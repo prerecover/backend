@@ -23,6 +23,10 @@ import { NewsModule } from './news/news.module';
 import { SavedModule } from './saved/saved.module';
 import { ClinicsModule } from './clinics/clinics.module';
 import { DoctorsModule } from './doctors/doctors.module';
+import { AuthModule } from './auth/auth.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { SMTPConfig } from './config/smtp';
+import { Service } from './config/smtp/.service';
 
 @Module({
     imports: [
@@ -33,6 +37,9 @@ import { DoctorsModule } from './doctors/doctors.module';
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: ['.env'],
+        }),
+        MailerModule.forRootAsync({
+            useClass: SMTPConfig
         }),
 
         TypeOrmModule.forRootAsync({
@@ -54,6 +61,7 @@ import { DoctorsModule } from './doctors/doctors.module';
         SavedModule,
         ClinicsModule,
         DoctorsModule,
+        AuthModule,
     ],
     controllers: [AppController],
     providers: [
@@ -65,6 +73,7 @@ import { DoctorsModule } from './doctors/doctors.module';
         IsExist,
         AppService,
         MinioService,
+        Service,
     ],
 })
 export class AppModule { }
