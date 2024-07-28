@@ -1,21 +1,25 @@
-import { Resolver, Query, Args } from '@nestjs/graphql';
+import { Resolver, Query, Args, Context } from '@nestjs/graphql';
 import { CountriesService } from './countries.service';
 import { Country } from './entities/country.entity';
-import { UseGuards } from '@nestjs/common';
+import { Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthInterceptor } from 'src/auth/auth.itc';
+import { CurrentUser } from 'src/common/shared/user.decorator';
+import { User } from 'src/users/entities/user.entity';
 
 @Resolver(() => Country)
 export class CountriesResolver {
     constructor(private readonly countriesService: CountriesService) {}
 
-    @UseGuards(AuthGuard)
     @Query(() => [Country], { name: 'countries' })
-    findAll() {
-        return this.countriesService.findAll();
+    async findAll(@CurrentUser() user: User) {
+        console.log(user);
+        return await this.countriesService.findAll();
     }
 
     @Query(() => Country, { name: 'country' })
-    findOne(@Args('slug') slug: string) {
-        return this.countriesService.findOne(slug);
+    async findOne(@Args('slug') slug: string, @CurrentUser() user: User) {
+        console.log(user);
+        return await this.countriesService.findOne(slug);
     }
 }

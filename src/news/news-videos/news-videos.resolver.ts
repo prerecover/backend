@@ -6,30 +6,30 @@ import { UpdateNewsVideoInput } from './dto/update-news-video.input';
 
 @Resolver(() => NewsVideo)
 export class NewsVideosResolver {
-  constructor(private readonly newsVideosService: NewsVideosService) {}
+    constructor(private readonly newsVideosService: NewsVideosService) {}
 
-  @Mutation(() => NewsVideo)
-  createNewsVideo(@Args('createNewsVideoInput') createNewsVideoInput: CreateNewsVideoInput) {
-    return this.newsVideosService.create(createNewsVideoInput);
-  }
+    @Mutation(() => NewsVideo)
+    createNewsVideo(@Args('createNewsVideoInput') createNewsVideoInput: CreateNewsVideoInput) {
+        return this.newsVideosService.create(createNewsVideoInput);
+    }
 
-  @Query(() => [NewsVideo], { name: 'newsVideos' })
-  findAll() {
-    return this.newsVideosService.findAll();
-  }
+    @Query(() => [NewsVideo], { name: 'newsVideos' })
+    findAll() {
+        return this.newsVideosService.findAll();
+    }
 
-  @Query(() => NewsVideo, { name: 'newsVideo' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.newsVideosService.findOne(id);
-  }
+    @Query(() => NewsVideo, { name: 'newsVideo' })
+    findOne(@Args('id', { type: () => Int }) id: number) {
+        return this.newsVideosService.findOne(id);
+    }
 
-  @Mutation(() => NewsVideo)
-  updateNewsVideo(@Args('updateNewsVideoInput') updateNewsVideoInput: UpdateNewsVideoInput) {
-    return this.newsVideosService.update(updateNewsVideoInput.id, updateNewsVideoInput);
-  }
+    @Mutation(() => NewsVideo)
+    updateNewsVideo(@Args('updateNewsVideoInput') updateNewsVideoInput: UpdateNewsVideoInput) {
+        return this.newsVideosService.update(updateNewsVideoInput.id, updateNewsVideoInput);
+    }
 
-  @Mutation(() => NewsVideo)
-  removeNewsVideo(@Args('id', { type: () => Int }) id: number) {
-    return this.newsVideosService.remove(id);
-  }
+    @Mutation(() => NewsVideo)
+    removeNewsVideo(@Args('id', { type: () => Int }) id: number) {
+        return this.newsVideosService.remove(id);
+    }
 }

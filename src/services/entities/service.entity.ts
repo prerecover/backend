@@ -1,8 +1,9 @@
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { CommonEntity } from 'src/common/common.entity';
+import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { News } from 'src/news/entities/news.entity';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 
 @ObjectType()
 @Entity({ name: 'services' })
@@ -23,14 +24,24 @@ export class Service extends CommonEntity {
     @Column()
     public duration: number;
 
+    @Field({ nullable: true })
+    @Column({ nullable: true })
+    public img: string;
+
     @Field(() => Float)
     @Column({ type: 'float' })
     public price: number;
 
-    @Field(() => Clinic)
+    @Field(() => Clinic, { nullable: true })
     @ManyToOne(() => Clinic, (clinic) => clinic.services, { onDelete: 'CASCADE' })
     public clinic: Clinic;
 
+    @Field(() => [Doctor])
+    @ManyToMany(() => Doctor, (doctor) => doctor.services)
+    @JoinTable({ name: 'service_doctors' })
+    public doctors: Doctor[];
+
+    @Field(() => [News])
     @OneToMany(() => News, (news) => news.service)
     public news: News[];
 }

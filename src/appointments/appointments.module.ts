@@ -8,4 +8,4 @@ import { Appointment } from './entities/appointment.entity';
     imports: [TypeOrmModule.forFeature([Appointment])],
     providers: [AppointmentsResolver, AppointmentsService],
 })
-export class AppointmentsModule { }
+export class AppointmentsModule {}

@@ -3,6 +3,6 @@ import { NewsVideosService } from './news-videos.service';
 import { NewsVideosResolver } from './news-videos.resolver';
 
 @Module({
-  providers: [NewsVideosResolver, NewsVideosService],
+    providers: [NewsVideosResolver, NewsVideosService],
 })
 export class NewsVideosModule {}

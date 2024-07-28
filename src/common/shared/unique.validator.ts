@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
 import { EntityManager } from 'typeorm';
 
@@ -20,7 +20,6 @@ export class IsUnique implements ValidatorConstraintInterface {
 
     defaultMessage(validationArguments: ValidationArguments): string {
         const field = validationArguments.property;
-
-        return `${field} is already exist.`;
+        throw new BadRequestException(`${field.charAt(0).toUpperCase() + field.slice(1)} is already exist.`);
     }
 }

@@ -19,25 +19,24 @@ export class News extends CommonEntity {
     @Column({ type: 'text' })
     public text: string;
 
-    @Field(() => Int)
-    @OneToMany(() => Like, (like) => like.news)
+    @OneToMany(() => Like, (like) => like.news, { nullable: true })
     public likes: Like[];
 
-    @Field(() => Int)
-    @OneToMany(() => Saved, (saved) => saved.news)
+    @OneToMany(() => Saved, (saved) => saved.news, { nullable: true })
     public saved: Saved[];
 
     @Field(() => [NewsImage])
-    @OneToMany(() => NewsImage, (ni) => ni.news)
+    @OneToMany(() => NewsImage, (ni) => ni.news, { nullable: true })
     public newsImages: NewsImage[];
 
     @Field(() => [NewsVideo])
-    @OneToMany(() => NewsVideo, (nv) => nv.news)
+    @OneToMany(() => NewsVideo, (nv) => nv.news, { nullable: true })
     public newsVideos: NewsVideo[];
 
-    @ManyToOne(() => Clinic, (clinic) => clinic.news)
+    @Field(() => Clinic, { nullable: true })
+    @ManyToOne(() => Clinic, (clinic) => clinic.news, { nullable: true })
     public clinic: Clinic;
 
-    @ManyToOne(() => Service, (service) => service.news)
+    @ManyToOne(() => Service, (service) => service.news, { nullable: true })
     public service: Service;
 }

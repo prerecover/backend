@@ -6,7 +6,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { AuthGuard } from './auth.guard';
 
-
 @Module({
     imports: [
         UsersModule,
@@ -16,7 +15,7 @@ import { AuthGuard } from './auth.guard';
             signOptions: { expiresIn: '7d' },
         }),
     ],
-    providers: [AuthResolver, AuthService],
-    exports: [AuthService],
+    providers: [AuthResolver, AuthService, AuthGuard],
+    exports: [AuthService, AuthGuard],
 })
 export class AuthModule {}

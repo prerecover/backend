@@ -3,33 +3,28 @@ import { ServicesService } from './services.service';
 import { Service } from './entities/service.entity';
 import { CreateServiceInput } from './dto/create-service.input';
 import { UpdateServiceInput } from './dto/update-service.input';
+import { PaginateArgs } from 'src/common/args/paginateArgs';
 
 @Resolver(() => Service)
 export class ServicesResolver {
-  constructor(private readonly servicesService: ServicesService) {}
+    constructor(private readonly servicesService: ServicesService) {}
 
-  @Mutation(() => Service)
-  createService(@Args('createServiceInput') createServiceInput: CreateServiceInput) {
-    return this.servicesService.create(createServiceInput);
-  }
+    @Mutation(() => Service)
+    async createService(@Args('createServiceInput') createServiceInput: CreateServiceInput) {
+        return await this.servicesService.create(createServiceInput);
+    }
 
-  @Query(() => [Service], { name: 'services' })
-  findAll() {
-    return this.servicesService.findAll();
-  }
+    @Query(() => [Service], { name: 'services' })
+    async findAll(@Args({ nullable: true }) args?: PaginateArgs) {
+        return this.servicesService.findAll(args);
+    }
 
-  @Query(() => Service, { name: 'service' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.servicesService.findOne(id);
-  }
-
-  @Mutation(() => Service)
-  updateService(@Args('updateServiceInput') updateServiceInput: UpdateServiceInput) {
-    return this.servicesService.update(updateServiceInput.id, updateServiceInput);
-  }
-
-  @Mutation(() => Service)
-  removeService(@Args('id', { type: () => Int }) id: number) {
-    return this.servicesService.remove(id);
-  }
+    @Query(() => Service, { name: 'service' })
+    async findOne(@Args('_id') id: string) {
+        return await this.servicesService.findOne(id);
+    }
+    @Query(() => [Service], { name: 'servicesByClinic' })
+    async findByClinic(@Args('clinicId') id: string) {
+        return await this.servicesService.findByClinic(id);
+    }
 }

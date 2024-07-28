@@ -28,6 +28,9 @@ import { SMTPConfig } from './config/smtp';
 import { MailModule } from './config/smtp/mail.module';
 import { BullModule } from '@nestjs/bull';
 import { BullConfig } from './config/bull';
+import { AuthInterceptor } from './auth/auth.itc';
+import { CommonModule } from './common/common.module';
+import { addTransactionalDataSource } from 'typeorm-transactional';
 
 @Module({
     imports: [
@@ -48,9 +51,11 @@ import { BullConfig } from './config/bull';
         }),
         TypeOrmModule.forRootAsync({
             useClass: TypeOrmCfgService,
-            dataSourceFactory: async (options) => {
-                const dataSource = await new DataSource(options).initialize();
-                return dataSource;
+            async dataSourceFactory(options) {
+                if (!options) {
+                    throw new Error('Invalid options passed');
+                }
+                return addTransactionalDataSource(new DataSource(options));
             },
         }),
         S3Module.forRootAsync({
@@ -60,6 +65,7 @@ import { BullConfig } from './config/bull';
         CountriesModule,
         ServicesModule,
         AppointmentsModule,
+        CommonModule,
         LikesModule,
         NewsModule,
         SavedModule,
@@ -74,6 +80,11 @@ import { BullConfig } from './config/bull';
             provide: APP_INTERCEPTOR,
             useClass: TimeoutInterceptor,
         },
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: AuthInterceptor,
+        },
+
         IsUnique,
         IsExist,
         AppService,

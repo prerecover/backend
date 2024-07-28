@@ -1,26 +1,50 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { In, Repository } from 'typeorm';
+import { PaginateArgs } from 'src/common/args/paginateArgs';
+import { Service } from './entities/service.entity';
 import { CreateServiceInput } from './dto/create-service.input';
-import { UpdateServiceInput } from './dto/update-service.input';
 
 @Injectable()
 export class ServicesService {
-  create(createServiceInput: CreateServiceInput) {
-    return 'This action adds a new service';
-  }
+    constructor(
+        @InjectRepository(Service)
+        private readonly servicesRepository: Repository<Service>,
+    ) {}
+    async create(createServiceInput: CreateServiceInput) {
+        return this.servicesRepository.create(createServiceInput);
+    }
 
-  findAll() {
-    return `This action returns all services`;
-  }
+    async findAll(args: PaginateArgs): Promise<Service[]> {
+        return await this.servicesRepository.find({
+            relations: { clinic: true, news: true, doctors: true },
+            take: args.take,
+            skip: args.skip,
+        });
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} service`;
-  }
-
-  update(id: number, updateServiceInput: UpdateServiceInput) {
-    return `This action updates a #${id} service`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} service`;
-  }
+    async findOne(id: string) {
+        const service = await this.servicesRepository.findOne({
+            where: { _id: id },
+            relations: { clinic: true, news: true, doctors: true },
+        });
+        if (!service) throw new NotFoundException('Service with that id not found!');
+        return service;
+    }
+    async findByClinic(clinicId: string) {
+        const services = await this.servicesRepository.find({
+            where: { clinic: { _id: clinicId } },
+            relations: { clinic: true, news: true, doctors: true },
+        });
+        if (!services) throw new NotFoundException('Service with that doctorId not found!');
+        return services;
+    }
+    async findByDoctor(doctorId: string) {
+        const services = await this.servicesRepository.find({
+            where: { doctors: { _id: doctorId } },
+            relations: { clinic: true, news: true, doctors: true },
+        });
+        if (!services) throw new NotFoundException('Service with that doctorId not found!');
+        return services;
+    }
 }

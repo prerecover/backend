@@ -25,32 +25,34 @@ type Appointment {
 
 type Clinic {
   _id: String!
-  address: String!
-  adminFirstName: String!
-  adminLastName: String!
-  adminNumber: String!
-  appointments: [Appointment!]!
+  address: String
+  adminFirstName: String
+  adminLastName: String
+  adminNumber: String
+  appointments: [Appointment!]
   avatar: String
+  city: String
   country: Country
 
   """Created at timestamp"""
   createdAt: Date!
-  description: String!
-  email: String!
-  employees: Int
-  endTime: Int!
+  description: String
+  doctors: [Doctor!]!
+  email: String
+  employees: Int!
+  endTime: Int
   isVerfied: Boolean!
-  news: [News!]!
-  number: String!
+  news: [News!]
+  number: String
   rating: Float!
-  services: [Service!]!
-  specialization: String!
-  startTime: Int!
+  services: [Service!]
+  specialization: String
+  startTime: Int
   title: String!
 
   """Updated at timestamp"""
   updatedAt: Date!
-  workDays: String!
+  workDays: String
 }
 
 type Country {
@@ -65,33 +67,38 @@ input CreateAppointmentInput {
 }
 
 input CreateClinicInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  address: String!
+  title: String!
 }
 
 input CreateDoctorInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  firstName: String!
+  lastName: String!
+  specialization: String!
+  surname: String!
 }
 
 input CreateLikeInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  authorId: String!
+  newsId: String!
 }
 
 input CreateNewsInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  text: String!
+  title: String!
 }
 
 input CreateSavedInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  authorId: String!
+  newsId: String!
 }
 
 input CreateServiceInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  description: String!
+  doctorIds: [String!]!
+  duration: Int!
+  price: Float!
+  title: String!
 }
 
 input CreateUserInput {
@@ -113,19 +120,20 @@ scalar Date
 type Doctor {
   _id: String!
   avatar: String
-  clinic: Clinic!
+  clinic: Clinic
   country: Country
 
   """Created at timestamp"""
   createdAt: Date!
-  email: String!
-  firstName: String!
-  lastName: String!
+  email: String
+  firstName: String
+  lastName: String
   mainStatus: Boolean!
-  number: String!
+  number: String
   online: Boolean!
+  services: [Service!]
   specialization: String
-  surname: String!
+  surname: String
 
   """Updated at timestamp"""
   updatedAt: Date!
@@ -134,11 +142,12 @@ type Doctor {
 
 input ForgotPasswordInput {
   email: String
-  number: Int
+  number: String
 }
 
 type Like {
   _id: String!
+  author: User
 
   """Created at timestamp"""
   createdAt: Date!
@@ -163,23 +172,24 @@ type Mutation {
   createSaved(createSavedInput: CreateSavedInput!): Saved!
   createService(createServiceInput: CreateServiceInput!): Service!
   createUser(countryTitle: String!, createUserInput: CreateUserInput!): User!
+  forgotPassword(forgotPasswordInput: ForgotPasswordInput!): Boolean!
+  newPassword(newPasswordInput: NewPasswordInput!): Boolean!
   registrationUser(registrationInput: RegistrationUser!): User!
   removeAppointment(id: Int!): Appointment!
   removeClinic(id: Int!): Clinic!
   removeDoctor(id: Int!): Doctor!
-  removeLike(id: Int!): Like!
+  removeLike(_id: String!): Like!
   removeNews(id: Int!): News!
-  removeSaved(id: Int!): Saved!
-  removeService(id: Int!): Service!
+  removeSaved(_id: String!): Saved!
   removeUser(_id: String!): User!
+  resendVerifyCode(email: String!): Boolean!
+  signIn(signIn: LoginInput!): TokenResponse!
   updateAppointment(updateAppointmentInput: UpdateAppointmentInput!): Appointment!
   updateClinic(updateClinicInput: UpdateClinicInput!): Clinic!
   updateDoctor(updateDoctorInput: UpdateDoctorInput!): Doctor!
-  updateLike(updateLikeInput: UpdateLikeInput!): Like!
   updateNews(updateNewsInput: UpdateNewsInput!): News!
-  updateSaved(updateSavedInput: UpdateSavedInput!): Saved!
-  updateService(updateServiceInput: UpdateServiceInput!): Service!
   updateUser(countryTitle: String, updateUserInput: UpdateUserInput!): User!
+  verifyCode(verifyCodeInput: VerifyCodeInput!): Boolean!
 }
 
 input NewPasswordInput {
@@ -189,13 +199,14 @@ input NewPasswordInput {
 
 type News {
   _id: String!
+  clinic: Clinic
 
   """Created at timestamp"""
   createdAt: Date!
-  likes: Int!
+  like: Like
   newsImages: [NewsImage!]!
   newsVideos: [NewsVideo!]!
-  saved: Int!
+  saved: Saved
   text: String!
   title: String!
 
@@ -230,26 +241,26 @@ type NewsVideo {
 type Query {
   appointment(id: Int!): Appointment!
   appointments: [Appointment!]!
-  clinic(id: Int!): Clinic!
-  clinics: [Clinic!]!
+  clinic(_id: String!): Clinic!
+  clinics(skip: Int! = 0, take: Int! = 25): [Clinic!]!
   countries: [Country!]!
   country(slug: String!): Country!
-  doctor(id: Int!): Doctor!
-  doctors: [Doctor!]!
-  forgotPassword(forgotPasswordInput: ForgotPasswordInput!): Boolean!
-  like(id: Int!): Like!
+  doctor(_id: String!): Doctor!
+  doctors(skip: Int! = 0, take: Int! = 25): [Doctor!]!
+  doctorsByClinic(clinicId: String!): [Doctor!]!
+  getMe: User!
+  like(id: ID!): Like!
   likes(skip: Int! = 0, take: Int! = 25): [Like!]!
-  newPassword(newPasswordInput: NewPasswordInput!): Boolean!
-  news(id: Int!): News!
+  news(_id: ID!): News!
+  newsAll(skip: Int! = 0, take: Int! = 25): [News!]!
   resendForgotCode(email: String!): Boolean!
-  resendVerifyCode(email: String!): Boolean!
-  saved(id: Int!): Saved!
-  service(id: Int!): Service!
-  services: [Service!]!
-  signIn(signIn: LoginInput!): TokenResponse!
+  saved(_id: String!): Saved!
+  search: Search!
+  service(_id: String!): Service!
+  services(skip: Int! = 0, take: Int! = 25): [Service!]!
+  servicesByClinic(clinicId: String!): [Service!]!
   user(_id: ID!): User!
   users(skip: Int! = 0, take: Int! = 25): [User!]!
-  verifyCode(verifyCodeInput: VerifyCodeInput!): Boolean!
 }
 
 input RegistrationUser {
@@ -259,6 +270,7 @@ input RegistrationUser {
 
 type Saved {
   _id: String!
+  author: User!
 
   """Created at timestamp"""
   createdAt: Date!
@@ -268,14 +280,23 @@ type Saved {
   updatedAt: Date!
 }
 
+type Search {
+  clinics: [Clinic!]!
+  doctors: [Doctor!]!
+  services: [Service!]!
+}
+
 type Service {
   _id: String!
-  clinic: Clinic!
+  clinic: Clinic
 
   """Created at timestamp"""
   createdAt: Date!
   description: String!
+  doctors: [Doctor!]!
   duration: Int!
+  img: String
+  news: [News!]!
   online: Boolean!
   price: Float!
   title: String!
@@ -295,39 +316,23 @@ input UpdateAppointmentInput {
 }
 
 input UpdateClinicInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  address: String
   id: Int!
+  title: String
 }
 
 input UpdateDoctorInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  firstName: String
   id: Int!
-}
-
-input UpdateLikeInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  lastName: String
+  specialization: String
+  surname: String
 }
 
 input UpdateNewsInput {
-  """Example field (placeholder)"""
-  exampleField: Int
   id: Int!
-}
-
-input UpdateSavedInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-input UpdateServiceInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  text: String
+  title: String
 }
 
 input UpdateUserInput {
@@ -365,7 +370,7 @@ type User {
   login: String
   number: String
   online: Boolean!
-  sex: Boolean!
+  sex: Boolean
   surname: String
 
   """Updated at timestamp"""

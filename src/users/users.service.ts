@@ -18,7 +18,7 @@ export class UsersService {
         private readonly countryRepository: Repository<Country>,
         @Inject()
         private readonly minioService: MinioService,
-    ) { }
+    ) {}
 
     @Transactional()
     async create(createUserInput: CreateUserInput, countryTitle: string): Promise<User> {
@@ -34,7 +34,7 @@ export class UsersService {
         return await this.userRepository.save(user);
     }
 
-    async findAll(args: PaginateArgs): Promise<User[]> {
+    async findAll(args?: PaginateArgs): Promise<User[]> {
         return await this.userRepository.find({ relations: { country: true }, take: args.take, skip: args.skip });
     }
 
@@ -44,12 +44,12 @@ export class UsersService {
         return user;
     }
 
-    async findOneByNumber(number: string) {
+    async findOneByNumber(number: string): Promise<User> {
         const user = await this.userRepository.findOneBy({ number: number });
         if (!user) throw new NotFoundException('User with that number not found!');
         return user;
     }
-    async findOneByEmail(email: string) {
+    async findOneByEmail(email: string): Promise<User> {
         const user = await this.userRepository.findOneBy({ email: email });
         if (!user) throw new NotFoundException('User with that email not found!');
         return user;

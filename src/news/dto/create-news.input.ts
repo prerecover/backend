@@ -1,7 +1,16 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
+import { IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 
 @InputType()
 export class CreateNewsInput {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+    @IsNotEmpty()
+    @MaxLength(30)
+    @MinLength(2)
+    @Field()
+    public title: string;
+
+    @IsNotEmpty()
+    @MinLength(2)
+    @Field()
+    public text: string;
 }

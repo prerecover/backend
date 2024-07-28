@@ -10,5 +10,5 @@ export class ForgotPasswordInput {
 
     @Field({ nullable: true })
     @IsOptional()
-    public number: number;
+    public number: string;
 }

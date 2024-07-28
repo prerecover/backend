@@ -11,7 +11,7 @@ interface registrationMessage {
 
 @Processor(QUEUE_NAME.mail)
 export class MailConsumer {
-    constructor(private mailService: MailService) { }
+    constructor(private mailService: MailService) {}
 
     @Process('registrationMessage')
     async sendMailJob(job: Job<registrationMessage>) {

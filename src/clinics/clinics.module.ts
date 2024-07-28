@@ -10,4 +10,4 @@ import { Country } from 'src/countries/entities/country.entity';
     imports: [TypeOrmModule.forFeature([Clinic, News, Country])],
     providers: [ClinicsResolver, ClinicsService],
 })
-export class ClinicsModule { }
+export class ClinicsModule {}

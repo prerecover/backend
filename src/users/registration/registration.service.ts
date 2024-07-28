@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { RegistrationUser } from './dto/registration-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
@@ -18,7 +18,7 @@ export class RegistrationService {
         private readonly userRepository: Repository<User>,
         @InjectQueue(QUEUE_NAME.mail) private msgQueue: Queue,
         private readonly userService: UsersService,
-    ) { }
+    ) {}
     async createUser(registrationInput: RegistrationUser): Promise<User> {
         const user = this.userRepository.create(registrationInput);
         const code = this.generateCode();
@@ -31,10 +31,11 @@ export class RegistrationService {
     async verifyCode(verifyCodeInput: VerifyCodeInput) {
         const user = await this.userService.findOneByEmail(verifyCodeInput.email);
         const isSuccess = user.verificationCode == verifyCodeInput.code;
-        if (isSuccess) {
-            user.isVerfied = true;
-            await this.userRepository.save(user);
+        if (isSuccess == false) {
+            throw new BadRequestException('No valid code');
         }
+        user.isVerfied = true;
+        await this.userRepository.save(user);
         return isSuccess;
     }
 

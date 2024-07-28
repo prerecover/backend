@@ -1,23 +1,26 @@
-import { ObjectType, Field, Int, HideField, Float } from '@nestjs/graphql';
+import { ObjectType, Field, HideField, Float } from '@nestjs/graphql';
 import { IsPhoneNumber } from 'class-validator';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { CommonEntity } from 'src/common/common.entity';
 import { Country } from 'src/countries/entities/country.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { Service } from 'src/services/entities/service.entity';
 
+const BCRYPT_HASH_ROUNDS = 12;
 @ObjectType()
 @Entity({ name: 'doctors' })
 export class Doctor extends CommonEntity {
-    @Field()
-    @Column({ name: 'first_name', length: 30 })
+    @Field({ nullable: true })
+    @Column({ name: 'first_name', length: 30, nullable: true })
     public firstName: string;
 
-    @Field()
-    @Column({ name: 'last_name', length: 30 })
+    @Field({ nullable: true })
+    @Column({ name: 'last_name', length: 30, nullable: true })
     public lastName: string;
 
-    @Field()
-    @Column({ name: 'surname', length: 30 })
+    @Field({ nullable: true })
+    @Column({ name: 'surname', length: 30, nullable: true })
     public surname: string;
 
     @Field()
@@ -32,25 +35,21 @@ export class Doctor extends CommonEntity {
     @Column({ name: 'work_experience', nullable: true })
     public workExp: number;
 
-    @Field(() => Clinic)
-    @ManyToOne(() => Clinic, (clinic) => clinic.doctors, { onDelete: 'CASCADE' })
+    @Field(() => Clinic, { nullable: true })
+    @ManyToOne(() => Clinic, (clinic) => clinic.doctors, { onDelete: 'CASCADE', nullable: true })
     public clinic: Clinic;
 
     @Field()
     @Column({ default: false, name: 'main_status' })
     mainStatus: boolean;
 
-    @Field(() => Country, { nullable: true })
-    @ManyToOne(() => Country, (country) => country.doctors, { onDelete: 'SET NULL' })
-    public country: Country;
-
-    @Field()
+    @Field({ nullable: true })
     @IsPhoneNumber('UZ')
-    @Column()
+    @Column({ nullable: true })
     public number: string;
 
-    @Field()
-    @Column({ length: 225, unique: true })
+    @Field({ nullable: true })
+    @Column({ length: 225, unique: true, nullable: true })
     public email: string;
 
     @Field({ nullable: true })
@@ -58,6 +57,22 @@ export class Doctor extends CommonEntity {
     public avatar: string;
 
     @HideField()
-    @Column()
+    @Column({ nullable: true })
     public password: string;
+
+    @Field(() => Country, { nullable: true })
+    @ManyToOne(() => Country, (country) => country.doctors, { onDelete: 'SET NULL', nullable: true })
+    public country: Country;
+
+    // @Field(() => [Service])
+    @ManyToMany(() => Service, (service) => service.doctors)
+    public services: Service[];
+
+    @BeforeInsert()
+    @BeforeUpdate()
+    async beforeInsertOrUpdate() {
+        if (this.password) {
+            this.password = await bcrypt.hash(this.password, BCRYPT_HASH_ROUNDS);
+        }
+    }
 }

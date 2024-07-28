@@ -9,12 +9,10 @@ export class AuthService {
     constructor(
         private userService: UsersService,
         private readonly jwtService: JwtService,
-    ) { }
+    ) {}
     async signIn({ email, number, password }: LoginInput): Promise<any> {
         let user = null;
-        const payload = {
-            type: 'user',
-        };
+        const payload = {};
         if (email) {
             user = await this.userService.findOneByEmail(email);
             payload['email'] = user.email;
@@ -27,8 +25,8 @@ export class AuthService {
         if (!comparePassword) {
             throw new UnauthorizedException('No valid password!');
         }
-        payload['sub'] = user.userId;
 
+        payload['_id'] = user._id;
         return {
             access_token: await this.jwtService.signAsync(payload),
         };

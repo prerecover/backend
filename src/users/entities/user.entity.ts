@@ -6,6 +6,8 @@ import { Country } from 'src/countries/entities/country.entity';
 import { IsPhoneNumber, Validate } from 'class-validator';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
 import { IsUnique } from 'src/common/shared/unique.validator';
+import { Like } from 'src/likes/entities/like.entity';
+import { Saved } from 'src/saved/entities/saved.entity';
 
 const BCRYPT_HASH_ROUNDS = 10;
 
@@ -80,9 +82,15 @@ export class User extends CommonEntity {
     @Column({ nullable: true })
     public avatar: string;
 
-    @Field()
+    @Field({ nullable: true })
     @Column({ nullable: true })
     public sex: boolean;
+
+    @OneToMany(() => Saved, (saved) => saved.author)
+    public saved: Saved[];
+
+    @OneToMany(() => Like, (like) => like.author)
+    public likes: Like[];
 
     @BeforeInsert()
     @BeforeUpdate()

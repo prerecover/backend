@@ -26,22 +26,23 @@ export class Clinic extends CommonEntity {
     @Column({ type: 'float', default: 5.0 })
     public rating: number;
 
-    @Field()
-    @Column()
+    @Field({ nullable: true })
+    @Column({ nullable: true })
     public specialization: string;
 
-    @Field(() => Int)
-    @Column({ name: 'start_time' })
+    @Field(() => Int, { nullable: true })
+    @Column({ name: 'start_time', nullable: true })
     public startTime: number;
 
-    @Field(() => Int)
-    @Column({ name: 'end_time' })
+    @Field(() => Int, { nullable: true })
+    @Column({ name: 'end_time', nullable: true })
     public endTime: number;
 
-    @Field()
-    @Column({ name: 'workdays' })
+    @Field({ nullable: true })
+    @Column({ name: 'workdays', nullable: true })
     public workDays: string;
 
+    @Field(() => [Doctor])
     @OneToMany(() => Doctor, (doctor) => doctor.clinic)
     public doctors: Doctor[];
 
@@ -49,41 +50,46 @@ export class Clinic extends CommonEntity {
     @ManyToOne(() => Country, (country) => country.clinics, { onDelete: 'SET NULL' })
     public country: Country;
 
-    @Field(() => [Appointment])
-    @OneToMany(() => Appointment, (appmt) => appmt.clinic, { onDelete: 'SET NULL' })
+    @Field({ nullable: true })
+    @Column({ length: 225, nullable: true })
+    public city: string;
+
+    @Field(() => [Appointment], { nullable: true })
+    @OneToMany(() => Appointment, (appmt) => appmt.clinic, { onDelete: 'SET NULL', nullable: true })
     public appointments: Appointment[];
 
-    @Field(() => Int, { nullable: true })
+    @Field(() => Int)
     @Column({ nullable: true, default: 0 })
     public employees: number;
-    @Field()
-    @Column({ length: 225 })
+
+    @Field({ nullable: true })
+    @Column({ length: 225, nullable: true })
     public description: string;
 
-    @Field()
-    @Column({ name: 'admin_firstname', length: 30 })
+    @Field({ nullable: true })
+    @Column({ name: 'admin_firstname', length: 30, nullable: true })
     public adminFirstName: string;
 
-    @Field()
-    @Column({ name: 'admin_lastname', length: 30 })
+    @Field({ nullable: true })
+    @Column({ name: 'admin_lastname', length: 30, nullable: true })
     public adminLastName: string;
 
-    @Field()
+    @Field({ nullable: true })
     @IsPhoneNumber('UZ')
-    @Column({ name: 'admin_number' })
+    @Column({ name: 'admin_number', nullable: true })
     public adminNumber: string;
 
-    @Field()
-    @Column({ name: 'address', length: 225 })
+    @Field({ nullable: true })
+    @Column({ name: 'address', length: 225, nullable: true })
     public address: string;
 
-    @Field()
+    @Field({ nullable: true })
     @IsPhoneNumber('UZ')
-    @Column()
+    @Column({ nullable: true })
     public number: string;
 
-    @Field()
-    @Column({ length: 225, unique: true })
+    @Field({ nullable: true })
+    @Column({ length: 225, unique: true, nullable: true })
     public email: string;
 
     @Field({ nullable: true })
@@ -91,15 +97,15 @@ export class Clinic extends CommonEntity {
     public avatar: string;
 
     @HideField()
-    @Column()
+    @Column({ nullable: true })
     public password: string;
 
-    @Field(() => [Service])
-    @OneToMany(() => Service, (service) => service.clinic)
+    @Field(() => [Service], { nullable: true })
+    @OneToMany(() => Service, (service) => service.clinic, { nullable: true })
     public services: Service[];
 
-    @Field(() => [News])
-    @OneToMany(() => News, (news) => news.clinic)
+    @Field(() => [News], { nullable: true })
+    @OneToMany(() => News, (news) => news.clinic, { nullable: true })
     public news: News[];
 
     @BeforeInsert()
