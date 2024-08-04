@@ -5,6 +5,8 @@ import { CreateSavedInput } from './dto/create-saved.input';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { CurrentUser } from 'src/common/shared/user.decorator';
+import { User } from 'src/users/entities/user.entity';
 
 @Resolver(() => Saved)
 export class SavedResolver {
@@ -16,9 +18,10 @@ export class SavedResolver {
         return await this.savedService.create(createSavedInput);
     }
 
-    @Query(() => [Saved], { name: 'saved' })
-    async findAll(@Args({ nullable: true }) args?: PaginateArgs) {
-        return this.savedService.findAll(args);
+    @UseGuards(AuthGuard)
+    @Query(() => [Saved], { name: 'savedAll' })
+    async findAll(@CurrentUser() user: User, @Args({ nullable: true }) args?: PaginateArgs) {
+        return this.savedService.findAll(user._id, args);
     }
 
     @Query(() => Saved, { name: 'saved' })

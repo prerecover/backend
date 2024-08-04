@@ -1,25 +1,24 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { InputType, Field, HideField } from '@nestjs/graphql';
 import { IsNotEmpty, MaxLength, MinLength, IsStrongPassword, IsEmail, Validate, IsPhoneNumber } from 'class-validator';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 import { FileUpload } from 'src/common/shared/file.interface';
-import { IsUnique } from 'src/common/shared/unique.validator';
 
 @InputType()
 export class CreateUserInput {
     @IsNotEmpty()
     @MaxLength(30)
     @MinLength(2)
-    @Validate(IsUnique, ['users', 'login'])
-    @Field()
+    @Field({ nullable: true })
     login: string;
 
     @IsNotEmpty()
     @MaxLength(30)
     @MinLength(2)
-    @Field()
+    @Field({ nullable: true })
     firstName: string;
 
     @IsPhoneNumber('UZ')
+    @Field({ nullable: true })
     number: string;
 
     @Field(() => GraphQLUpload, { nullable: true })
@@ -41,8 +40,4 @@ export class CreateUserInput {
 
     @Field({ nullable: true })
     birthday: Date;
-
-    @IsStrongPassword()
-    @Field()
-    password: string;
 }

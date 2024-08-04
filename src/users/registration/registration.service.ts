@@ -10,6 +10,7 @@ import { VerifyCodeInput } from './dto/verify-code.input';
 import { UsersService } from '../users.service';
 import { ForgotPasswordInput } from './dto/forgot-password.input';
 import { NewPasswordInput } from './dto/new-password.input';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class RegistrationService {
@@ -23,6 +24,7 @@ export class RegistrationService {
         const user = this.userRepository.create(registrationInput);
         const code = this.generateCode();
         user.verificationCode = code;
+        user.password = await bcrypt.hash(registrationInput.password, 10);
         const resultUser = await this.userRepository.save(user);
         await this.msgQueue.add('registrationMessage', { email: registrationInput.email, code: code });
         return resultUser;
@@ -66,7 +68,7 @@ export class RegistrationService {
 
     async newPassword(newPasswordInput: NewPasswordInput) {
         const user = await this.userService.findOneByEmail(newPasswordInput.email);
-        user.password = newPasswordInput.password;
+        user.password = await bcrypt.hash(newPasswordInput.password, 10);
         return Boolean(await this.userRepository.save(user));
     }
 

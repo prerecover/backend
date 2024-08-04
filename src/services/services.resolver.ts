@@ -1,13 +1,20 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
 import { ServicesService } from './services.service';
 import { Service } from './entities/service.entity';
 import { CreateServiceInput } from './dto/create-service.input';
-import { UpdateServiceInput } from './dto/update-service.input';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
+import { News } from 'src/news/entities/news.entity';
+import { NewsService } from 'src/news/news.service';
+import { Clinic } from 'src/clinics/entities/clinic.entity';
+import { ClinicsService } from 'src/clinics/clinics.service';
 
 @Resolver(() => Service)
 export class ServicesResolver {
-    constructor(private readonly servicesService: ServicesService) {}
+    constructor(
+        private readonly servicesService: ServicesService,
+        private readonly newsService: NewsService,
+        private readonly clinicService: ClinicsService,
+    ) {}
 
     @Mutation(() => Service)
     async createService(@Args('createServiceInput') createServiceInput: CreateServiceInput) {
@@ -17,6 +24,18 @@ export class ServicesResolver {
     @Query(() => [Service], { name: 'services' })
     async findAll(@Args({ nullable: true }) args?: PaginateArgs) {
         return this.servicesService.findAll(args);
+    }
+
+    @ResolveField('clinic', () => Clinic)
+    async clinic(@Parent() service: Service) {
+        const { _id: serviceId } = service;
+        return await this.clinicService.findForService(serviceId);
+    }
+
+    @ResolveField('news', () => [News], { nullable: true })
+    async news(@Parent() service: Service) {
+        const { _id: serviceId } = service;
+        return await this.newsService.findForService(serviceId);
     }
 
     @Query(() => Service, { name: 'service' })

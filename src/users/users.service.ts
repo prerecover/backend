@@ -8,6 +8,9 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { Transactional } from 'typeorm-transactional';
 import { Country } from 'src/countries/entities/country.entity';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
+import * as bcrypt from 'bcrypt';
+import { FileUpload } from 'src/common/shared/file.interface';
+import { AvatarUpload } from './dto/avatar-upload';
 
 @Injectable()
 export class UsersService {
@@ -34,8 +37,33 @@ export class UsersService {
         return await this.userRepository.save(user);
     }
 
+    async changeMe(userId: string, changeMe: UpdateUserInput) {
+        const user = await this.findOne(userId);
+        const { avatar, countryTitle, ...data } = changeMe;
+        if (countryTitle) {
+            const country = await this.countryRepository.findOneBy({ title: countryTitle });
+            user.country = country;
+        }
+        if (avatar) {
+            const path = await this.minioService.uploadFile(await avatar, 'users_images');
+            user.avatar = `${this.minioService.pathToFile}/${path}`;
+        }
+        const newUser = await this.userRepository.save({
+            ...user,
+            ...data,
+        });
+        return newUser;
+    }
+
     async findAll(args?: PaginateArgs): Promise<User[]> {
         return await this.userRepository.find({ relations: { country: true }, take: args.take, skip: args.skip });
+    }
+    async uploadAvatar(avatar: AvatarUpload, userId: string): Promise<string> {
+        const user = await this.findOne(userId);
+        const path = await this.minioService.uploadFile(await avatar.avatar, 'users_images');
+        user.avatar = `${this.minioService.pathToFile}/${path}`;
+        await this.userRepository.save(user);
+        return user.avatar;
     }
 
     async findOne(id: string) {

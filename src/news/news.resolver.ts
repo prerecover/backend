@@ -41,6 +41,10 @@ export class NewsResolver {
     async findAll(@Args({ nullable: true }) args?: PaginateArgs) {
         return await this.newsService.findAll(args);
     }
+    @Query(() => [News], { name: 'newsByClinic' })
+    async findByClinic(@Args('clinicId') clinicId: string) {
+        return await this.newsService.findByClinic(clinicId);
+    }
 
     @Query(() => News, { name: 'news' })
     async findOne(@Args('_id', { type: () => ID }) _id: string) {

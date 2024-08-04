@@ -3,9 +3,10 @@ import { IsPhoneNumber } from 'class-validator';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { CommonEntity } from 'src/common/common.entity';
 import { Country } from 'src/countries/entities/country.entity';
-import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Service } from 'src/services/entities/service.entity';
+import { Appointment } from 'src/appointments/entities/appointment.entity';
 
 const BCRYPT_HASH_ROUNDS = 12;
 @ObjectType()
@@ -64,15 +65,11 @@ export class Doctor extends CommonEntity {
     @ManyToOne(() => Country, (country) => country.doctors, { onDelete: 'SET NULL', nullable: true })
     public country: Country;
 
+    @Field(() => Appointment, { nullable: true })
+    @OneToMany(() => Appointment, (appointment) => appointment.doctor)
+    public appointments: Appointment[];
+
     // @Field(() => [Service])
     @ManyToMany(() => Service, (service) => service.doctors)
     public services: Service[];
-
-    @BeforeInsert()
-    @BeforeUpdate()
-    async beforeInsertOrUpdate() {
-        if (this.password) {
-            this.password = await bcrypt.hash(this.password, BCRYPT_HASH_ROUNDS);
-        }
-    }
 }

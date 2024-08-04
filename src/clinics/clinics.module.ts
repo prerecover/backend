@@ -9,5 +9,6 @@ import { Country } from 'src/countries/entities/country.entity';
 @Module({
     imports: [TypeOrmModule.forFeature([Clinic, News, Country])],
     providers: [ClinicsResolver, ClinicsService],
+    exports: [ClinicsService],
 })
 export class ClinicsModule {}

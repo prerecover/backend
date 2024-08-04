@@ -24,7 +24,13 @@ export class ClinicsService {
             skip: args.skip,
         });
     }
-
+    async findForService(serviceId: string): Promise<Clinic> {
+        const clinic = await this.clinicRepository.findOne({
+            where: { services: { _id: serviceId } },
+            relations: { country: true, doctors: true },
+        });
+        return clinic;
+    }
     async findOne(id: string) {
         const clinic = await this.clinicRepository.findOne({
             where: { _id: id },

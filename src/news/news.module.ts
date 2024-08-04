@@ -16,5 +16,6 @@ import { SavedModule } from 'src/saved/saved.module';
     imports: [TypeOrmModule.forFeature([News, Like, Saved, Service, NewsImage, NewsVideo]), LikesModule, SavedModule],
 
     providers: [NewsResolver, NewsService],
+    exports: [NewsService],
 })
 export class NewsModule {}

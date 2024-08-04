@@ -3,8 +3,9 @@ import { IsDate } from 'class-validator';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { CommonEntity } from 'src/common/common.entity';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
+import { Service } from 'src/services/entities/service.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 
 @ObjectType()
 @Entity({ name: 'appointments' })
@@ -17,8 +18,12 @@ export class Appointment extends CommonEntity {
     @ManyToOne(() => Clinic, (clinic) => clinic.appointments, { onDelete: 'CASCADE' })
     public clinic: Clinic;
 
-    @Field()
-    @Column({ length: 225 })
+    @Field(() => Service, { nullable: true })
+    @ManyToOne(() => Service, (service) => service.appointments, { onDelete: 'CASCADE' })
+    public service: Service;
+
+    @Field({ nullable: true })
+    @Column({ length: 225, nullable: true })
     public title: string;
 
     @Field()
@@ -30,24 +35,18 @@ export class Appointment extends CommonEntity {
     public file: string;
 
     @IsDate()
-    @Field()
+    @Field({ nullable: true })
     @Column({ name: 'notify', type: 'timestamp with time zone', nullable: true })
     public notify: Date;
 
     @IsDate()
-    @Field()
-    @Column({ name: 'time_start', type: 'timestamp with time zone' })
+    @Field({ nullable: true })
+    @Column({ name: 'time_start', type: 'timestamp with time zone', nullable: true })
     public timeStart: Date;
 
-    @Field(() => [Doctor])
-    @ManyToMany(() => Doctor, { onDelete: 'SET NULL' })
-    @JoinTable({ name: 'appointments_doctors' })
-    public doctors: Doctor[];
-
-    @IsDate()
-    @Field()
-    @Column({ name: 'time_end', type: 'timestamp with time zone' })
-    public timeEnd: Date;
+    @Field(() => Doctor, { nullable: true })
+    @ManyToOne(() => Doctor, (doctor) => doctor.appointments, { onDelete: 'SET NULL', nullable: true })
+    public doctor: Doctor;
 
     @Field()
     @Column({ default: 'In process' })

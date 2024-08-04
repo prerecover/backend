@@ -107,12 +107,4 @@ export class Clinic extends CommonEntity {
     @Field(() => [News], { nullable: true })
     @OneToMany(() => News, (news) => news.clinic, { nullable: true })
     public news: News[];
-
-    @BeforeInsert()
-    @BeforeUpdate()
-    async beforeInsertOrUpdate() {
-        if (this.password) {
-            this.password = await bcrypt.hash(this.password, BCRYPT_HASH_ROUNDS);
-        }
-    }
 }

@@ -35,6 +35,7 @@ export class ServicesService {
         const services = await this.servicesRepository.find({
             where: { clinic: { _id: clinicId } },
             relations: { clinic: true, news: true, doctors: true },
+            select: { news: { _id: true }, doctors: { _id: true, firstName: true, lastName: true, surname: true } },
         });
         if (!services) throw new NotFoundException('Service with that doctorId not found!');
         return services;
@@ -43,6 +44,7 @@ export class ServicesService {
         const services = await this.servicesRepository.find({
             where: { doctors: { _id: doctorId } },
             relations: { clinic: true, news: true, doctors: true },
+            select: { doctors: { _id: true, firstName: true, lastName: true, surname: true } },
         });
         if (!services) throw new NotFoundException('Service with that doctorId not found!');
         return services;

@@ -8,19 +8,23 @@ type Appointment {
 
   """Created at timestamp"""
   createdAt: Date!
-  doctors: [Doctor!]!
+  doctor: Doctor
   file: String
-  notify: Date!
+  notify: Date
   online: Boolean!
+  service: Service
   specialCheck: Boolean!
   status: String!
-  timeEnd: Date!
-  timeStart: Date!
-  title: String!
+  timeStart: Date
+  title: String
 
   """Updated at timestamp"""
   updatedAt: Date!
   user: User
+}
+
+input AvatarUpload {
+  avatar: Upload
 }
 
 type Clinic {
@@ -62,8 +66,11 @@ type Country {
 }
 
 input CreateAppointmentInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  clinicId: String!
+  doctorId: String!
+  online: Boolean! = true
+  serviceId: String!
+  timeStart: Date!
 }
 
 input CreateClinicInput {
@@ -105,10 +112,10 @@ input CreateUserInput {
   avatar: Upload
   birthday: Date
   email: String!
-  firstName: String!
+  firstName: String
   lastName: String!
-  login: String!
-  password: String!
+  login: String
+  number: String
 
   """User's gender"""
   sex: Boolean
@@ -119,6 +126,7 @@ scalar Date
 
 type Doctor {
   _id: String!
+  appointments: Appointment
   avatar: String
   clinic: Clinic
   country: Country
@@ -145,6 +153,12 @@ input ForgotPasswordInput {
   number: String
 }
 
+type History {
+  appointments: [Appointment!]!
+  clinics: [Clinic!]!
+  doctors: [Doctor!]!
+}
+
 type Like {
   _id: String!
   author: User
@@ -164,6 +178,7 @@ input LoginInput {
 }
 
 type Mutation {
+  changeMe(changeMeInput: UpdateUserInput!): User!
   createAppointment(createAppointmentInput: CreateAppointmentInput!): Appointment!
   createClinic(createClinicInput: CreateClinicInput!): Clinic!
   createDoctor(createDoctorInput: CreateDoctorInput!): Doctor!
@@ -188,7 +203,7 @@ type Mutation {
   updateClinic(updateClinicInput: UpdateClinicInput!): Clinic!
   updateDoctor(updateDoctorInput: UpdateDoctorInput!): Doctor!
   updateNews(updateNewsInput: UpdateNewsInput!): News!
-  updateUser(countryTitle: String, updateUserInput: UpdateUserInput!): User!
+  uploadAvatar(avatarUpload: AvatarUpload!): String!
   verifyCode(verifyCodeInput: VerifyCodeInput!): Boolean!
 }
 
@@ -239,8 +254,8 @@ type NewsVideo {
 }
 
 type Query {
-  appointment(id: Int!): Appointment!
-  appointments: [Appointment!]!
+  appointment(_id: String!): Appointment!
+  appointments(skip: Int! = 0, take: Int! = 25): [Appointment!]!
   clinic(_id: String!): Clinic!
   clinics(skip: Int! = 0, take: Int! = 25): [Clinic!]!
   countries: [Country!]!
@@ -249,12 +264,15 @@ type Query {
   doctors(skip: Int! = 0, take: Int! = 25): [Doctor!]!
   doctorsByClinic(clinicId: String!): [Doctor!]!
   getMe: User!
+  history: History!
   like(id: ID!): Like!
   likes(skip: Int! = 0, take: Int! = 25): [Like!]!
   news(_id: ID!): News!
   newsAll(skip: Int! = 0, take: Int! = 25): [News!]!
+  newsByClinic(clinicId: String!): [News!]!
   resendForgotCode(email: String!): Boolean!
   saved(_id: String!): Saved!
+  savedAll(skip: Int! = 0, take: Int! = 25): [Saved!]!
   search: Search!
   service(_id: String!): Service!
   services(skip: Int! = 0, take: Int! = 25): [Service!]!
@@ -288,7 +306,7 @@ type Search {
 
 type Service {
   _id: String!
-  clinic: Clinic
+  clinic: Clinic!
 
   """Created at timestamp"""
   createdAt: Date!
@@ -296,7 +314,8 @@ type Service {
   doctors: [Doctor!]!
   duration: Int!
   img: String
-  news: [News!]!
+  news: [News!]
+  offline: Boolean!
   online: Boolean!
   price: Float!
   title: String!
@@ -310,9 +329,12 @@ type TokenResponse {
 }
 
 input UpdateAppointmentInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  clinicId: String
+  doctorId: String
   id: Int!
+  online: Boolean = true
+  serviceId: String
+  timeStart: Date
 }
 
 input UpdateClinicInput {
@@ -336,14 +358,16 @@ input UpdateNewsInput {
 }
 
 input UpdateUserInput {
-  _id: String!
+  address: String
   avatar: Upload
   birthday: Date
+  city: String
+  countryTitle: String
   email: String
   firstName: String
   lastName: String
   login: String
-  password: String
+  number: String
 
   """User's gender"""
   sex: Boolean
@@ -358,6 +382,7 @@ type User {
   appointments: [Appointment!]
   avatar: String
   birthday: Date
+  city: String
   country: Country
 
   """Created at timestamp"""

@@ -38,6 +38,10 @@ export class User extends CommonEntity {
     public address: string;
 
     @Field({ nullable: true })
+    @Column({ name: 'city', length: 225, nullable: true })
+    public city: string;
+
+    @Field({ nullable: true })
     @Column({ name: 'first_name', length: 30, nullable: true })
     public firstName: string;
 
@@ -53,7 +57,7 @@ export class User extends CommonEntity {
     @OneToMany(() => Appointment, (appmt) => appmt.user, { onDelete: 'SET NULL' })
     public appointments: Appointment[];
 
-    @Field({ nullable: true })
+    @Field(() => Country, { nullable: true })
     @ManyToOne(() => Country, (country) => country.users, { onDelete: 'SET NULL' })
     public country: Country;
 
@@ -91,12 +95,4 @@ export class User extends CommonEntity {
 
     @OneToMany(() => Like, (like) => like.author)
     public likes: Like[];
-
-    @BeforeInsert()
-    @BeforeUpdate()
-    async beforeInsertOrUpdate() {
-        if (this.password) {
-            this.password = await bcrypt.hash(this.password, BCRYPT_HASH_ROUNDS);
-        }
-    }
 }

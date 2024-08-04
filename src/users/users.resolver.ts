@@ -7,6 +7,9 @@ import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { CurrentUser } from 'src/common/shared/user.decorator';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
+import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
+import { FileUpload } from 'src/common/shared/file.interface';
+import { AvatarUpload } from './dto/avatar-upload';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -18,6 +21,11 @@ export class UsersResolver {
         @Args('countryTitle') countryTitle: string,
     ): Promise<User> {
         return await this.usersService.create(createUserInput, countryTitle);
+    }
+
+    @Mutation(() => String, { name: 'uploadAvatar' })
+    async uploadAvatar(@CurrentUser() user: User, @Args('avatarUpload') avatar: AvatarUpload) {
+        return this.usersService.uploadAvatar(avatar, user._id);
     }
 
     @Query(() => [User], { name: 'users' })
@@ -35,12 +43,11 @@ export class UsersResolver {
     async getMe(@CurrentUser() user: User) {
         return user;
     }
-    @Mutation(() => User)
-    async updateUser(
-        @Args('updateUserInput') updateUserInput: UpdateUserInput,
-        @Args('countryTitle', { nullable: true }) countryTitle: string,
-    ) {
-        return await this.usersService.update(updateUserInput._id, updateUserInput, countryTitle);
+
+    @UseGuards(AuthGuard)
+    @Mutation(() => User, { name: 'changeMe' })
+    async changeMe(@CurrentUser() user: User, @Args('changeMeInput') changeMeInput: UpdateUserInput) {
+        return await this.usersService.changeMe(user._id, changeMeInput);
     }
 
     @Mutation(() => User)

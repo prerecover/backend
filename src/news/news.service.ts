@@ -28,6 +28,21 @@ export class NewsService {
         return news;
     }
 
+    async findByClinic(clinicId: string): Promise<News[]> {
+        const news = await this.newsRepository.find({
+            where: { clinic: { _id: clinicId } },
+            relations: { likes: true, saved: true, newsImages: true, newsVideos: true, clinic: true },
+        });
+        return news;
+    }
+    async findForService(serviceId: string): Promise<News[]> {
+        const news = await this.newsRepository.find({
+            where: { service: { _id: serviceId } },
+            relations: { likes: true, saved: true, newsImages: true, newsVideos: true, clinic: true },
+        });
+        return news;
+    }
+
     async findOne(id: string) {
         const news = await this.newsRepository.findOne({
             where: { _id: id },

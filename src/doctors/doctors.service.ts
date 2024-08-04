@@ -31,7 +31,7 @@ export class DoctorsService {
     async findByClinic(clinicId: string) {
         const doctors = await this.doctorRepository.find({
             where: { clinic: { _id: clinicId } },
-            relations: { clinic: true, services: true, country: true },
+            select: { _id: true, specialization: true, firstName: true, lastName: true, avatar: true },
         });
         if (!doctors) throw new NotFoundException('Service with that doctorId not found!');
         return doctors;

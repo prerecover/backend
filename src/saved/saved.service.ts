@@ -20,9 +20,10 @@ export class SavedService {
         return await this.savedRepository.save(saved);
     }
 
-    async findAll(args?: PaginateArgs): Promise<Saved[]> {
+    async findAll(userId: string, args?: PaginateArgs): Promise<Saved[]> {
         return await this.savedRepository.find({
-            relations: { author: true },
+            relations: { author: true, news: true },
+            where: { author: { _id: userId } },
             take: args.take,
             skip: args.skip,
         });
