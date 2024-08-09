@@ -23,7 +23,7 @@ export class AppointmentsService {
         private readonly servicesRepository: Repository<Service>,
         @InjectRepository(User)
         private readonly usersRepository: Repository<User>,
-    ) {}
+    ) { }
     async create(createAppointmentInput: CreateAppointmentInput, userId: string) {
         const { clinicId, doctorId, serviceId } = createAppointmentInput;
         const appointment = this.appointmentsRepository.create(createAppointmentInput);

@@ -7,6 +7,7 @@ import { News } from 'src/news/entities/news.entity';
 import { NewsService } from 'src/news/news.service';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { ClinicsService } from 'src/clinics/clinics.service';
+import { SelectServiceInput } from './dto/select-service.input';
 
 @Resolver(() => Service)
 export class ServicesResolver {
@@ -14,7 +15,7 @@ export class ServicesResolver {
         private readonly servicesService: ServicesService,
         private readonly newsService: NewsService,
         private readonly clinicService: ClinicsService,
-    ) {}
+    ) { }
 
     @Mutation(() => Service)
     async createService(@Args('createServiceInput') createServiceInput: CreateServiceInput) {
@@ -30,6 +31,11 @@ export class ServicesResolver {
     async clinic(@Parent() service: Service) {
         const { _id: serviceId } = service;
         return await this.clinicService.findForService(serviceId);
+    }
+
+    @Mutation(() => [Service], { name: 'selectServices' })
+    async selectClinics(@Args('selectServiceInput') selectServiceInput: SelectServiceInput) {
+        return await this.servicesService.selectService(selectServiceInput);
     }
 
     @ResolveField('news', () => [News], { nullable: true })

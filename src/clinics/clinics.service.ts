@@ -5,13 +5,17 @@ import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { Clinic } from './entities/clinic.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { SelectClinicInput } from './dto/select-clinic-input';
+import { Country } from 'src/countries/entities/country.entity';
 
 @Injectable()
 export class ClinicsService {
     constructor(
         @InjectRepository(Clinic)
         private readonly clinicRepository: Repository<Clinic>,
-    ) {}
+        @InjectRepository(Country)
+        private readonly countriesRepository: Repository<Country>,
+    ) { }
     async create(createClinicInput: CreateClinicInput) {
         const clinic = this.clinicRepository.create(createClinicInput);
         return await this.clinicRepository.save(clinic);
@@ -24,9 +28,25 @@ export class ClinicsService {
             skip: args.skip,
         });
     }
+
+    async selectClinic(selectClinicInput: SelectClinicInput) {
+        const { countryTitle, online, offline } = selectClinicInput;
+        return await this.clinicRepository.find({
+            where: { services: { online: online, offline: offline }, country: { title: countryTitle } },
+            select: { _id: true, title: true },
+        });
+    }
+
     async findForService(serviceId: string): Promise<Clinic> {
         const clinic = await this.clinicRepository.findOne({
             where: { services: { _id: serviceId } },
+            relations: { country: true, doctors: true },
+        });
+        return clinic;
+    }
+    async findByDoctor(doctorId: string): Promise<Clinic> {
+        const clinic = await this.clinicRepository.findOne({
+            where: { doctors: { _id: doctorId } },
             relations: { country: true, doctors: true },
         });
         return clinic;

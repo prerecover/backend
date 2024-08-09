@@ -100,11 +100,11 @@ export class Clinic extends CommonEntity {
     @Column({ nullable: true })
     public password: string;
 
-    @Field(() => [Service], { nullable: true })
+    // @Field(() => [Service], { nullable: true })
     @OneToMany(() => Service, (service) => service.clinic, { nullable: true })
     public services: Service[];
 
-    @Field(() => [News], { nullable: true })
+    // @Field(() => [News], { nullable: true })
     @OneToMany(() => News, (news) => news.clinic, { nullable: true })
     public news: News[];
 }

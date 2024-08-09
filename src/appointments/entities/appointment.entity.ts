@@ -52,6 +52,10 @@ export class Appointment extends CommonEntity {
     @Column({ default: 'In process' })
     public status: string;
 
+    @Field(() => Int, {nullable: true})
+    @Column({ nullable: true })
+    public duration: number;
+
     @Field()
     @Column({ name: 'special_check', default: false })
     public specialCheck: boolean;

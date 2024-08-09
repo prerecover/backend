@@ -1,16 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { Service } from './entities/service.entity';
 import { CreateServiceInput } from './dto/create-service.input';
+import { SelectServiceInput } from './dto/select-service.input';
 
 @Injectable()
 export class ServicesService {
     constructor(
         @InjectRepository(Service)
         private readonly servicesRepository: Repository<Service>,
-    ) {}
+    ) { }
     async create(createServiceInput: CreateServiceInput) {
         return this.servicesRepository.create(createServiceInput);
     }
@@ -31,11 +32,21 @@ export class ServicesService {
         if (!service) throw new NotFoundException('Service with that id not found!');
         return service;
     }
+
+    async selectService(selectServiceInput: SelectServiceInput) {
+        const { countryTitle, startPrice, endPrice } = selectServiceInput;
+        return await this.servicesRepository.find({
+            where: { price: Between(startPrice, endPrice), clinic: { country: { title: countryTitle } } },
+        });
+    }
     async findByClinic(clinicId: string) {
         const services = await this.servicesRepository.find({
             where: { clinic: { _id: clinicId } },
             relations: { clinic: true, news: true, doctors: true },
-            select: { news: { _id: true }, doctors: { _id: true, firstName: true, lastName: true, surname: true } },
+            select: {
+                news: { _id: true },
+                doctors: { _id: true, firstName: true, lastName: true, surname: true, avatar: true },
+            },
         });
         if (!services) throw new NotFoundException('Service with that doctorId not found!');
         return services;

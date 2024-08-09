@@ -11,6 +11,7 @@ import { PaginateArgs } from 'src/common/args/paginateArgs';
 import * as bcrypt from 'bcrypt';
 import { FileUpload } from 'src/common/shared/file.interface';
 import { AvatarUpload } from './dto/avatar-upload';
+import { Appointment } from 'src/appointments/entities/appointment.entity';
 
 @Injectable()
 export class UsersService {
@@ -19,9 +20,11 @@ export class UsersService {
         private readonly userRepository: Repository<User>,
         @InjectRepository(Country)
         private readonly countryRepository: Repository<Country>,
+        @InjectRepository(Appointment)
+        private readonly appointmentsRepository: Repository<Appointment>,
         @Inject()
         private readonly minioService: MinioService,
-    ) {}
+    ) { }
 
     @Transactional()
     async create(createUserInput: CreateUserInput, countryTitle: string): Promise<User> {
@@ -67,9 +70,19 @@ export class UsersService {
     }
 
     async findOne(id: string) {
-        const user = await this.userRepository.findOne({ where: { _id: id }, relations: { country: true } });
+        const user = await this.userRepository.findOne({
+            where: { _id: id },
+            relations: { country: true, appointments: true },
+        });
         if (!user) throw new NotFoundException('User with that id not found!');
         return user;
+    }
+
+    async appointmentsForUser(userId: string) {
+        return await this.appointmentsRepository.find({
+            where: { user: { _id: userId } },
+            relations: { user: true, clinic: true, doctor: true, service: true },
+        });
     }
 
     async findOneByNumber(number: string): Promise<User> {

@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ID, Parent, ResolveField } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { CreateUserInput } from './dto/create-user.input';
@@ -10,10 +10,11 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 import { FileUpload } from 'src/common/shared/file.interface';
 import { AvatarUpload } from './dto/avatar-upload';
+import { Appointment } from 'src/appointments/entities/appointment.entity';
 
 @Resolver(() => User)
 export class UsersResolver {
-    constructor(private readonly usersService: UsersService) {}
+    constructor(private readonly usersService: UsersService) { }
 
     @Mutation(() => User)
     async createUser(
@@ -42,6 +43,12 @@ export class UsersResolver {
     @Query(() => User, { name: 'getMe' })
     async getMe(@CurrentUser() user: User) {
         return user;
+    }
+
+    @ResolveField('appointments', () => [Appointment])
+    async appointments(@Parent() user: User) {
+        const { _id: userId } = user;
+        return await this.usersService.appointmentsForUser(userId);
     }
 
     @UseGuards(AuthGuard)

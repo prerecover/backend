@@ -6,13 +6,16 @@ import { UpdateDoctorInput } from './dto/update-doctor.input';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { Service } from 'src/services/entities/service.entity';
 import { ServicesService } from 'src/services/services.service';
+import { Clinic } from 'src/clinics/entities/clinic.entity';
+import { ClinicsService } from 'src/clinics/clinics.service';
 
 @Resolver(() => Doctor)
 export class DoctorsResolver {
     constructor(
         private readonly doctorsService: DoctorsService,
         private readonly servicesService: ServicesService,
-    ) {}
+        private readonly clinicService: ClinicsService,
+    ) { }
 
     @Mutation(() => Doctor)
     async createDoctor(@Args('createDoctorInput') createDoctorInput: CreateDoctorInput) {
@@ -27,6 +30,11 @@ export class DoctorsResolver {
     async services(@Parent() doctor: Doctor) {
         const { _id: doctorId } = doctor;
         return await this.servicesService.findByDoctor(doctorId);
+    }
+    @ResolveField('clinic', () => Clinic, { nullable: true })
+    async clinic(@Parent() doctor: Doctor) {
+        const { _id: doctorId } = doctor;
+        return await this.clinicService.findByDoctor(doctorId);
     }
     @Query(() => [Doctor], { name: 'doctorsByClinic' })
     async findByClinic(@Args('clinicId') id: string) {

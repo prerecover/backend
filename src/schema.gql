@@ -9,6 +9,7 @@ type Appointment {
   """Created at timestamp"""
   createdAt: Date!
   doctor: Doctor
+  duration: Int
   file: String
   notify: Date
   online: Boolean!
@@ -46,10 +47,10 @@ type Clinic {
   employees: Int!
   endTime: Int
   isVerfied: Boolean!
-  news: [News!]
+  news: [News!]!
   number: String
   rating: Float!
-  services: [Service!]
+  services: [Service!]!
   specialization: String
   startTime: Int
   title: String!
@@ -68,6 +69,7 @@ type Country {
 input CreateAppointmentInput {
   clinicId: String!
   doctorId: String!
+  duration: Int!
   online: Boolean! = true
   serviceId: String!
   timeStart: Date!
@@ -198,6 +200,8 @@ type Mutation {
   removeSaved(_id: String!): Saved!
   removeUser(_id: String!): User!
   resendVerifyCode(email: String!): Boolean!
+  selectClinics(selectClinicInput: SelectClinicInput!): [Clinic!]!
+  selectServices(selectServiceInput: SelectServiceInput!): [Service!]!
   signIn(signIn: LoginInput!): TokenResponse!
   updateAppointment(updateAppointmentInput: UpdateAppointmentInput!): Appointment!
   updateClinic(updateClinicInput: UpdateClinicInput!): Clinic!
@@ -304,6 +308,18 @@ type Search {
   services: [Service!]!
 }
 
+input SelectClinicInput {
+  countryTitle: String!
+  offline: Boolean!
+  online: Boolean!
+}
+
+input SelectServiceInput {
+  countryTitle: String!
+  endPrice: Int!
+  startPrice: Int!
+}
+
 type Service {
   _id: String!
   clinic: Clinic!
@@ -331,6 +347,7 @@ type TokenResponse {
 input UpdateAppointmentInput {
   clinicId: String
   doctorId: String
+  duration: Int
   id: Int!
   online: Boolean = true
   serviceId: String
@@ -379,7 +396,7 @@ scalar Upload
 type User {
   _id: String!
   address: String
-  appointments: [Appointment!]
+  appointments: [Appointment!]!
   avatar: String
   birthday: Date
   city: String

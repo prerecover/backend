@@ -53,7 +53,7 @@ export class User extends CommonEntity {
     @Column({ name: 'surname', length: 30, nullable: true })
     public surname: string;
 
-    @Field(() => [Appointment], { nullable: true })
+    // @Field(() => [Appointment], { nullable: true })
     @OneToMany(() => Appointment, (appmt) => appmt.user, { onDelete: 'SET NULL' })
     public appointments: Appointment[];
 
