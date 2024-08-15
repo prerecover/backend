@@ -13,7 +13,7 @@ export class ServicesService {
         private readonly servicesRepository: Repository<Service>,
     ) { }
     async create(createServiceInput: CreateServiceInput) {
-        return this.servicesRepository.create(createServiceInput);
+        return this.servicesRepository.save(this.servicesRepository.create(createServiceInput));
     }
 
     async findAll(args: PaginateArgs): Promise<Service[]> {
@@ -48,7 +48,7 @@ export class ServicesService {
                 doctors: { _id: true, firstName: true, lastName: true, surname: true, avatar: true },
             },
         });
-        if (!services) throw new NotFoundException('Service with that doctorId not found!');
+        if (!services) throw new NotFoundException('Service with that clinicId not found!');
         return services;
     }
     async findByDoctor(doctorId: string) {
