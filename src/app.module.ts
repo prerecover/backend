@@ -6,7 +6,7 @@ import { TimeoutInterceptor } from './common/itc/timeout.itc';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UsersModule } from './users/users.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { S3Module } from 'nestjs-s3';
@@ -31,6 +31,10 @@ import { BullConfig } from './config/bull';
 import { AuthInterceptor } from './auth/auth.itc';
 import { CommonModule } from './common/common.module';
 import { addTransactionalDataSource } from 'typeorm-transactional';
+import { LinksModule } from './clinics/links/links.module';
+import { TelegramModule } from "nestjs-telegram"
+import { TelegramConfig } from './config/telegram';
+
 
 @Module({
     imports: [
@@ -45,6 +49,12 @@ import { addTransactionalDataSource } from 'typeorm-transactional';
         MailerModule.forRootAsync({
             useClass: SMTPConfig,
         }),
+        TelegramModule.forRootAsync({
+            useClass: TelegramConfig,
+            inject: [ConfigService]
+
+        }),
+
 
         BullModule.forRootAsync({
             useClass: BullConfig,
@@ -73,6 +83,8 @@ import { addTransactionalDataSource } from 'typeorm-transactional';
         DoctorsModule,
         AuthModule,
         MailModule,
+        LinksModule
+
     ],
     controllers: [AppController],
     providers: [
@@ -91,4 +103,4 @@ import { addTransactionalDataSource } from 'typeorm-transactional';
         MinioService,
     ],
 })
-export class AppModule {}
+export class AppModule { }

@@ -92,6 +92,11 @@ input CreateLikeInput {
   newsId: String!
 }
 
+input CreateLinkInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 input CreateNewsInput {
   text: String!
   title: String!
@@ -173,6 +178,16 @@ type Like {
   updatedAt: Date!
 }
 
+type Link {
+  _id: String!
+
+  """Created at timestamp"""
+  createdAt: Date!
+
+  """Updated at timestamp"""
+  updatedAt: Date!
+}
+
 input LoginInput {
   email: String
   number: String
@@ -185,6 +200,7 @@ type Mutation {
   createClinic(createClinicInput: CreateClinicInput!): Clinic!
   createDoctor(createDoctorInput: CreateDoctorInput!): Doctor!
   createLike(createLikeInput: CreateLikeInput!): Like!
+  createLink(createLinkInput: CreateLinkInput!): Link!
   createNews(createNewsInput: CreateNewsInput!): News!
   createSaved(createSavedInput: CreateSavedInput!): Saved!
   createService(createServiceInput: CreateServiceInput!): Service!
@@ -196,6 +212,7 @@ type Mutation {
   removeClinic(id: Int!): Clinic!
   removeDoctor(id: Int!): Doctor!
   removeLike(_id: String!): Like!
+  removeLink(id: Int!): Link!
   removeNews(id: Int!): News!
   removeSaved(_id: String!): Saved!
   removeUser(_id: String!): User!
@@ -206,6 +223,7 @@ type Mutation {
   updateAppointment(updateAppointmentInput: UpdateAppointmentInput!): Appointment!
   updateClinic(updateClinicInput: UpdateClinicInput!): Clinic!
   updateDoctor(updateDoctorInput: UpdateDoctorInput!): Doctor!
+  updateLink(updateLinkInput: UpdateLinkInput!): Link!
   updateNews(updateNewsInput: UpdateNewsInput!): News!
   uploadAvatar(avatarUpload: AvatarUpload!): String!
   verifyCode(verifyCodeInput: VerifyCodeInput!): Boolean!
@@ -271,6 +289,8 @@ type Query {
   history: History!
   like(id: ID!): Like!
   likes(skip: Int! = 0, take: Int! = 25): [Like!]!
+  link(id: Int!): Link!
+  links: [Link!]!
   news(_id: ID!): News!
   newsAll(skip: Int! = 0, take: Int! = 25): [News!]!
   newsByClinic(clinicId: String!): [News!]!
@@ -366,6 +386,12 @@ input UpdateDoctorInput {
   lastName: String
   specialization: String
   surname: String
+}
+
+input UpdateLinkInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }
 
 input UpdateNewsInput {

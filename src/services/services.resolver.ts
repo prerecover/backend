@@ -34,7 +34,7 @@ export class ServicesResolver {
     }
 
     @Mutation(() => [Service], { name: 'selectServices' })
-    async selectClinics(@Args('selectServiceInput') selectServiceInput: SelectServiceInput) {
+    async selectServices(@Args('selectServiceInput') selectServiceInput: SelectServiceInput) {
         return await this.servicesService.selectService(selectServiceInput);
     }
 

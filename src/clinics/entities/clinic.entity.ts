@@ -2,7 +2,6 @@ import { ObjectType, Field, Int, HideField, Float } from '@nestjs/graphql';
 import { CommonEntity } from 'src/common/common.entity';
 import { News } from 'src/news/entities/news.entity';
 import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
-import * as bcrypt from 'bcrypt';
 import { IsPhoneNumber } from 'class-validator';
 import { Country } from 'src/countries/entities/country.entity';
 import { Doctor } from 'src/doctors/entities/doctor.entity';

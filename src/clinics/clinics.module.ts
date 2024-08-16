@@ -8,10 +8,11 @@ import { Country } from 'src/countries/entities/country.entity';
 import { ServicesModule } from 'src/services/services.module';
 import { ServicesService } from 'src/services/services.service';
 import { NewsModule } from 'src/news/news.module';
+import { LinksModule } from './links/links.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Clinic, News, Country]), forwardRef(() => ServicesModule), NewsModule],
+    imports: [TypeOrmModule.forFeature([Clinic, News, Country]), forwardRef(() => ServicesModule), NewsModule, LinksModule],
     providers: [ClinicsResolver, ClinicsService],
     exports: [ClinicsService],
 })
-export class ClinicsModule {}
+export class ClinicsModule { }
