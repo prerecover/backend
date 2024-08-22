@@ -2,9 +2,6 @@ import { InputType, Field, Int } from '@nestjs/graphql';
 
 @InputType()
 export class CreateAppointmentInput {
-    // @Field()
-    // public title: string;
-
     @Field()
     public clinicId: string;
 

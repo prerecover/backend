@@ -1,14 +1,12 @@
 import { ObjectType, Field, Int, HideField, Float } from '@nestjs/graphql';
 import { CommonEntity } from 'src/common/common.entity';
 import { News } from 'src/news/entities/news.entity';
-import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { IsPhoneNumber } from 'class-validator';
 import { Country } from 'src/countries/entities/country.entity';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
 import { Service } from 'src/services/entities/service.entity';
-
-const BCRYPT_HASH_ROUNDS = 12;
 
 @ObjectType()
 @Entity({ name: 'clinics' })
@@ -29,6 +27,10 @@ export class Clinic extends CommonEntity {
     @Column({ nullable: true })
     public specialization: string;
 
+    @Field({ nullable: true })
+    @Column({ nullable: true })
+    public site: string;
+
     @Field(() => Int, { nullable: true })
     @Column({ name: 'start_time', nullable: true })
     public startTime: number;
@@ -48,6 +50,7 @@ export class Clinic extends CommonEntity {
     @Field(() => Country, { nullable: true })
     @ManyToOne(() => Country, (country) => country.clinics, { onDelete: 'SET NULL' })
     public country: Country;
+
 
     @Field({ nullable: true })
     @Column({ length: 225, nullable: true })
@@ -99,11 +102,9 @@ export class Clinic extends CommonEntity {
     @Column({ nullable: true })
     public password: string;
 
-    // @Field(() => [Service], { nullable: true })
     @OneToMany(() => Service, (service) => service.clinic, { nullable: true })
     public services: Service[];
 
-    // @Field(() => [News], { nullable: true })
     @OneToMany(() => News, (news) => news.clinic, { nullable: true })
     public news: News[];
 }

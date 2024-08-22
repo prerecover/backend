@@ -15,7 +15,7 @@ export class ServicesResolver {
         private readonly servicesService: ServicesService,
         private readonly newsService: NewsService,
         private readonly clinicService: ClinicsService,
-    ) { }
+    ) {}
 
     @Mutation(() => Service)
     async createService(@Args('createServiceInput') createServiceInput: CreateServiceInput) {

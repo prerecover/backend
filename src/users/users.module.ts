@@ -15,4 +15,4 @@ import { Appointment } from 'src/appointments/entities/appointment.entity';
     providers: [UsersResolver, UsersService, DateScalar, MinioService],
     exports: [UsersService],
 })
-export class UsersModule { }
+export class UsersModule {}

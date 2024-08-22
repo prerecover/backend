@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAppointmentInput } from './dto/create-appointment.input';
-import { UpdateAppointmentInput } from './dto/update-appointment.input';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { Appointment } from './entities/appointment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -23,7 +22,7 @@ export class AppointmentsService {
         private readonly servicesRepository: Repository<Service>,
         @InjectRepository(User)
         private readonly usersRepository: Repository<User>,
-    ) { }
+    ) {}
     async create(createAppointmentInput: CreateAppointmentInput, userId: string) {
         const { clinicId, doctorId, serviceId } = createAppointmentInput;
         const appointment = this.appointmentsRepository.create(createAppointmentInput);
@@ -53,13 +52,5 @@ export class AppointmentsService {
         });
         if (!appointment) throw new NotFoundException('Appointment with that id not found!');
         return appointment;
-    }
-
-    update(id: number, updateAppointmentInput: UpdateAppointmentInput) {
-        return `This action updates a #${id} appointment`;
-    }
-
-    remove(id: number) {
-        return `This action removes a #${id} appointment`;
     }
 }

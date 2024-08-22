@@ -32,9 +32,8 @@ import { AuthInterceptor } from './auth/auth.itc';
 import { CommonModule } from './common/common.module';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { LinksModule } from './clinics/links/links.module';
-import { TelegramModule } from "nestjs-telegram"
+import { TelegramModule } from 'nestjs-telegram';
 import { TelegramConfig } from './config/telegram';
-
 
 @Module({
     imports: [
@@ -51,10 +50,8 @@ import { TelegramConfig } from './config/telegram';
         }),
         TelegramModule.forRootAsync({
             useClass: TelegramConfig,
-            inject: [ConfigService]
-
+            inject: [ConfigService],
         }),
-
 
         BullModule.forRootAsync({
             useClass: BullConfig,
@@ -83,8 +80,7 @@ import { TelegramConfig } from './config/telegram';
         DoctorsModule,
         AuthModule,
         MailModule,
-        LinksModule
-
+        LinksModule,
     ],
     controllers: [AppController],
     providers: [

@@ -13,4 +13,4 @@ import { User } from 'src/users/entities/user.entity';
     imports: [TypeOrmModule.forFeature([Appointment, Clinic, Doctor, Service, User]), UsersModule],
     providers: [AppointmentsResolver, AppointmentsService],
 })
-export class AppointmentsModule { }
+export class AppointmentsModule {}

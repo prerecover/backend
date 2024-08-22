@@ -14,7 +14,7 @@ import { Appointment } from 'src/appointments/entities/appointment.entity';
 
 @Resolver(() => User)
 export class UsersResolver {
-    constructor(private readonly usersService: UsersService) { }
+    constructor(private readonly usersService: UsersService) {}
 
     @Mutation(() => User)
     async createUser(

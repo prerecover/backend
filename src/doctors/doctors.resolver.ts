@@ -15,7 +15,7 @@ export class DoctorsResolver {
         private readonly doctorsService: DoctorsService,
         private readonly servicesService: ServicesService,
         private readonly clinicService: ClinicsService,
-    ) { }
+    ) {}
 
     @Mutation(() => Doctor)
     async createDoctor(@Args('createDoctorInput') createDoctorInput: CreateDoctorInput) {

@@ -41,7 +41,7 @@ export class Service extends CommonEntity {
     public clinic: Clinic;
 
     @Field(() => [Doctor])
-    @ManyToMany(() => Doctor, (doctor) => doctor.services)
+    @ManyToMany(() => Doctor, (doctor) => doctor.services, { cascade: true })
     @JoinTable({ name: 'service_doctors' })
     public doctors: Doctor[];
 

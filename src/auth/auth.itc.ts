@@ -1,11 +1,4 @@
-import {
-    CallHandler,
-    CanActivate,
-    ExecutionContext,
-    Injectable,
-    NestInterceptor,
-    UnauthorizedException,
-} from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
@@ -16,7 +9,7 @@ export class AuthInterceptor implements NestInterceptor {
     constructor(
         private jwtService: JwtService,
         private readonly userService: UsersService,
-    ) { }
+    ) {}
     async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
         const ctx = GqlExecutionContext.create(context);
         const request = ctx.getContext().req;
@@ -32,7 +25,6 @@ export class AuthInterceptor implements NestInterceptor {
             return next.handle();
         } catch (e) {
             return next.handle();
-            // throw new UnauthorizedException();
         }
     }
     private extractTokenFromHeader(request: Request): string | undefined {

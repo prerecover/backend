@@ -11,7 +11,7 @@ export class ServicesService {
     constructor(
         @InjectRepository(Service)
         private readonly servicesRepository: Repository<Service>,
-    ) { }
+    ) {}
     async create(createServiceInput: CreateServiceInput) {
         return this.servicesRepository.save(this.servicesRepository.create(createServiceInput));
     }

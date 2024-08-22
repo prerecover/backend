@@ -1,15 +1,14 @@
-import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
 import { ClinicsService } from './clinics.service';
 import { Clinic } from './entities/clinic.entity';
 import { CreateClinicInput } from './dto/create-clinic.input';
-import { UpdateClinicInput } from './dto/update-clinic.input';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { SelectClinicInput } from './dto/select-clinic-input';
 import { Service } from 'src/services/entities/service.entity';
 import { ServicesService } from 'src/services/services.service';
-import { forwardRef, Inject } from '@nestjs/common';
 import { News } from 'src/news/entities/news.entity';
 import { NewsService } from 'src/news/news.service';
+import { RegisterClinicInput } from './dto/registration/register-input';
 
 @Resolver(() => Clinic)
 export class ClinicsResolver {
@@ -17,7 +16,13 @@ export class ClinicsResolver {
         private readonly clinicsService: ClinicsService,
         private readonly servicesService: ServicesService,
         private readonly newsService: NewsService,
-    ) {}
+    ) { }
+
+    @Mutation(() => Clinic)
+    async registerClinic(@Args('registerClinicInput') registerClinicInput: RegisterClinicInput) {
+        console.log(registerClinicInput.services)
+        return await this.clinicsService.registerClinic(registerClinicInput)
+    }
 
     @Mutation(() => Clinic)
     async createClinic(@Args('createClinicInput') createClinicInput: CreateClinicInput) {
@@ -49,14 +54,5 @@ export class ClinicsResolver {
     async news(@Parent() clinic: Clinic) {
         const { _id: clinicId } = clinic;
         return await this.newsService.findByClinic(clinicId);
-    }
-    @Mutation(() => Clinic)
-    updateClinic(@Args('updateClinicInput') updateClinicInput: UpdateClinicInput) {
-        return this.clinicsService.update(updateClinicInput.id, updateClinicInput);
-    }
-
-    @Mutation(() => Clinic)
-    removeClinic(@Args('id', { type: () => Int }) id: number) {
-        return this.clinicsService.remove(id);
     }
 }

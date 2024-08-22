@@ -6,8 +6,6 @@ export class TelegramConfig implements TelegramOptionsFactory {
     createTelegramOptions(): Promise<TelegramModuleOptions> | TelegramModuleOptions {
         return {
             botKey: process.env.BOT_TOKEN,
-            
-            
-        }
+        };
     }
 }

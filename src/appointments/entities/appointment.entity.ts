@@ -1,12 +1,11 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { IsDate } from 'class-validator';
-import { TelegramService } from 'nestjs-telegram';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { CommonEntity } from 'src/common/common.entity';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { Service } from 'src/services/entities/service.entity';
 import { User } from 'src/users/entities/user.entity';
-import { AfterInsert, Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 
 @ObjectType()
 @Entity({ name: 'appointments' })
@@ -60,7 +59,4 @@ export class Appointment extends CommonEntity {
     @Field()
     @Column({ name: 'special_check', default: false })
     public specialCheck: boolean;
-
-
-
 }

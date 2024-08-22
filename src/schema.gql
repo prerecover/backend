@@ -51,6 +51,7 @@ type Clinic {
   number: String
   rating: Float!
   services: [Service!]!
+  site: String
   specialization: String
   startTime: Int
   title: String!
@@ -90,11 +91,6 @@ input CreateDoctorInput {
 input CreateLikeInput {
   authorId: String!
   newsId: String!
-}
-
-input CreateLinkInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
 }
 
 input CreateNewsInput {
@@ -180,9 +176,12 @@ type Like {
 
 type Link {
   _id: String!
+  clinicEmail: String!
 
   """Created at timestamp"""
   createdAt: Date!
+  expiredAt: Date!
+  isUsed: Boolean!
 
   """Updated at timestamp"""
   updatedAt: Date!
@@ -200,19 +199,17 @@ type Mutation {
   createClinic(createClinicInput: CreateClinicInput!): Clinic!
   createDoctor(createDoctorInput: CreateDoctorInput!): Doctor!
   createLike(createLikeInput: CreateLikeInput!): Like!
-  createLink(createLinkInput: CreateLinkInput!): Link!
   createNews(createNewsInput: CreateNewsInput!): News!
   createSaved(createSavedInput: CreateSavedInput!): Saved!
   createService(createServiceInput: CreateServiceInput!): Service!
   createUser(countryTitle: String!, createUserInput: CreateUserInput!): User!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): Boolean!
+  generateLink(clinicEmail: String!): Link!
   newPassword(newPasswordInput: NewPasswordInput!): Boolean!
+  registerClinic(registerClinicInput: RegisterClinicInput!): Clinic!
   registrationUser(registrationInput: RegistrationUser!): User!
-  removeAppointment(id: Int!): Appointment!
-  removeClinic(id: Int!): Clinic!
   removeDoctor(id: Int!): Doctor!
   removeLike(_id: String!): Like!
-  removeLink(id: Int!): Link!
   removeNews(id: Int!): News!
   removeSaved(_id: String!): Saved!
   removeUser(_id: String!): User!
@@ -220,10 +217,7 @@ type Mutation {
   selectClinics(selectClinicInput: SelectClinicInput!): [Clinic!]!
   selectServices(selectServiceInput: SelectServiceInput!): [Service!]!
   signIn(signIn: LoginInput!): TokenResponse!
-  updateAppointment(updateAppointmentInput: UpdateAppointmentInput!): Appointment!
-  updateClinic(updateClinicInput: UpdateClinicInput!): Clinic!
   updateDoctor(updateDoctorInput: UpdateDoctorInput!): Doctor!
-  updateLink(updateLinkInput: UpdateLinkInput!): Link!
   updateNews(updateNewsInput: UpdateNewsInput!): News!
   uploadAvatar(avatarUpload: AvatarUpload!): String!
   verifyCode(verifyCodeInput: VerifyCodeInput!): Boolean!
@@ -289,8 +283,6 @@ type Query {
   history: History!
   like(id: ID!): Like!
   likes(skip: Int! = 0, take: Int! = 25): [Like!]!
-  link(id: Int!): Link!
-  links: [Link!]!
   news(_id: ID!): News!
   newsAll(skip: Int! = 0, take: Int! = 25): [News!]!
   newsByClinic(clinicId: String!): [News!]!
@@ -303,6 +295,39 @@ type Query {
   servicesByClinic(clinicId: String!): [Service!]!
   user(_id: ID!): User!
   users(skip: Int! = 0, take: Int! = 25): [User!]!
+  validateLink(_id: String!): Link!
+}
+
+input RegisterClinicInput {
+  address: String!
+  adminNumber: String!
+  avatar: Upload
+  city: String!
+  countryName: String!
+  email: String!
+  endTime: Int!
+  services: [RegisterServiceInput!]!
+  site: String
+  startTime: Int!
+  title: String!
+  workdays: String!
+}
+
+input RegisterDoctorInput {
+  firstName: String!
+  lastName: String!
+  specialization: String!
+  workExp: Float!
+}
+
+input RegisterServiceInput {
+  description: String!
+  doctors: [RegisterDoctorInput!]!
+  duration: Int!
+  offline: Boolean!
+  online: Boolean!
+  price: Float!
+  title: String!
 }
 
 input RegistrationUser {
@@ -364,34 +389,12 @@ type TokenResponse {
   access_token: String!
 }
 
-input UpdateAppointmentInput {
-  clinicId: String
-  doctorId: String
-  duration: Int
-  id: Int!
-  online: Boolean = true
-  serviceId: String
-  timeStart: Date
-}
-
-input UpdateClinicInput {
-  address: String
-  id: Int!
-  title: String
-}
-
 input UpdateDoctorInput {
   firstName: String
   id: Int!
   lastName: String
   specialization: String
   surname: String
-}
-
-input UpdateLinkInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
 }
 
 input UpdateNewsInput {

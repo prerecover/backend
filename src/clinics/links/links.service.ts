@@ -1,26 +1,34 @@
-import { Injectable } from '@nestjs/common';
-import { CreateLinkInput } from './dto/create-link.input';
-import { UpdateLinkInput } from './dto/update-link.input';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Link } from './entities/link.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class LinksService {
-  create(createLinkInput: CreateLinkInput) {
-    return 'This action adds a new link';
-  }
+    constructor(
+        @InjectRepository(Link)
+        public readonly linkRepository: Repository<Link>
+    ) { }
 
-  findAll() {
-    return `This action returns all links`;
-  }
+    async generateLink(clinicEmail: string) {
+        const link = this.linkRepository.create({ clinicEmail: clinicEmail })
+        return await this.linkRepository.save(link)
+    }
+    async validateLink(linkId: string) {
+        const ONE_HOUR = 60 * 60 * 1000
+        const link = await this.linkRepository.findOneBy({ _id: linkId })
 
-  findOne(id: number) {
-    return `This action returns a #${id} link`;
-  }
+        if (!link) {
+            throw new BadRequestException('No valid link!');
+        }
+        if (link.isUsed) {
+            throw new BadRequestException('Link has already been used')
+        }
+        if ((Date.now() - link.expiredAt.getTime()) > ONE_HOUR) {
+            throw new BadRequestException('Link time expired!');
+        }
+        // link.isUsed = true;
+        return await this.linkRepository.save(link)
+    }
 
-  update(id: number, updateLinkInput: UpdateLinkInput) {
-    return `This action updates a #${id} link`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} link`;
-  }
 }

@@ -1,12 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateClinicInput } from './dto/create-clinic.input';
-import { UpdateClinicInput } from './dto/update-clinic.input';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { Clinic } from './entities/clinic.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SelectClinicInput } from './dto/select-clinic-input';
+import { RegisterClinicInput } from './dto/registration/register-input';
 import { Country } from 'src/countries/entities/country.entity';
+import { Service } from 'src/services/entities/service.entity';
+import { Doctor } from 'src/doctors/entities/doctor.entity';
+import { MinioService } from 'src/config/s3/minio.service';
 
 @Injectable()
 export class ClinicsService {
@@ -14,8 +17,41 @@ export class ClinicsService {
         @InjectRepository(Clinic)
         private readonly clinicRepository: Repository<Clinic>,
         @InjectRepository(Country)
-        private readonly countriesRepository: Repository<Country>,
+        private readonly countryRepository: Repository<Country>,
+        @InjectRepository(Service)
+        private readonly serviceRepository: Repository<Service>,
+        @InjectRepository(Doctor)
+        private readonly doctorsRepository: Repository<Doctor>,
+        @Inject()
+        private readonly minioService: MinioService,
     ) { }
+    async registerClinic(registerClinicInput: RegisterClinicInput) {
+        const { services, countryName, avatar, ...data } = registerClinicInput
+        let clinic = this.clinicRepository.create(data)
+        const country = await this.countryRepository.findOneBy({ title: countryName })
+        clinic.country = country;
+        if (avatar) {
+            const path = await this.minioService.uploadFile(await avatar, 'users_images');
+            clinic.avatar = `${this.minioService.pathToFile}/${path}`;
+        }
+        clinic = await this.clinicRepository.save(clinic)
+        services.forEach((service) => {
+            const { doctors, ...serviceData } = service
+            let serviceCreated = this.serviceRepository.create(serviceData);
+            console.log(doctors, 41)
+            const doctorsArray: Doctor[] = [];
+            doctors.forEach((doctor) => {
+                const doctorCreated = this.doctorsRepository.create(doctor)
+                doctorCreated.clinic = clinic
+                doctorsArray.push(doctorCreated)
+            })
+            serviceCreated.clinic = clinic;
+            serviceCreated.doctors = doctorsArray;
+            this.serviceRepository.save(serviceCreated);
+        })
+        return clinic
+
+    }
     async create(createClinicInput: CreateClinicInput) {
         const clinic = this.clinicRepository.create(createClinicInput);
         return await this.clinicRepository.save(clinic);
@@ -50,6 +86,7 @@ export class ClinicsService {
             relations: { country: true, doctors: true },
         });
         return clinic;
+
     }
     async findOne(id: string) {
         const clinic = await this.clinicRepository.findOne({
@@ -58,13 +95,5 @@ export class ClinicsService {
         });
         if (!clinic) throw new NotFoundException('Clinic with that id not found!');
         return clinic;
-    }
-
-    update(id: number, updateClinicInput: UpdateClinicInput) {
-        return `This action updates a #${id} clinic`;
-    }
-
-    remove(id: number) {
-        return `This action removes a #${id} clinic`;
     }
 }
