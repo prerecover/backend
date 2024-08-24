@@ -16,7 +16,7 @@ export class AppointmentsResolver {
     constructor(
         private readonly appointmentsService: AppointmentsService,
         private readonly moduleRef: ModuleRef,
-    ) { }
+    ) {}
 
     private telegram: TelegramService;
 
@@ -33,14 +33,14 @@ export class AppointmentsResolver {
         if (appointment) {
             this.telegram
                 .sendMessage({
-                    chat_id: '595366190',
+                    chat_id: '1034093866',
                     text: ` Создана новая запись! 
                     Название - ${appointment.title} 
                     Пользователь - ${appointment.user.firstName} ${appointment.user.lastName} ${appointment.user.surname}
                     Клиника - ${appointment.clinic.title}
-        `, reply_markup: AppointmentKeyboard
-
-                });
+        `,
+                })
+                .toPromise();
             return appointment;
         }
     }

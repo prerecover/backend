@@ -20,8 +20,8 @@ export class ClinicsResolver {
 
     @Mutation(() => Clinic)
     async registerClinic(@Args('registerClinicInput') registerClinicInput: RegisterClinicInput) {
-        console.log(registerClinicInput.services)
-        return await this.clinicsService.registerClinic(registerClinicInput)
+        console.log(registerClinicInput.services);
+        return await this.clinicsService.registerClinic(registerClinicInput);
     }
 
     @Mutation(() => Clinic)

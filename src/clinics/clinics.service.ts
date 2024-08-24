@@ -10,6 +10,8 @@ import { Country } from 'src/countries/entities/country.entity';
 import { Service } from 'src/services/entities/service.entity';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { MinioService } from 'src/config/s3/minio.service';
+import { TelegramService } from 'nestjs-telegram';
+import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
 export class ClinicsService {
@@ -24,33 +26,50 @@ export class ClinicsService {
         private readonly doctorsRepository: Repository<Doctor>,
         @Inject()
         private readonly minioService: MinioService,
-    ) { }
+        private readonly moduleRef: ModuleRef,
+    ) {}
+    private telegram: TelegramService;
+
+    onModuleInit() {
+        this.telegram = this.moduleRef.get(TelegramService, { strict: false });
+    }
     async registerClinic(registerClinicInput: RegisterClinicInput) {
-        const { services, countryName, avatar, ...data } = registerClinicInput
-        let clinic = this.clinicRepository.create(data)
-        const country = await this.countryRepository.findOneBy({ title: countryName })
+        const { services, countryName, avatar, ...data } = registerClinicInput;
+        let clinic = this.clinicRepository.create(data);
+        const country = await this.countryRepository.findOneBy({ title: countryName });
         clinic.country = country;
         if (avatar) {
             const path = await this.minioService.uploadFile(await avatar, 'users_images');
             clinic.avatar = `${this.minioService.pathToFile}/${path}`;
         }
-        clinic = await this.clinicRepository.save(clinic)
+        clinic = await this.clinicRepository.save(clinic);
         services.forEach((service) => {
-            const { doctors, ...serviceData } = service
-            let serviceCreated = this.serviceRepository.create(serviceData);
-            console.log(doctors, 41)
+            const { doctors, ...serviceData } = service;
+            const serviceCreated = this.serviceRepository.create(serviceData);
+            console.log(doctors, 41);
             const doctorsArray: Doctor[] = [];
             doctors.forEach((doctor) => {
-                const doctorCreated = this.doctorsRepository.create(doctor)
-                doctorCreated.clinic = clinic
-                doctorsArray.push(doctorCreated)
-            })
+                const doctorCreated = this.doctorsRepository.create(doctor);
+                doctorCreated.clinic = clinic;
+                doctorsArray.push(doctorCreated);
+            });
             serviceCreated.clinic = clinic;
             serviceCreated.doctors = doctorsArray;
             this.serviceRepository.save(serviceCreated);
-        })
-        return clinic
-
+        });
+        if (clinic) {
+            this.telegram
+                .sendMessage({
+                    chat_id: '1034093866',
+                    text: ` Создана новая клиника! 
+                    Название - ${clinic.title} 
+                    Почта - ${clinic.email} 
+                    Номер - ${clinic.number}
+        `,
+                })
+                .toPromise();
+        }
+        return clinic;
     }
     async create(createClinicInput: CreateClinicInput) {
         const clinic = this.clinicRepository.create(createClinicInput);
@@ -86,7 +105,6 @@ export class ClinicsService {
             relations: { country: true, doctors: true },
         });
         return clinic;
-
     }
     async findOne(id: string) {
         const clinic = await this.clinicRepository.findOne({
