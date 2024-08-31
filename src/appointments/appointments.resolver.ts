@@ -52,7 +52,7 @@ export class AppointmentsResolver {
     }
 
     @Query(() => Appointment, { name: 'appointment' })
-    async findOne(@Args('_id') id: string) {
-        return await this.appointmentsService.findOne(id);
+    async findOne(@Args('_id') _id: string) {
+        return await this.appointmentsService.findOne(_id);
     }
 }

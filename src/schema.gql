@@ -41,6 +41,9 @@ type Clinic {
 
   """Created at timestamp"""
   createdAt: Date!
+
+  """Deleted at timestamp"""
+  deleted_at: Date!
   description: String
   doctors: [Doctor!]!
   email: String
@@ -55,6 +58,7 @@ type Clinic {
   specialization: String
   startTime: Int
   title: String!
+  treated: Int!
 
   """Updated at timestamp"""
   updatedAt: Date!
@@ -380,6 +384,7 @@ type Service {
   online: Boolean!
   price: Float!
   title: String!
+  treated: Int!
 
   """Updated at timestamp"""
   updatedAt: Date!
@@ -433,6 +438,9 @@ type User {
 
   """Created at timestamp"""
   createdAt: Date!
+
+  """Deleted at timestamp"""
+  deleted_at: Date!
   email: String!
   firstName: String
   isStaff: Boolean!

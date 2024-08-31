@@ -55,6 +55,17 @@ services:
           memory: 600M
     networks:
       - postgres
+  loki:
+    image: grafana/loki
+    ports:
+      - "3100:3100"
+    restart: unless-stopped
+  grafana:
+    volumes:
+      - grafana_storage:/var/lib/grafana
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
   redis:
     image: redis:latest
     restart: always
@@ -66,11 +77,22 @@ services:
       timeout: 60s
       retries: 5
       start_period: 10s
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yaml"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
 
 volumes:
   pgdata:
   pgadmin-data:
   minio_storage:
+  grafana_storage:
 networks:
   postgres:
     driver: bridge

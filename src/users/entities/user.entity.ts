@@ -1,15 +1,12 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 import { CommonEntity } from '../../common/common.entity';
-import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import { Column, DeleteDateColumn, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Country } from 'src/countries/entities/country.entity';
 import { IsPhoneNumber, Validate } from 'class-validator';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
 import { IsUnique } from 'src/common/shared/unique.validator';
 import { Like } from 'src/likes/entities/like.entity';
 import { Saved } from 'src/saved/entities/saved.entity';
-
-const BCRYPT_HASH_ROUNDS = 10;
 
 @ObjectType()
 @Entity({ name: 'users' })
@@ -89,6 +86,10 @@ export class User extends CommonEntity {
     @Field({ nullable: true })
     @Column({ nullable: true })
     public sex: boolean;
+
+    @Field({ description: 'Deleted at timestamp' })
+    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp with time zone' })
+    public deleted_at: Date;
 
     @OneToMany(() => Saved, (saved) => saved.author)
     public saved: Saved[];

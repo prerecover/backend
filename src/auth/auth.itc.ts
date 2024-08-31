@@ -7,7 +7,7 @@ import { UsersService } from 'src/users/users.service';
 @Injectable()
 export class AuthInterceptor implements NestInterceptor {
     constructor(
-        private jwtService: JwtService,
+        private readonly jwtService: JwtService,
         private readonly userService: UsersService,
     ) {}
     async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {

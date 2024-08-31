@@ -1,7 +1,7 @@
 import { ObjectType, Field, Int, HideField, Float } from '@nestjs/graphql';
 import { CommonEntity } from 'src/common/common.entity';
 import { News } from 'src/news/entities/news.entity';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { IsPhoneNumber, IsStrongPassword } from 'class-validator';
 import { Country } from 'src/countries/entities/country.entity';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
@@ -18,6 +18,10 @@ export class Clinic extends CommonEntity {
     @Field()
     @Column({ name: 'is_verified', default: false })
     public isVerfied: boolean;
+
+    @Field()
+    @Column({ default: 0 })
+    public treated: number;
 
     @Field(() => Float)
     @Column({ type: 'float', default: 5.0 })
@@ -100,6 +104,10 @@ export class Clinic extends CommonEntity {
     @HideField()
     @Column({ nullable: true })
     public password: string;
+
+    @Field({ description: 'Deleted at timestamp' })
+    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp with time zone' })
+    public deleted_at: Date;
 
     @OneToMany(() => Service, (service) => service.clinic, { nullable: true })
     public services: Service[];

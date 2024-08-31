@@ -12,6 +12,7 @@ export class CountriesService {
     ) {
         this.countriesRepository.find().then((list) => list.length === 0 && this.initCountries());
     }
+
     async findAll() {
         return await this.countriesRepository.find();
     }

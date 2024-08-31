@@ -10,7 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { S3Module } from 'nestjs-s3';
-import { S3Config, TypeOrmCfgService, GqlConfig } from './config';
+import { S3Config, TypeOrmCfgService, GqlConfig, PrometheusConfig } from './config';
 import { MinioService } from './config/s3/minio.service';
 import { IsUnique } from './common/shared/unique.validator';
 import { CountriesModule } from './countries/countries.module';
@@ -34,6 +34,9 @@ import { addTransactionalDataSource } from 'typeorm-transactional';
 import { LinksModule } from './clinics/links/links.module';
 import { TelegramModule } from 'nestjs-telegram';
 import { TelegramConfig } from './config/telegram';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { LokiLoggerModule } from 'nestjs-loki-logger';
+import { StatisticModule } from './statistic/statistic.module';
 
 @Module({
     imports: [
@@ -52,6 +55,9 @@ import { TelegramConfig } from './config/telegram';
             useClass: TelegramConfig,
             inject: [ConfigService],
         }),
+        PrometheusModule.registerAsync({
+            useClass: PrometheusConfig,
+        }),
 
         BullModule.forRootAsync({
             useClass: BullConfig,
@@ -68,6 +74,13 @@ import { TelegramConfig } from './config/telegram';
         S3Module.forRootAsync({
             useClass: S3Config,
         }),
+        LokiLoggerModule.forRootAsync({
+            useFactory: () => ({
+                lokiUrl: `http://${process.env.LOGGING_HOST}:${process.env.LOGGING_PORT}`,
+                logToConsole: true,
+            }),
+            inject: [ConfigService],
+        }),
         UsersModule,
         CountriesModule,
         ServicesModule,
@@ -81,6 +94,7 @@ import { TelegramConfig } from './config/telegram';
         AuthModule,
         MailModule,
         LinksModule,
+        StatisticModule,
     ],
     controllers: [AppController],
     providers: [

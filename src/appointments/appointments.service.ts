@@ -30,6 +30,8 @@ export class AppointmentsService {
         const doctor = await this.doctorsRepository.findOneBy({ _id: doctorId });
         const clinic = await this.clinicsRepository.findOneBy({ _id: clinicId });
         const user = await this.usersRepository.findOneBy({ _id: userId });
+        service.treated += 1;
+        await this.servicesRepository.save(service);
         appointment.service = service;
         appointment.clinic = clinic;
         appointment.doctor = doctor;

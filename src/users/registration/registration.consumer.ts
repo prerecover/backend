@@ -1,7 +1,6 @@
 import { Process, Processor } from '@nestjs/bull';
 import { QUEUE_NAME } from 'src/config/bull/queue.interface';
 import { MailService } from 'src/config/smtp/mail.service';
-import { RegistrationUser } from './dto/registration-user.input';
 import { Job } from 'bull';
 
 interface registrationMessage {

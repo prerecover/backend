@@ -29,6 +29,10 @@ export class Service extends CommonEntity {
     @Column()
     public duration: number;
 
+    @Field()
+    @Column({ default: 0 })
+    public treated: number;
+
     @Field({ nullable: true })
     @Column({ nullable: true })
     public img: string;
