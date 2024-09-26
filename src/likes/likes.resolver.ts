@@ -10,29 +10,29 @@ import { User } from 'src/users/entities/user.entity';
 
 @Resolver(() => Like)
 export class LikesResolver {
-    constructor(
-        private readonly likesService: LikesService,
-        private readonly userService: UsersService,
-    ) {}
+  constructor(
+    private readonly likesService: LikesService,
+    private readonly userService: UsersService,
+  ) {}
 
-    @Mutation(() => Like)
-    @UseGuards(AuthGuard)
-    async createLike(@Args('createLikeInput') createLikeInput: CreateLikeInput) {
-        return await this.likesService.create(createLikeInput);
-    }
+  @Mutation(() => Like)
+  @UseGuards(AuthGuard)
+  async createLike(@Args('createLikeInput') createLikeInput: CreateLikeInput) {
+    return await this.likesService.create(createLikeInput);
+  }
 
-    @Query(() => [Like], { name: 'likes' })
-    async findAll(@Args({ nullable: true }) args?: PaginateArgs) {
-        return this.likesService.findAll(args);
-    }
+  @Query(() => [Like], { name: 'likes' })
+  async findAll(@Args({ nullable: true }) args?: PaginateArgs) {
+    return this.likesService.findAll(args);
+  }
 
-    @Query(() => Like, { name: 'like' })
-    async findOne(@Args('id', { type: () => ID }) id: string) {
-        return await this.likesService.findOne(id);
-    }
+  @Query(() => Like, { name: 'like' })
+  async findOne(@Args('id', { type: () => ID }) id: string) {
+    return await this.likesService.findOne(id);
+  }
 
-    @Mutation(() => Like)
-    async removeLike(@Args('_id') _id: string) {
-        return await this.likesService.remove(_id);
-    }
+  @Mutation(() => Like)
+  async removeLike(@Args('_id') _id: string) {
+    return await this.likesService.remove(_id);
+  }
 }

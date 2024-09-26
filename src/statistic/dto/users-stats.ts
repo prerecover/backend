@@ -1,15 +1,9 @@
-import { InputType, Field, Int, Float } from '@nestjs/graphql';
+import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
 
-@InputType()
+@ObjectType()
 export class UsersStats {
     @Field()
     public totalCreatedUsers: number;
-
-    @Field()
-    public smsRegistration: number;
-
-    @Field()
-    public smsForgot: number;
 
     @Field(() => Int)
     public completedSurvey: number;

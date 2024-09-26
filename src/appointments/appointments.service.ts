@@ -3,11 +3,13 @@ import { CreateAppointmentInput } from './dto/create-appointment.input';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { Appointment } from './entities/appointment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { Service } from 'src/services/entities/service.entity';
+import { AvailableDate } from './available_dates/entities/availableDate.entity';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class AppointmentsService {
@@ -22,7 +24,10 @@ export class AppointmentsService {
         private readonly servicesRepository: Repository<Service>,
         @InjectRepository(User)
         private readonly usersRepository: Repository<User>,
-    ) {}
+        @InjectRepository(AvailableDate)
+        private readonly dateRepository: Repository<AvailableDate>,
+        private readonly notificationService: NotificationsService,
+    ) { }
     async create(createAppointmentInput: CreateAppointmentInput, userId: string) {
         const { clinicId, doctorId, serviceId } = createAppointmentInput;
         const appointment = this.appointmentsRepository.create(createAppointmentInput);
@@ -36,21 +41,49 @@ export class AppointmentsService {
         appointment.clinic = clinic;
         appointment.doctor = doctor;
         appointment.user = user;
-        return await this.appointmentsRepository.save(appointment);
+        const createdAppointment = await this.appointmentsRepository.save(appointment)
+        console.log(createdAppointment.timeStart)
+        this.notificationService.create({
+            userId: appointment.user._id,
+            text: `Создана запись “${createdAppointment.title || 'Без названия'}” на ${new Date(createdAppointment.createdAt).getDate()}.${new Date(createdAppointment.createdAt).getMonth() + 1}.${new Date(createdAppointment.createdAt).getFullYear()}`,
+        });
+        return createdAppointment
     }
     async findAll(userId: string, args?: PaginateArgs): Promise<Appointment[]> {
         return await this.appointmentsRepository.find({
-            where: { user: { _id: userId } },
-            relations: { user: true, clinic: true, doctor: true, service: true },
+            where: { user: { _id: userId }, status: Not('Rejected') },
+            relations: { user: true, clinic: true, doctor: true, service: true, surveys: true, availableDates: true },
             take: args.take,
             skip: args.skip,
         });
     }
 
+    async allAppointments(approoved?: boolean): Promise<Appointment[]> {
+        return await this.appointmentsRepository.find({
+            relations: { user: true, clinic: true, doctor: true, service: true, surveys: true, availableDates: true },
+            where: { status: approoved ? 'Approoved' : In(['In process', 'Pending', 'Rejected', 'Approoved']) },
+        });
+    }
+
+    async setStatus(appointmentId: string, status: string) {
+        const appointment = await this.findOne(appointmentId);
+        appointment.status = status;
+        return await this.appointmentsRepository.save(appointment);
+    }
+
+    async changeDate(appointmentId: string, timeStart: Date) {
+        const appointment = await this.findOne(appointmentId);
+        appointment.timeStart = timeStart;
+        appointment.status = 'In process';
+        await this.dateRepository.delete({ appointment: appointment });
+        await this.appointmentsRepository.save(appointment);
+        return true;
+    }
+
     async findOne(id: string) {
         const appointment = await this.appointmentsRepository.findOne({
             where: { _id: id },
-            relations: { user: true, doctor: true, clinic: true, service: true },
+            relations: { user: true, doctor: true, clinic: true, service: true, surveys: true },
         });
         if (!appointment) throw new NotFoundException('Appointment with that id not found!');
         return appointment;

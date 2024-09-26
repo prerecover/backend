@@ -1,9 +1,9 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { AppointmentStats } from './appointment-stats';
 import { ClinicStats } from './clinic-stats';
 import { UsersStats } from './users-stats';
 
-@InputType()
+@ObjectType()
 export class StatsOutput {
     @Field()
     public appointments: AppointmentStats;

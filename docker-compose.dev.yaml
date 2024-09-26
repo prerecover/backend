@@ -60,12 +60,12 @@ services:
     ports:
       - "3100:3100"
     restart: unless-stopped
-  grafana:
-    volumes:
-      - grafana_storage:/var/lib/grafana
-    image: grafana/grafana
-    ports:
-      - "3000:3000"
+  # grafana:
+  #   volumes:
+  #     - grafana_storage:/var/lib/grafana
+  #   image: grafana/grafana
+  #   ports:
+  #     - "3000:3000"
   redis:
     image: redis:latest
     restart: always

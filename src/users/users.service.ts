@@ -8,8 +8,6 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { Transactional } from 'typeorm-transactional';
 import { Country } from 'src/countries/entities/country.entity';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
-import * as bcrypt from 'bcrypt';
-import { FileUpload } from 'src/common/shared/file.interface';
 import { AvatarUpload } from './dto/avatar-upload';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
 
@@ -24,7 +22,7 @@ export class UsersService {
         private readonly appointmentsRepository: Repository<Appointment>,
         @Inject()
         private readonly minioService: MinioService,
-    ) {}
+    ) { }
 
     @Transactional()
     async create(createUserInput: CreateUserInput, countryTitle: string): Promise<User> {
@@ -57,7 +55,6 @@ export class UsersService {
         });
         return newUser;
     }
-
     async findAll(args?: PaginateArgs): Promise<User[]> {
         return await this.userRepository.find({ relations: { country: true }, take: args.take, skip: args.skip });
     }

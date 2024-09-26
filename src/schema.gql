@@ -2,8 +2,13 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input AnswerInput {
+  text: String!
+}
+
 type Appointment {
   _id: String!
+  availableDates: [AvailableDate!]
   clinic: Clinic
 
   """Created at timestamp"""
@@ -16,12 +21,37 @@ type Appointment {
   service: Service
   specialCheck: Boolean!
   status: String!
+  surveys: [Survey!]
   timeStart: Date
   title: String
 
   """Updated at timestamp"""
   updatedAt: Date!
   user: User
+}
+
+type AppointmentStats {
+  acceptedAppointments: Int!
+  completedAppointments: Int!
+  rejectedAppointments: Int!
+  totalAppointments: Int!
+}
+
+type AvailableDate {
+  _id: String!
+  appointment: Appointment
+
+  """Created at timestamp"""
+  createdAt: Date!
+  date: Date!
+
+  """Updated at timestamp"""
+  updatedAt: Date!
+}
+
+input AvailableDateInput {
+  appointmentId: String!
+  availableDates: [Date!]!
 }
 
 input AvatarUpload {
@@ -43,7 +73,7 @@ type Clinic {
   createdAt: Date!
 
   """Deleted at timestamp"""
-  deleted_at: Date!
+  deletedAt: Date!
   description: String
   doctors: [Doctor!]!
   email: String
@@ -63,6 +93,12 @@ type Clinic {
   """Updated at timestamp"""
   updatedAt: Date!
   workDays: String
+}
+
+type ClinicStats {
+  totalClinics: Int!
+  totalCreated: Int!
+  totalDeleted: Int!
 }
 
 type Country {
@@ -100,6 +136,11 @@ input CreateLikeInput {
 input CreateNewsInput {
   text: String!
   title: String!
+}
+
+input CreateNotificationInput {
+  text: String!
+  userId: String!
 }
 
 input CreateSavedInput {
@@ -198,14 +239,17 @@ input LoginInput {
 }
 
 type Mutation {
+  changeDate(appointmentId: String!, timeStart: Date!): Boolean!
   changeMe(changeMeInput: UpdateUserInput!): User!
   createAppointment(createAppointmentInput: CreateAppointmentInput!): Appointment!
   createClinic(createClinicInput: CreateClinicInput!): Clinic!
   createDoctor(createDoctorInput: CreateDoctorInput!): Doctor!
   createLike(createLikeInput: CreateLikeInput!): Like!
   createNews(createNewsInput: CreateNewsInput!): News!
+  createNotification(createNotificationInput: CreateNotificationInput!): Notification!
   createSaved(createSavedInput: CreateSavedInput!): Saved!
   createService(createServiceInput: CreateServiceInput!): Service!
+  createSurvey(surveyInput: SurveyInput!): Survey!
   createUser(countryTitle: String!, createUserInput: CreateUserInput!): User!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): Boolean!
   generateLink(clinicEmail: String!): Link!
@@ -215,14 +259,19 @@ type Mutation {
   removeDoctor(id: Int!): Doctor!
   removeLike(_id: String!): Like!
   removeNews(id: Int!): News!
+  removeNotification(id: Int!): Notification!
   removeSaved(_id: String!): Saved!
   removeUser(_id: String!): User!
   resendVerifyCode(email: String!): Boolean!
   selectClinics(selectClinicInput: SelectClinicInput!): [Clinic!]!
   selectServices(selectServiceInput: SelectServiceInput!): [Service!]!
+  setAsRead(notificationId: String!): Notification!
+  setAvailableDates(availableDateInput: AvailableDateInput!): Boolean!
+  setStatusAppointment(appointmentId: String!, status: String!): Appointment!
   signIn(signIn: LoginInput!): TokenResponse!
   updateDoctor(updateDoctorInput: UpdateDoctorInput!): Doctor!
   updateNews(updateNewsInput: UpdateNewsInput!): News!
+  updateNotification(updateNotificationInput: UpdateNotificationInput!): Notification!
   uploadAvatar(avatarUpload: AvatarUpload!): String!
   verifyCode(verifyCodeInput: VerifyCodeInput!): Boolean!
 }
@@ -273,12 +322,26 @@ type NewsVideo {
   video: String
 }
 
+type Notification {
+  _id: String!
+
+  """Created at timestamp"""
+  createdAt: Date!
+  isRead: Boolean!
+  text: String!
+
+  """Updated at timestamp"""
+  updatedAt: Date!
+  user: User!
+}
+
 type Query {
+  allAppointments(approoved: Boolean): [Appointment!]!
   appointment(_id: String!): Appointment!
   appointments(skip: Int! = 0, take: Int! = 25): [Appointment!]!
   clinic(_id: String!): Clinic!
   clinics(skip: Int! = 0, take: Int! = 25): [Clinic!]!
-  countries: [Country!]!
+  countries(skip: Int! = 0, take: Int! = 25): [Country!]!
   country(slug: String!): Country!
   doctor(_id: String!): Doctor!
   doctors(skip: Int! = 0, take: Int! = 25): [Doctor!]!
@@ -290,6 +353,9 @@ type Query {
   news(_id: ID!): News!
   newsAll(skip: Int! = 0, take: Int! = 25): [News!]!
   newsByClinic(clinicId: String!): [News!]!
+  notification(id: Int!): Notification!
+  notifications(skip: Int! = 0, take: Int! = 25): [Notification!]!
+  notificationsByUser: [Notification!]!
   resendForgotCode(email: String!): Boolean!
   saved(_id: String!): Saved!
   savedAll(skip: Int! = 0, take: Int! = 25): [Saved!]!
@@ -297,9 +363,29 @@ type Query {
   service(_id: String!): Service!
   services(skip: Int! = 0, take: Int! = 25): [Service!]!
   servicesByClinic(clinicId: String!): [Service!]!
+  stats(chunk: Int!): StatsOutput!
+  surveys(skip: Int! = 0, take: Int! = 25): [Survey!]!
   user(_id: ID!): User!
   users(skip: Int! = 0, take: Int! = 25): [User!]!
   validateLink(_id: String!): Link!
+}
+
+type QuestionAnswer {
+  _id: String!
+
+  """Created at timestamp"""
+  createdAt: Date!
+  question: SurveyQuestion
+  summaryQuestion: SurveyQuestion
+  text: String
+
+  """Updated at timestamp"""
+  updatedAt: Date!
+}
+
+input QuestionInput {
+  answers: [AnswerInput!]!
+  text: String!
 }
 
 input RegisterClinicInput {
@@ -390,6 +476,44 @@ type Service {
   updatedAt: Date!
 }
 
+type StatsOutput {
+  appointments: AppointmentStats!
+  clinics: ClinicStats!
+  users: UsersStats!
+}
+
+type Survey {
+  _id: String!
+  appointment: Appointment
+
+  """Created at timestamp"""
+  createdAt: Date!
+  passed: Boolean!
+  questions: [SurveyQuestion!]
+
+  """Updated at timestamp"""
+  updatedAt: Date!
+}
+
+input SurveyInput {
+  questions: [QuestionInput!]!
+  title: String
+}
+
+type SurveyQuestion {
+  _id: String!
+  answer: QuestionAnswer
+  answers: [QuestionAnswer!]
+
+  """Created at timestamp"""
+  createdAt: Date!
+  survey: Survey
+  text: String
+
+  """Updated at timestamp"""
+  updatedAt: Date!
+}
+
 type TokenResponse {
   access_token: String!
 }
@@ -406,6 +530,12 @@ input UpdateNewsInput {
   id: Int!
   text: String
   title: String
+}
+
+input UpdateNotificationInput {
+  id: Int!
+  text: String
+  userId: String
 }
 
 input UpdateUserInput {
@@ -440,13 +570,14 @@ type User {
   createdAt: Date!
 
   """Deleted at timestamp"""
-  deleted_at: Date!
+  deletedAt: Date
   email: String!
   firstName: String
   isStaff: Boolean!
   isVerfied: Boolean!
   lastName: String
   login: String
+  notifications: [Notification!]
   number: String
   online: Boolean!
   sex: Boolean
@@ -455,6 +586,13 @@ type User {
   """Updated at timestamp"""
   updatedAt: Date!
   verificationCode: Int
+}
+
+type UsersStats {
+  completedSurvey: Int!
+  createdSurvey: Int!
+  totalCreatedUsers: Int!
+  totalDeletedUsers: Float!
 }
 
 input VerifyCodeInput {

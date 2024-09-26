@@ -9,50 +9,70 @@ import { ServicesService } from 'src/services/services.service';
 import { News } from 'src/news/entities/news.entity';
 import { NewsService } from 'src/news/news.service';
 import { RegisterClinicInput } from './dto/registration/register-input';
+import { ModuleRef } from '@nestjs/core';
+import { TelegramService } from 'nestjs-telegram';
 
 @Resolver(() => Clinic)
 export class ClinicsResolver {
-    constructor(
-        private readonly clinicsService: ClinicsService,
-        private readonly servicesService: ServicesService,
-        private readonly newsService: NewsService,
-    ) { }
+  constructor(
+    private readonly clinicsService: ClinicsService,
+    private readonly servicesService: ServicesService,
+    private readonly newsService: NewsService,
+    private readonly moduleRef: ModuleRef,
+  ) { }
+  private telegram: TelegramService;
 
-    @Mutation(() => Clinic)
-    async registerClinic(@Args('registerClinicInput') registerClinicInput: RegisterClinicInput) {
-        console.log(registerClinicInput.services);
-        return await this.clinicsService.registerClinic(registerClinicInput);
-    }
+  onModuleInit() {
+    this.telegram = this.moduleRef.get(TelegramService, { strict: false });
+  }
 
-    @Mutation(() => Clinic)
-    async createClinic(@Args('createClinicInput') createClinicInput: CreateClinicInput) {
-        return await this.clinicsService.create(createClinicInput);
+  @Mutation(() => Clinic)
+  async registerClinic(@Args('registerClinicInput') registerClinicInput: RegisterClinicInput) {
+    console.log(registerClinicInput.services);
+    const clinic = await this.clinicsService.registerClinic(registerClinicInput);
+    if (clinic) {
+      this.telegram
+        .sendMessage({
+          chat_id: '1034093866',
+          text: ` Создана новая клиника! 
+                    Название - ${clinic.title} 
+                    Номер администратора - ${clinic.adminNumber} 
+        `,
+        })
+        .toPromise();
+      return clinic;
     }
+  }
 
-    @Query(() => [Clinic], { name: 'clinics' })
-    async findAll(@Args({ nullable: true }) args?: PaginateArgs) {
-        return await this.clinicsService.findAll(args);
-    }
+  @Mutation(() => Clinic)
+  async createClinic(@Args('createClinicInput') createClinicInput: CreateClinicInput) {
+    return await this.clinicsService.create(createClinicInput);
+  }
 
-    @Query(() => Clinic, { name: 'clinic' })
-    async findOne(@Args('_id') id: string) {
-        return await this.clinicsService.findOne(id);
-    }
+  @Query(() => [Clinic], { name: 'clinics' })
+  async findAll(@Args({ nullable: true }) args?: PaginateArgs) {
+    return await this.clinicsService.findAll(args);
+  }
 
-    @Mutation(() => [Clinic], { name: 'selectClinics' })
-    async selectClinics(@Args('selectClinicInput') selectClinicInput: SelectClinicInput) {
-        return await this.clinicsService.selectClinic(selectClinicInput);
-    }
+  @Query(() => Clinic, { name: 'clinic' })
+  async findOne(@Args('_id') id: string) {
+    return await this.clinicsService.findOne(id);
+  }
 
-    @ResolveField('services', () => [Service])
-    async clinic(@Parent() clinic: Clinic) {
-        const { _id: clinicId } = clinic;
-        return await this.servicesService.findByClinic(clinicId);
-    }
+  @Mutation(() => [Clinic], { name: 'selectClinics' })
+  async selectClinics(@Args('selectClinicInput') selectClinicInput: SelectClinicInput) {
+    return await this.clinicsService.selectClinic(selectClinicInput);
+  }
 
-    @ResolveField('news', () => [News])
-    async news(@Parent() clinic: Clinic) {
-        const { _id: clinicId } = clinic;
-        return await this.newsService.findByClinic(clinicId);
-    }
+  @ResolveField('services', () => [Service])
+  async clinic(@Parent() clinic: Clinic) {
+    const { _id: clinicId } = clinic;
+    return await this.servicesService.findByClinic(clinicId);
+  }
+
+  @ResolveField('news', () => [News])
+  async news(@Parent() clinic: Clinic) {
+    const { _id: clinicId } = clinic;
+    return await this.newsService.findByClinic(clinicId);
+  }
 }

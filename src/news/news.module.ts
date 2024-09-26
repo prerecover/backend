@@ -9,13 +9,12 @@ import { Service } from 'src/services/entities/service.entity';
 import { NewsImage } from './news-images/entities/news-image.entity';
 import { NewsVideo } from './news-videos/entities/news-video.entity';
 import { LikesModule } from 'src/likes/likes.module';
-import { LikesService } from 'src/likes/likes.service';
 import { SavedModule } from 'src/saved/saved.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([News, Like, Saved, Service, NewsImage, NewsVideo]), LikesModule, SavedModule],
+  imports: [TypeOrmModule.forFeature([News, Like, Saved, Service, NewsImage, NewsVideo]), LikesModule, SavedModule],
 
-    providers: [NewsResolver, NewsService],
-    exports: [NewsService],
+  providers: [NewsResolver, NewsService],
+  exports: [NewsService],
 })
 export class NewsModule {}

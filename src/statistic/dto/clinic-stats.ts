@@ -1,16 +1,13 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
-@InputType()
-export class ClinicStats{
+@ObjectType()
+export class ClinicStats {
     @Field()
     public totalClinics: number;
 
     @Field()
-    public completedAppointments: number;
+    public totalCreated: number;
 
     @Field()
-    public acceptedAppointments: number;
-
-    @Field()
-    public rejectedAppointments: number;
+    public totalDeleted: number;
 }

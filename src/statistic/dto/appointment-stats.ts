@@ -1,6 +1,6 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
-@InputType()
+@ObjectType()
 export class AppointmentStats {
     @Field()
     public totalAppointments: number;

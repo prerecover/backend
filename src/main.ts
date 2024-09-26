@@ -7,20 +7,20 @@ import { useContainer } from 'class-validator';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 
 async function bootstrap() {
-    initializeTransactionalContext();
-    const app = await NestFactory.create(AppModule, {
-        logger: ['debug'],
-    });
-    useContainer(app.select(AppModule), { fallbackOnErrors: true });
-    app.use('/graphql', graphqlUploadExpress({ maxFileSize: 50000000, maxFiles: 10 }));
-    app.enableVersioning({
-        type: VersioningType.URI,
-    });
-    app.enableCors();
+  initializeTransactionalContext();
+  const app = await NestFactory.create(AppModule, {
+    logger: ['debug'],
+  });
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+  app.use('/graphql', graphqlUploadExpress({ maxFileSize: 50000000, maxFiles: 10 }));
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
+  app.enableCors();
 
-    SwaggerConfig(app);
+  SwaggerConfig(app);
 
-    app.useGlobalPipes(new ValidationPipe());
-    await app.listen(8000);
+  app.useGlobalPipes(new ValidationPipe());
+  await app.listen(8000);
 }
 bootstrap();

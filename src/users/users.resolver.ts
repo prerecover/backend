@@ -14,51 +14,51 @@ import { Appointment } from 'src/appointments/entities/appointment.entity';
 
 @Resolver(() => User)
 export class UsersResolver {
-    constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
 
-    @Mutation(() => User)
-    async createUser(
-        @Args('createUserInput') createUserInput: CreateUserInput,
-        @Args('countryTitle') countryTitle: string,
-    ): Promise<User> {
-        return await this.usersService.create(createUserInput, countryTitle);
-    }
+  @Mutation(() => User)
+  async createUser(
+    @Args('createUserInput') createUserInput: CreateUserInput,
+    @Args('countryTitle') countryTitle: string,
+  ): Promise<User> {
+    return await this.usersService.create(createUserInput, countryTitle);
+  }
 
-    @Mutation(() => String, { name: 'uploadAvatar' })
-    async uploadAvatar(@CurrentUser() user: User, @Args('avatarUpload') avatar: AvatarUpload) {
-        return this.usersService.uploadAvatar(avatar, user._id);
-    }
+  @Mutation(() => String, { name: 'uploadAvatar' })
+  async uploadAvatar(@CurrentUser() user: User, @Args('avatarUpload') avatar: AvatarUpload) {
+    return this.usersService.uploadAvatar(avatar, user._id);
+  }
 
-    @Query(() => [User], { name: 'users' })
-    async findAll(@Args({ nullable: true }) args?: PaginateArgs) {
-        return await this.usersService.findAll(args);
-    }
+  @Query(() => [User], { name: 'users' })
+  async findAll(@Args({ nullable: true }) args?: PaginateArgs) {
+    return await this.usersService.findAll(args);
+  }
 
-    @Query(() => User, { name: 'user' })
-    async findOne(@Args('_id', { type: () => ID }) id: string) {
-        return await this.usersService.findOne(id);
-    }
+  @Query(() => User, { name: 'user' })
+  async findOne(@Args('_id', { type: () => ID }) id: string) {
+    return await this.usersService.findOne(id);
+  }
 
-    @UseGuards(AuthGuard)
-    @Query(() => User, { name: 'getMe' })
-    async getMe(@CurrentUser() user: User) {
-        return user;
-    }
+  @UseGuards(AuthGuard)
+  @Query(() => User, { name: 'getMe' })
+  async getMe(@CurrentUser() user: User) {
+    return user;
+  }
 
-    @ResolveField('appointments', () => [Appointment])
-    async appointments(@Parent() user: User) {
-        const { _id: userId } = user;
-        return await this.usersService.appointmentsForUser(userId);
-    }
+  @ResolveField('appointments', () => [Appointment])
+  async appointments(@Parent() user: User) {
+    const { _id: userId } = user;
+    return await this.usersService.appointmentsForUser(userId);
+  }
 
-    @UseGuards(AuthGuard)
-    @Mutation(() => User, { name: 'changeMe' })
-    async changeMe(@CurrentUser() user: User, @Args('changeMeInput') changeMeInput: UpdateUserInput) {
-        return await this.usersService.changeMe(user._id, changeMeInput);
-    }
+  @UseGuards(AuthGuard)
+  @Mutation(() => User, { name: 'changeMe' })
+  async changeMe(@CurrentUser() user: User, @Args('changeMeInput') changeMeInput: UpdateUserInput) {
+    return await this.usersService.changeMe(user._id, changeMeInput);
+  }
 
-    @Mutation(() => User)
-    async removeUser(@Args('_id') id: string) {
-        return await this.usersService.remove(id);
-    }
+  @Mutation(() => User)
+  async removeUser(@Args('_id') id: string) {
+    return await this.usersService.remove(id);
+  }
 }
