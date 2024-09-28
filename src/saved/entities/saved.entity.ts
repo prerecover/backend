@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 import { CommonEntity } from 'src/common/common.entity';
 import { News } from 'src/news/entities/news.entity';
 import { User } from 'src/users/entities/user.entity';

@@ -5,11 +5,11 @@ import { SurveyQuestion } from './entities/question.entity';
 
 @Resolver(() => SurveyQuestion)
 export class QuestionsResolver {
-  constructor(private readonly questionsService: QuestionsService) {}
+    constructor(private readonly questionsService: QuestionsService) {}
 
-  @ResolveField('answers', () => [QuestionAnswer])
-  async answers(@Parent() question: SurveyQuestion): Promise<QuestionAnswer[]> {
-    const { _id: questionId } = question;
-    return await this.questionsService.answersForQuestion(questionId);
-  }
+    @ResolveField('answers', () => [QuestionAnswer])
+    async answers(@Parent() question: SurveyQuestion): Promise<QuestionAnswer[]> {
+        const { _id: questionId } = question;
+        return await this.questionsService.answersForQuestion(questionId);
+    }
 }

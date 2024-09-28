@@ -4,7 +4,6 @@ import { CountriesResolver } from './countries.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Country } from './entities/country.entity';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
-import { UsersService } from 'src/users/users.service';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({

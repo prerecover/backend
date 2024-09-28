@@ -6,15 +6,15 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 @ObjectType()
 @Entity({ name: 'notifications' })
 export class Notification extends CommonEntity {
-  @Field()
-  @Column()
-  public text: string;
+    @Field()
+    @Column()
+    public text: string;
 
-  @Field(() => User)
-  @ManyToOne(() => User, (user) => user.notifications)
-  public user: User;
+    @Field(() => User)
+    @ManyToOne(() => User, (user) => user.notifications)
+    public user: User;
 
-  @Field()
-  @Column({ default: false })
-  public isRead: boolean;
+    @Field()
+    @Column({ default: false })
+    public isRead: boolean;
 }

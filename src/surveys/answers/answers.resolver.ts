@@ -3,5 +3,5 @@ import { AnswersService } from './answers.service';
 
 @Resolver()
 export class AnswersResolver {
-  constructor(private readonly answersService: AnswersService) {}
+    constructor(private readonly answersService: AnswersService) {}
 }

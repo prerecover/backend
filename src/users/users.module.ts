@@ -7,7 +7,6 @@ import { User } from './entities/user.entity';
 import { MinioService } from 'src/config/s3/minio.service';
 import { Country } from 'src/countries/entities/country.entity';
 import { RegistrationModule } from './registration/registration.module';
-import { AppointmentsModule } from 'src/appointments/appointments.module';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
 
 @Module({

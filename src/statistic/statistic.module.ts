@@ -11,4 +11,4 @@ import { Survey } from 'src/surveys/entities/survey.entity';
     imports: [TypeOrmModule.forFeature([Clinic, Appointment, User, Survey])],
     providers: [StatisticResolver, StatisticService],
 })
-export class StatisticModule { }
+export class StatisticModule {}

@@ -12,13 +12,13 @@ import { AppointmentsModule } from 'src/appointments/appointments.module';
 import { NotificationsModule } from 'src/notifications/notifications.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Survey, QuestionAnswer, SurveyQuestion, Appointment]),
-    AppointmentsModule,
-    NotificationsModule,
-    QuestionsModule,
-    AnswersModule,
-  ],
-  providers: [SurveysResolver, SurveysService],
+    imports: [
+        TypeOrmModule.forFeature([Survey, QuestionAnswer, SurveyQuestion, Appointment]),
+        AppointmentsModule,
+        NotificationsModule,
+        QuestionsModule,
+        AnswersModule,
+    ],
+    providers: [SurveysResolver, SurveysService],
 })
 export class SurveysModule {}

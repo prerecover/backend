@@ -22,7 +22,7 @@ export class UsersService {
         private readonly appointmentsRepository: Repository<Appointment>,
         @Inject()
         private readonly minioService: MinioService,
-    ) { }
+    ) {}
 
     @Transactional()
     async create(createUserInput: CreateUserInput, countryTitle: string): Promise<User> {

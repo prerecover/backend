@@ -1,5 +1,4 @@
 import { InputType, Field, Int, Float } from '@nestjs/graphql';
-import { Doctor } from 'src/doctors/entities/doctor.entity';
 
 @InputType()
 export class CreateServiceInput {

@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateNewsInput } from './dto/create-news.input';
-import { UpdateNewsInput } from './dto/update-news.input';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { News } from './entities/news.entity';
@@ -50,10 +49,6 @@ export class NewsService {
         });
         if (!news) throw new NotFoundException('News with that id not found!');
         return news;
-    }
-
-    async update(id: number, updateNewsInput: UpdateNewsInput) {
-        return `This action updates a #${id} news`;
     }
 
     async remove(id: number) {

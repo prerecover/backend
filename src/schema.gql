@@ -271,7 +271,6 @@ type Mutation {
   signIn(signIn: LoginInput!): TokenResponse!
   updateDoctor(updateDoctorInput: UpdateDoctorInput!): Doctor!
   updateNews(updateNewsInput: UpdateNewsInput!): News!
-  updateNotification(updateNotificationInput: UpdateNotificationInput!): Notification!
   uploadAvatar(avatarUpload: AvatarUpload!): String!
   verifyCode(verifyCodeInput: VerifyCodeInput!): Boolean!
 }
@@ -530,12 +529,6 @@ input UpdateNewsInput {
   id: Int!
   text: String
   title: String
-}
-
-input UpdateNotificationInput {
-  id: Int!
-  text: String
-  userId: String
 }
 
 input UpdateUserInput {

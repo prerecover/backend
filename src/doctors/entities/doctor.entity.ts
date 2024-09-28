@@ -3,12 +3,10 @@ import { IsPhoneNumber } from 'class-validator';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { CommonEntity } from 'src/common/common.entity';
 import { Country } from 'src/countries/entities/country.entity';
-import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 import { Service } from 'src/services/entities/service.entity';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
 
-const BCRYPT_HASH_ROUNDS = 12;
 @ObjectType()
 @Entity({ name: 'doctors' })
 export class Doctor extends CommonEntity {

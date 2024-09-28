@@ -12,9 +12,9 @@ import { LikesModule } from 'src/likes/likes.module';
 import { SavedModule } from 'src/saved/saved.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([News, Like, Saved, Service, NewsImage, NewsVideo]), LikesModule, SavedModule],
+    imports: [TypeOrmModule.forFeature([News, Like, Saved, Service, NewsImage, NewsVideo]), LikesModule, SavedModule],
 
-  providers: [NewsResolver, NewsService],
-  exports: [NewsService],
+    providers: [NewsResolver, NewsService],
+    exports: [NewsService],
 })
 export class NewsModule {}

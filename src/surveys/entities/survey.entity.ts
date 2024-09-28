@@ -7,15 +7,15 @@ import { SurveyQuestion } from '../questions/entities/question.entity';
 @ObjectType()
 @Entity({ name: 'surveys' })
 export class Survey extends CommonEntity {
-  @Field(() => Appointment, { nullable: true })
-  @ManyToOne(() => Appointment, (appointment) => appointment.surveys, { onDelete: 'CASCADE' })
-  public appointment: Appointment;
+    @Field(() => Appointment, { nullable: true })
+    @ManyToOne(() => Appointment, (appointment) => appointment.surveys, { onDelete: 'CASCADE' })
+    public appointment: Appointment;
 
-  @Field(() => [SurveyQuestion], { nullable: true })
-  @OneToMany(() => SurveyQuestion, (question) => question.survey)
-  public questions: SurveyQuestion[];
+    @Field(() => [SurveyQuestion], { nullable: true })
+    @OneToMany(() => SurveyQuestion, (question) => question.survey)
+    public questions: SurveyQuestion[];
 
-  @Field()
-  @Column({ default: false })
-  public passed: boolean;
+    @Field()
+    @Column({ default: false })
+    public passed: boolean;
 }

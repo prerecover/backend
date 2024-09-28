@@ -27,7 +27,7 @@ export class AppointmentsService {
         @InjectRepository(AvailableDate)
         private readonly dateRepository: Repository<AvailableDate>,
         private readonly notificationService: NotificationsService,
-    ) { }
+    ) {}
     async create(createAppointmentInput: CreateAppointmentInput, userId: string) {
         const { clinicId, doctorId, serviceId } = createAppointmentInput;
         const appointment = this.appointmentsRepository.create(createAppointmentInput);
@@ -41,13 +41,13 @@ export class AppointmentsService {
         appointment.clinic = clinic;
         appointment.doctor = doctor;
         appointment.user = user;
-        const createdAppointment = await this.appointmentsRepository.save(appointment)
-        console.log(createdAppointment.timeStart)
+        const createdAppointment = await this.appointmentsRepository.save(appointment);
+        console.log(createdAppointment.timeStart);
         this.notificationService.create({
             userId: appointment.user._id,
             text: `Создана запись “${createdAppointment.title || 'Без названия'}” на ${new Date(createdAppointment.createdAt).getDate()}.${new Date(createdAppointment.createdAt).getMonth() + 1}.${new Date(createdAppointment.createdAt).getFullYear()}`,
         });
-        return createdAppointment
+        return createdAppointment;
     }
     async findAll(userId: string, args?: PaginateArgs): Promise<Appointment[]> {
         return await this.appointmentsRepository.find({

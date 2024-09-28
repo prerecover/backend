@@ -14,65 +14,65 @@ import { TelegramService } from 'nestjs-telegram';
 
 @Resolver(() => Clinic)
 export class ClinicsResolver {
-  constructor(
-    private readonly clinicsService: ClinicsService,
-    private readonly servicesService: ServicesService,
-    private readonly newsService: NewsService,
-    private readonly moduleRef: ModuleRef,
-  ) { }
-  private telegram: TelegramService;
+    constructor(
+        private readonly clinicsService: ClinicsService,
+        private readonly servicesService: ServicesService,
+        private readonly newsService: NewsService,
+        private readonly moduleRef: ModuleRef,
+    ) {}
+    private telegram: TelegramService;
 
-  onModuleInit() {
-    this.telegram = this.moduleRef.get(TelegramService, { strict: false });
-  }
+    onModuleInit() {
+        this.telegram = this.moduleRef.get(TelegramService, { strict: false });
+    }
 
-  @Mutation(() => Clinic)
-  async registerClinic(@Args('registerClinicInput') registerClinicInput: RegisterClinicInput) {
-    console.log(registerClinicInput.services);
-    const clinic = await this.clinicsService.registerClinic(registerClinicInput);
-    if (clinic) {
-      this.telegram
-        .sendMessage({
-          chat_id: '1034093866',
-          text: ` Создана новая клиника! 
+    @Mutation(() => Clinic)
+    async registerClinic(@Args('registerClinicInput') registerClinicInput: RegisterClinicInput) {
+        console.log(registerClinicInput.services);
+        const clinic = await this.clinicsService.registerClinic(registerClinicInput);
+        if (clinic) {
+            this.telegram
+                .sendMessage({
+                    chat_id: '1034093866',
+                    text: ` Создана новая клиника! 
                     Название - ${clinic.title} 
                     Номер администратора - ${clinic.adminNumber} 
         `,
-        })
-        .toPromise();
-      return clinic;
+                })
+                .toPromise();
+            return clinic;
+        }
     }
-  }
 
-  @Mutation(() => Clinic)
-  async createClinic(@Args('createClinicInput') createClinicInput: CreateClinicInput) {
-    return await this.clinicsService.create(createClinicInput);
-  }
+    @Mutation(() => Clinic)
+    async createClinic(@Args('createClinicInput') createClinicInput: CreateClinicInput) {
+        return await this.clinicsService.create(createClinicInput);
+    }
 
-  @Query(() => [Clinic], { name: 'clinics' })
-  async findAll(@Args({ nullable: true }) args?: PaginateArgs) {
-    return await this.clinicsService.findAll(args);
-  }
+    @Query(() => [Clinic], { name: 'clinics' })
+    async findAll(@Args({ nullable: true }) args?: PaginateArgs) {
+        return await this.clinicsService.findAll(args);
+    }
 
-  @Query(() => Clinic, { name: 'clinic' })
-  async findOne(@Args('_id') id: string) {
-    return await this.clinicsService.findOne(id);
-  }
+    @Query(() => Clinic, { name: 'clinic' })
+    async findOne(@Args('_id') id: string) {
+        return await this.clinicsService.findOne(id);
+    }
 
-  @Mutation(() => [Clinic], { name: 'selectClinics' })
-  async selectClinics(@Args('selectClinicInput') selectClinicInput: SelectClinicInput) {
-    return await this.clinicsService.selectClinic(selectClinicInput);
-  }
+    @Mutation(() => [Clinic], { name: 'selectClinics' })
+    async selectClinics(@Args('selectClinicInput') selectClinicInput: SelectClinicInput) {
+        return await this.clinicsService.selectClinic(selectClinicInput);
+    }
 
-  @ResolveField('services', () => [Service])
-  async clinic(@Parent() clinic: Clinic) {
-    const { _id: clinicId } = clinic;
-    return await this.servicesService.findByClinic(clinicId);
-  }
+    @ResolveField('services', () => [Service])
+    async clinic(@Parent() clinic: Clinic) {
+        const { _id: clinicId } = clinic;
+        return await this.servicesService.findByClinic(clinicId);
+    }
 
-  @ResolveField('news', () => [News])
-  async news(@Parent() clinic: Clinic) {
-    const { _id: clinicId } = clinic;
-    return await this.newsService.findByClinic(clinicId);
-  }
+    @ResolveField('news', () => [News])
+    async news(@Parent() clinic: Clinic) {
+        const { _id: clinicId } = clinic;
+        return await this.newsService.findByClinic(clinicId);
+    }
 }

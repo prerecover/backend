@@ -10,7 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { S3Module } from 'nestjs-s3';
-import { S3Config, TypeOrmCfgService, GqlConfig, PrometheusConfig, pusherOptions, chunkingOption } from './config';
+import { S3Config, TypeOrmCfgService, GqlConfig, PrometheusConfig, chunkingOption } from './config';
 import { MinioService } from './config/s3/minio.service';
 import { IsUnique } from './common/shared/unique.validator';
 import { CountriesModule } from './countries/countries.module';
@@ -43,92 +43,92 @@ import { PusherModule } from 'nestjs-pusher';
 import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
-  imports: [
-    GraphQLModule.forRootAsync<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      useClass: GqlConfig,
-    }),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: ['.env'],
-    }),
-    MailerModule.forRootAsync({
-      useClass: SMTPConfig,
-    }),
-    TelegramModule.forRootAsync({
-      useClass: TelegramConfig,
-      inject: [ConfigService],
-    }),
-    PusherModule.forRoot(
-      {
-        key: process.env.PUSHER_APP_KEY,
-        cluster: process.env.PUSHER_APP_CLUSTER,
-        secret: process.env.PUSHER_APP_SECRET,
-        appId: process.env.PUSHER_APP_ID,
-      },
-      chunkingOption,
-      true,
-    ),
+    imports: [
+        GraphQLModule.forRootAsync<ApolloDriverConfig>({
+            driver: ApolloDriver,
+            useClass: GqlConfig,
+        }),
+        ConfigModule.forRoot({
+            isGlobal: true,
+            envFilePath: ['.env'],
+        }),
+        MailerModule.forRootAsync({
+            useClass: SMTPConfig,
+        }),
+        TelegramModule.forRootAsync({
+            useClass: TelegramConfig,
+            inject: [ConfigService],
+        }),
+        PusherModule.forRoot(
+            {
+                key: process.env.PUSHER_APP_KEY,
+                cluster: process.env.PUSHER_APP_CLUSTER,
+                secret: process.env.PUSHER_APP_SECRET,
+                appId: process.env.PUSHER_APP_ID,
+            },
+            chunkingOption,
+            true,
+        ),
 
-    PrometheusModule.registerAsync({
-      useClass: PrometheusConfig,
-    }),
+        PrometheusModule.registerAsync({
+            useClass: PrometheusConfig,
+        }),
 
-    BullModule.forRootAsync({
-      useClass: BullConfig,
-    }),
-    TypeOrmModule.forRootAsync({
-      useClass: TypeOrmCfgService,
-      async dataSourceFactory(options) {
-        if (!options) {
-          throw new Error('Invalid options passed');
-        }
-        return addTransactionalDataSource(new DataSource(options));
-      },
-    }),
-    S3Module.forRootAsync({
-      useClass: S3Config,
-    }),
-    LokiLoggerModule.forRootAsync({
-      useFactory: () => ({
-        lokiUrl: `http://${process.env.LOGGING_HOST}:${process.env.LOGGING_PORT}`,
-        logToConsole: true,
-      }),
-      inject: [ConfigService],
-    }),
-    UsersModule,
-    CountriesModule,
-    ServicesModule,
-    AppointmentsModule,
-    CommonModule,
-    LikesModule,
-    NewsModule,
-    SavedModule,
-    ClinicsModule,
-    DoctorsModule,
-    AuthModule,
-    MailModule,
-    LinksModule,
-    StatisticModule,
-    SurveysModule,
-    AvailableDatesModule,
-    NotificationsModule,
-  ],
-  controllers: [AppController],
-  providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: TimeoutInterceptor,
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: AuthInterceptor,
-    },
+        BullModule.forRootAsync({
+            useClass: BullConfig,
+        }),
+        TypeOrmModule.forRootAsync({
+            useClass: TypeOrmCfgService,
+            async dataSourceFactory(options) {
+                if (!options) {
+                    throw new Error('Invalid options passed');
+                }
+                return addTransactionalDataSource(new DataSource(options));
+            },
+        }),
+        S3Module.forRootAsync({
+            useClass: S3Config,
+        }),
+        LokiLoggerModule.forRootAsync({
+            useFactory: () => ({
+                lokiUrl: `http://${process.env.LOGGING_HOST}:${process.env.LOGGING_PORT}`,
+                logToConsole: true,
+            }),
+            inject: [ConfigService],
+        }),
+        UsersModule,
+        CountriesModule,
+        ServicesModule,
+        AppointmentsModule,
+        CommonModule,
+        LikesModule,
+        NewsModule,
+        SavedModule,
+        ClinicsModule,
+        DoctorsModule,
+        AuthModule,
+        MailModule,
+        LinksModule,
+        StatisticModule,
+        SurveysModule,
+        AvailableDatesModule,
+        NotificationsModule,
+    ],
+    controllers: [AppController],
+    providers: [
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: TimeoutInterceptor,
+        },
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: AuthInterceptor,
+        },
 
-    IsUnique,
-    IsExist,
-    AppService,
-    MinioService,
-  ],
+        IsUnique,
+        IsExist,
+        AppService,
+        MinioService,
+    ],
 })
 export class AppModule {}

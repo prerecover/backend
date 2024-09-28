@@ -21,7 +21,7 @@ export class StatisticService {
         private readonly appointmentRepository: Repository<Appointment>,
         @InjectRepository(Survey)
         private readonly surveyRepository: Repository<Survey>,
-    ) { }
+    ) {}
     oneDay = new Date(Date.now() - 24 * 60 * 60 * 1000);
     week = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 

@@ -7,7 +7,7 @@ import { AvailableDateResolver } from './available_dates.resolver';
 import { NotificationsModule } from 'src/notifications/notifications.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Appointment, AvailableDate]), NotificationsModule],
-  providers: [AvailableDatesService, AvailableDateResolver],
+    imports: [TypeOrmModule.forFeature([Appointment, AvailableDate]), NotificationsModule],
+    providers: [AvailableDatesService, AvailableDateResolver],
 })
 export class AvailableDatesModule {}

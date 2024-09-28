@@ -6,7 +6,7 @@ import { SurveyQuestion } from './entities/question.entity';
 import { QuestionAnswer } from '../answers/entities/answer.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([SurveyQuestion, QuestionAnswer])],
-  providers: [QuestionsResolver, QuestionsService],
+    imports: [TypeOrmModule.forFeature([SurveyQuestion, QuestionAnswer])],
+    providers: [QuestionsResolver, QuestionsService],
 })
 export class QuestionsModule {}

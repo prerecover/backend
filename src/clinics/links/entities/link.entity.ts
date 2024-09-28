@@ -5,10 +5,9 @@ import { Column, CreateDateColumn, Entity } from 'typeorm';
 @ObjectType()
 @Entity({ name: 'links' })
 export class Link extends CommonEntity {
-
     @Field()
     @Column({ name: 'clinic_email' })
-    public clinicEmail: string
+    public clinicEmail: string;
 
     @Field()
     @CreateDateColumn({ name: 'expired_at', type: 'timestamp with time zone' })
@@ -17,6 +16,4 @@ export class Link extends CommonEntity {
     @Field()
     @Column({ default: false })
     public isUsed: boolean;
-
-
 }

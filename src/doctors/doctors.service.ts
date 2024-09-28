@@ -46,6 +46,7 @@ export class DoctorsService {
     }
 
     async update(id: number, updateDoctorInput: UpdateDoctorInput) {
+        console.log(updateDoctorInput);
         return `This action updates a #${id} doctor`;
     }
 

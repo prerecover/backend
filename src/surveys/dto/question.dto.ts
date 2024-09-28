@@ -1,11 +1,11 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { AnswerInput } from './answer.dto';
 
 @InputType()
 export class QuestionInput {
-  @Field()
-  public text: string;
+    @Field()
+    public text: string;
 
-  @Field(() => [AnswerInput])
-  public answers: AnswerInput[];
+    @Field(() => [AnswerInput])
+    public answers: AnswerInput[];
 }

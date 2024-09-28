@@ -1,6 +1,4 @@
-import { InputType, Int, Field, PartialType } from '@nestjs/graphql';
-import { Doctor } from '../entities/doctor.entity';
-import { Clinic } from 'src/clinics/entities/clinic.entity';
+import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
 export class CreateDoctorInput {

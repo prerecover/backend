@@ -11,7 +11,7 @@ export class AuthService {
     constructor(
         private userService: UsersService,
         private readonly jwtService: JwtService,
-    ) { }
+    ) {}
 
     private readonly logger = new LokiLogger(AuthService.name);
     async signIn({ email, number, password }: LoginInput): Promise<any> {

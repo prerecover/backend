@@ -1,7 +1,7 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class AnswerInput {
-  @Field()
-  public text: string;
+    @Field()
+    public text: string;
 }

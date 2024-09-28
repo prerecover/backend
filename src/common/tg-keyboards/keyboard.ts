@@ -1,12 +1,12 @@
-import { TelegramReplyKeyboardMarkup, TelegramKeyboardButton, TelegramInlineKeyboardMarkup, TelegramInlineKeyboardButton } from "nestjs-telegram";
+import { TelegramInlineKeyboardMarkup, TelegramInlineKeyboardButton } from 'nestjs-telegram';
 
 const buttonApproove: TelegramInlineKeyboardButton = {
-    text: "Подтвердить"
-}
+    text: 'Подтвердить',
+};
 const buttonReject: TelegramInlineKeyboardButton = {
-    text: "Отклонить",
-}
+    text: 'Отклонить',
+};
 
 export const AppointmentKeyboard: TelegramInlineKeyboardMarkup = {
-    inline_keyboard: [[buttonApproove, buttonReject]]
+    inline_keyboard: [[buttonApproove, buttonReject]],
 };

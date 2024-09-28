@@ -22,4 +22,4 @@ import { MinioService } from 'src/config/s3/minio.service';
     providers: [ClinicsResolver, ClinicsService, MinioService],
     exports: [ClinicsService],
 })
-export class ClinicsModule { }
+export class ClinicsModule {}

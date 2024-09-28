@@ -12,4 +12,4 @@ import { Appointment } from 'src/appointments/entities/appointment.entity';
     imports: [TypeOrmModule.forFeature([Clinic, Doctor, Service, Appointment]), UsersModule],
     providers: [CommonResolver, CommonService],
 })
-export class CommonModule { }
+export class CommonModule {}

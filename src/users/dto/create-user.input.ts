@@ -1,5 +1,5 @@
-import { InputType, Field, HideField } from '@nestjs/graphql';
-import { IsNotEmpty, MaxLength, MinLength, IsStrongPassword, IsEmail, Validate, IsPhoneNumber } from 'class-validator';
+import { InputType, Field } from '@nestjs/graphql';
+import { IsNotEmpty, MaxLength, MinLength, IsEmail, IsPhoneNumber } from 'class-validator';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 import { FileUpload } from 'src/common/shared/file.interface';
 

@@ -1,11 +1,9 @@
-
 import { InputType, Field, Float } from '@nestjs/graphql';
 
 @InputType()
 export class RegisterDoctorInput {
     @Field()
     public firstName: string;
-
 
     @Field()
     public lastName: string;
@@ -15,9 +13,4 @@ export class RegisterDoctorInput {
 
     @Field(() => Float)
     public workExp: number;
-
-
-
-
-
 }

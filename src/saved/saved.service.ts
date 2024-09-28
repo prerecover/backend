@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSavedInput } from './dto/create-saved.input';
-import { UpdateSavedInput } from './dto/update-saved.input';
 import { Saved } from './entities/saved.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -43,10 +42,6 @@ export class SavedService {
         const saved = await this.savedRepository.findOne({ where: { _id: id }, relations: { author: true } });
         if (!saved) throw new NotFoundException('Saved with that id not found!');
         return saved;
-    }
-
-    update(id: number, updateSavedInput: UpdateSavedInput) {
-        return `This action updates a #${id} saved`;
     }
 
     async remove(id: string) {

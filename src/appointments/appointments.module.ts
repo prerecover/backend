@@ -13,13 +13,13 @@ import { AvailableDate } from './available_dates/entities/availableDate.entity';
 import { NotificationsModule } from 'src/notifications/notifications.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Appointment, Clinic, Doctor, Service, User, AvailableDate]),
-    UsersModule,
+    imports: [
+        TypeOrmModule.forFeature([Appointment, Clinic, Doctor, Service, User, AvailableDate]),
+        UsersModule,
         NotificationsModule,
-    AvailableDatesModule,
-  ],
-  providers: [AppointmentsResolver, AppointmentsService],
-  exports: [AppointmentsService],
+        AvailableDatesModule,
+    ],
+    providers: [AppointmentsResolver, AppointmentsService],
+    exports: [AppointmentsService],
 })
 export class AppointmentsModule {}

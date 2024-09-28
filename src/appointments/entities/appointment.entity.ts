@@ -12,61 +12,61 @@ import { AvailableDate } from '../available_dates/entities/availableDate.entity'
 @ObjectType()
 @Entity({ name: 'appointments' })
 export class Appointment extends CommonEntity {
-  @Field(() => User, { nullable: true })
-  @ManyToOne(() => User, (user) => user.appointments, { onDelete: 'CASCADE' })
-  public user: User;
+    @Field(() => User, { nullable: true })
+    @ManyToOne(() => User, (user) => user.appointments, { onDelete: 'CASCADE' })
+    public user: User;
 
-  @Field(() => Clinic, { nullable: true })
-  @ManyToOne(() => Clinic, (clinic) => clinic.appointments, { onDelete: 'CASCADE' })
-  public clinic: Clinic;
+    @Field(() => Clinic, { nullable: true })
+    @ManyToOne(() => Clinic, (clinic) => clinic.appointments, { onDelete: 'CASCADE' })
+    public clinic: Clinic;
 
-  @Field(() => Service, { nullable: true })
-  @ManyToOne(() => Service, (service) => service.appointments, { onDelete: 'CASCADE' })
-  public service: Service;
+    @Field(() => Service, { nullable: true })
+    @ManyToOne(() => Service, (service) => service.appointments, { onDelete: 'CASCADE' })
+    public service: Service;
 
-  @Field({ nullable: true })
-  @Column({ length: 225, nullable: true })
-  public title: string;
+    @Field({ nullable: true })
+    @Column({ length: 225, nullable: true })
+    public title: string;
 
-  @Field()
-  @Column({ default: false })
-  public online: boolean;
+    @Field()
+    @Column({ default: false })
+    public online: boolean;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  public file: string;
+    @Field({ nullable: true })
+    @Column({ nullable: true })
+    public file: string;
 
-  @Field(() => [Survey], { nullable: true })
-  @OneToMany(() => Survey, (survey) => survey.appointment)
-  public surveys: Survey[];
+    @Field(() => [Survey], { nullable: true })
+    @OneToMany(() => Survey, (survey) => survey.appointment)
+    public surveys: Survey[];
 
-  @Field(() => [AvailableDate], { nullable: true })
-  @OneToMany(() => AvailableDate, (avDate) => avDate.appointment)
-  public availableDates: AvailableDate[];
+    @Field(() => [AvailableDate], { nullable: true })
+    @OneToMany(() => AvailableDate, (avDate) => avDate.appointment)
+    public availableDates: AvailableDate[];
 
-  @IsDate()
-  @Field({ nullable: true })
-  @Column({ name: 'notify', type: 'timestamp with time zone', nullable: true })
-  public notify: Date;
+    @IsDate()
+    @Field({ nullable: true })
+    @Column({ name: 'notify', type: 'timestamp with time zone', nullable: true })
+    public notify: Date;
 
-  @IsDate()
-  @Field({ nullable: true })
-  @Column({ name: 'time_start', type: 'timestamp with time zone', nullable: true })
-  public timeStart: Date;
+    @IsDate()
+    @Field({ nullable: true })
+    @Column({ name: 'time_start', type: 'timestamp with time zone', nullable: true })
+    public timeStart: Date;
 
-  @Field(() => Doctor, { nullable: true })
-  @ManyToOne(() => Doctor, (doctor) => doctor.appointments, { onDelete: 'SET NULL', nullable: true })
-  public doctor: Doctor;
+    @Field(() => Doctor, { nullable: true })
+    @ManyToOne(() => Doctor, (doctor) => doctor.appointments, { onDelete: 'SET NULL', nullable: true })
+    public doctor: Doctor;
 
-  @Field()
-  @Column({ default: 'In process' })
-  public status: string;
+    @Field()
+    @Column({ default: 'In process' })
+    public status: string;
 
-  @Field(() => Int, { nullable: true })
-  @Column({ nullable: true })
-  public duration: number;
+    @Field(() => Int, { nullable: true })
+    @Column({ nullable: true })
+    public duration: number;
 
-  @Field()
-  @Column({ name: 'special_check', default: false })
-  public specialCheck: boolean;
+    @Field()
+    @Column({ name: 'special_check', default: false })
+    public specialCheck: boolean;
 }

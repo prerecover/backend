@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AvailableDate } from './entities/availableDate.entity';
 import { Repository } from 'typeorm';
@@ -13,7 +13,7 @@ export class AvailableDatesService {
         @InjectRepository(Appointment)
         private readonly appointmentsRepository: Repository<Appointment>,
         private readonly notificationService: NotificationsService,
-    ) { }
+    ) {}
 
     async setDates(appointmentId: string, dates: Date[]): Promise<boolean> {
         const appointment = await this.appointmentsRepository.findOne({
