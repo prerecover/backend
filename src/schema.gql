@@ -270,7 +270,6 @@ type Mutation {
   setStatusAppointment(appointmentId: String!, status: String!): Appointment!
   signIn(signIn: LoginInput!): TokenResponse!
   updateDoctor(updateDoctorInput: UpdateDoctorInput!): Doctor!
-  updateNews(updateNewsInput: UpdateNewsInput!): News!
   uploadAvatar(avatarUpload: AvatarUpload!): String!
   verifyCode(verifyCodeInput: VerifyCodeInput!): Boolean!
 }
@@ -523,12 +522,6 @@ input UpdateDoctorInput {
   lastName: String
   specialization: String
   surname: String
-}
-
-input UpdateNewsInput {
-  id: Int!
-  text: String
-  title: String
 }
 
 input UpdateUserInput {

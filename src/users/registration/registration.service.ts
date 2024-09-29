@@ -11,6 +11,7 @@ import { UsersService } from '../users.service';
 import { ForgotPasswordInput } from './dto/forgot-password.input';
 import { NewPasswordInput } from './dto/new-password.input';
 import * as bcrypt from 'bcrypt';
+import { LokiLogger } from 'nestjs-loki-logger';
 
 @Injectable()
 export class RegistrationService {
@@ -20,6 +21,7 @@ export class RegistrationService {
         @InjectQueue(QUEUE_NAME.mail) private msgQueue: Queue,
         private readonly userService: UsersService,
     ) {}
+    private readonly logger = new LokiLogger(RegistrationService.name);
     async createUser(registrationInput: RegistrationUser): Promise<User> {
         const user = this.userRepository.create(registrationInput);
         const code = this.generateCode();
@@ -27,6 +29,7 @@ export class RegistrationService {
         user.password = await bcrypt.hash(registrationInput.password, 10);
         const resultUser = await this.userRepository.save(user);
         await this.msgQueue.add('registrationMessage', { email: registrationInput.email, code: code });
+        this.logger.log(`Создан новый пользователь - ${resultUser.email}`);
         return resultUser;
     }
 
@@ -34,16 +37,19 @@ export class RegistrationService {
         const user = await this.userService.findOneByEmail(verifyCodeInput.email);
         const isSuccess = user.verificationCode == verifyCodeInput.code;
         if (isSuccess == false) {
+            this.logger.error(`Неверный код, ${user.email}`);
             throw new BadRequestException('No valid code');
         }
         user.isVerfied = true;
         await this.userRepository.save(user);
+        this.logger.log(`Код подтвержден - ${user.email}`);
         return isSuccess;
     }
 
     async resendVerifyCode(email: string) {
         const code = this.generateCode();
         await this.setVerificationCode(email, null, code);
+        this.logger.log(`Переотправка кода подтверждения регистрации, ${email}`);
         return Boolean(await this.msgQueue.add('registrationMessage', { email: email, code: code }));
     }
 
@@ -51,6 +57,7 @@ export class RegistrationService {
         if (forgotPassword.email) {
             const code = this.generateCode();
             await this.setVerificationCode(forgotPassword.email, null, code);
+            this.logger.log(`Отправка кода сброса пароля - ${forgotPassword.email}`);
             return Boolean(
                 await this.msgQueue.add('forgotPasswordMessage', { email: forgotPassword.email, code: code }),
             );
@@ -69,6 +76,7 @@ export class RegistrationService {
     async newPassword(newPasswordInput: NewPasswordInput) {
         const user = await this.userService.findOneByEmail(newPasswordInput.email);
         user.password = await bcrypt.hash(newPasswordInput.password, 10);
+        this.logger.log(`Установлен новый пароль - ${user.email} - ${newPasswordInput.password}`);
         return Boolean(await this.userRepository.save(user));
     }
 

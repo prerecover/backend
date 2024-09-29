@@ -4,6 +4,7 @@ import { AvailableDate } from './entities/availableDate.entity';
 import { Repository } from 'typeorm';
 import { Appointment } from '../entities/appointment.entity';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { LokiLogger } from 'nestjs-loki-logger';
 
 @Injectable()
 export class AvailableDatesService {
@@ -13,7 +14,8 @@ export class AvailableDatesService {
         @InjectRepository(Appointment)
         private readonly appointmentsRepository: Repository<Appointment>,
         private readonly notificationService: NotificationsService,
-    ) {}
+    ) { }
+    private readonly logger = new LokiLogger(AvailableDatesService.name);
 
     async setDates(appointmentId: string, dates: Date[]): Promise<boolean> {
         const appointment = await this.appointmentsRepository.findOne({
@@ -34,6 +36,8 @@ export class AvailableDatesService {
     }
 
     async getDates(appointmentId: string): Promise<AvailableDate[]> {
-        return await this.datesRepository.find({ where: { appointment: { _id: appointmentId } } });
+        const dates = await this.datesRepository.find({ where: { appointment: { _id: appointmentId } } });
+        this.logger.log(`${dates}`);
+        return dates;
     }
 }

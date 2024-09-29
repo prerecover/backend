@@ -1,15 +1,15 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
+import { LokiLogger } from 'nestjs-loki-logger';
 
 @Injectable()
 export class MailService {
-    constructor(private readonly smtpService: MailerService) {}
+    constructor(private readonly smtpService: MailerService) { }
 
-    private generateCode(): number {
-        return Math.floor(1000 + Math.random() * 9000);
-    }
+    private readonly logger = new LokiLogger(MailService.name);
 
     public async registrationMessage(userEmail: string, code: number) {
+        this.logger.log(`Отправлено сообщение о регистрации на почту ${userEmail}`);
         await this.smtpService.sendMail({
             to: userEmail,
             from: process.env.EMAIL_USER,
@@ -20,6 +20,7 @@ export class MailService {
     }
 
     public async forgotPasswordMessage(userEmail: string, code: number) {
+        this.logger.log(`Отправлено сообщение о восстановлении пароля на почту ${userEmail}`);
         await this.smtpService.sendMail({
             to: userEmail,
             from: process.env.EMAIL_USER,

@@ -10,6 +10,7 @@ import { Country } from 'src/countries/entities/country.entity';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { AvatarUpload } from './dto/avatar-upload';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
+import { LokiLogger } from 'nestjs-loki-logger';
 
 @Injectable()
 export class UsersService {
@@ -24,6 +25,7 @@ export class UsersService {
         private readonly minioService: MinioService,
     ) {}
 
+    private readonly logger = new LokiLogger(UsersService.name);
     @Transactional()
     async create(createUserInput: CreateUserInput, countryTitle: string): Promise<User> {
         const { avatar, ...data } = createUserInput;
@@ -31,10 +33,12 @@ export class UsersService {
 
         const country = await this.countryRepository.findOneBy({ title: countryTitle });
         if (avatar) {
+            this.logger.log(`Создано фото пользователя - ${user.email}`);
             const path = await this.minioService.uploadFile(await avatar, 'users_images');
             user.avatar = `${this.minioService.pathToFile}/${path}`;
         }
         user.country = country;
+        this.logger.log(`Создан пользователь - ${user.email}`);
         return await this.userRepository.save(user);
     }
 
@@ -42,10 +46,12 @@ export class UsersService {
         const user = await this.findOne(userId);
         const { avatar, countryTitle, ...data } = changeMe;
         if (countryTitle) {
+            this.logger.log(`Обновлена страна - ${user.email}, ${countryTitle}`);
             const country = await this.countryRepository.findOneBy({ title: countryTitle });
             user.country = country;
         }
         if (avatar) {
+            this.logger.log(`Обновлено фото пользователя - ${user.email}`);
             const path = await this.minioService.uploadFile(await avatar, 'users_images');
             user.avatar = `${this.minioService.pathToFile}/${path}`;
         }
@@ -53,6 +59,7 @@ export class UsersService {
             ...user,
             ...data,
         });
+        this.logger.log(`Обновлен профиль пользователя - ${user.email}`);
         return newUser;
     }
     async findAll(args?: PaginateArgs): Promise<User[]> {
@@ -63,6 +70,7 @@ export class UsersService {
         const path = await this.minioService.uploadFile(await avatar.avatar, 'users_images');
         user.avatar = `${this.minioService.pathToFile}/${path}`;
         await this.userRepository.save(user);
+        this.logger.log(`Обновлено фото пользователя - ${user.email}`);
         return user.avatar;
     }
 

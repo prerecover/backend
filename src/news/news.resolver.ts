@@ -2,7 +2,6 @@ import { Resolver, Query, Mutation, Args, Int, ID, ResolveField, Parent } from '
 import { NewsService } from './news.service';
 import { News } from './entities/news.entity';
 import { CreateNewsInput } from './dto/create-news.input';
-import { UpdateNewsInput } from './dto/update-news.input';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { Like } from 'src/likes/entities/like.entity';
 import { LikesService } from 'src/likes/likes.service';
@@ -49,11 +48,6 @@ export class NewsResolver {
     @Query(() => News, { name: 'news' })
     async findOne(@Args('_id', { type: () => ID }) _id: string) {
         return await this.newsService.findOne(_id);
-    }
-
-    @Mutation(() => News)
-    async updateNews(@Args('updateNewsInput') updateNewsInput: UpdateNewsInput) {
-        return await this.newsService.update(updateNewsInput.id, updateNewsInput);
     }
 
     @Mutation(() => News)

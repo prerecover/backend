@@ -10,6 +10,8 @@ import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { Service } from 'src/services/entities/service.entity';
 import { AvailableDate } from './available_dates/entities/availableDate.entity';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { LokiLogger } from 'nestjs-loki-logger';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class AppointmentsService {
@@ -27,7 +29,10 @@ export class AppointmentsService {
         @InjectRepository(AvailableDate)
         private readonly dateRepository: Repository<AvailableDate>,
         private readonly notificationService: NotificationsService,
-    ) {}
+    ) { }
+    private readonly logger = new LokiLogger(AppointmentsService.name);
+
+    @Transactional()
     async create(createAppointmentInput: CreateAppointmentInput, userId: string) {
         const { clinicId, doctorId, serviceId } = createAppointmentInput;
         const appointment = this.appointmentsRepository.create(createAppointmentInput);
@@ -42,7 +47,6 @@ export class AppointmentsService {
         appointment.doctor = doctor;
         appointment.user = user;
         const createdAppointment = await this.appointmentsRepository.save(appointment);
-        console.log(createdAppointment.timeStart);
         this.notificationService.create({
             userId: appointment.user._id,
             text: `Создана запись “${createdAppointment.title || 'Без названия'}” на ${new Date(createdAppointment.createdAt).getDate()}.${new Date(createdAppointment.createdAt).getMonth() + 1}.${new Date(createdAppointment.createdAt).getFullYear()}`,
@@ -50,33 +54,40 @@ export class AppointmentsService {
         return createdAppointment;
     }
     async findAll(userId: string, args?: PaginateArgs): Promise<Appointment[]> {
-        return await this.appointmentsRepository.find({
+        const appointments = await this.appointmentsRepository.find({
             where: { user: { _id: userId }, status: Not('Rejected') },
             relations: { user: true, clinic: true, doctor: true, service: true, surveys: true, availableDates: true },
             take: args.take,
             skip: args.skip,
         });
+        this.logger.log(appointments.toString());
+        return appointments;
     }
 
     async allAppointments(approoved?: boolean): Promise<Appointment[]> {
-        return await this.appointmentsRepository.find({
+        const appointments = await this.appointmentsRepository.find({
             relations: { user: true, clinic: true, doctor: true, service: true, surveys: true, availableDates: true },
             where: { status: approoved ? 'Approoved' : In(['In process', 'Pending', 'Rejected', 'Approoved']) },
         });
+        this.logger.log(appointments.toString());
+        return appointments;
     }
 
     async setStatus(appointmentId: string, status: string) {
         const appointment = await this.findOne(appointmentId);
         appointment.status = status;
+        this.logger.log(appointment.toString());
         return await this.appointmentsRepository.save(appointment);
     }
 
+    @Transactional()
     async changeDate(appointmentId: string, timeStart: Date) {
         const appointment = await this.findOne(appointmentId);
         appointment.timeStart = timeStart;
         appointment.status = 'In process';
         await this.dateRepository.delete({ appointment: appointment });
         await this.appointmentsRepository.save(appointment);
+        this.logger.log(`Дата записи изменена, статус - "В процессе" ${appointment}`);
         return true;
     }
 
@@ -85,7 +96,11 @@ export class AppointmentsService {
             where: { _id: id },
             relations: { user: true, doctor: true, clinic: true, service: true, surveys: true },
         });
-        if (!appointment) throw new NotFoundException('Appointment with that id not found!');
+        if (!appointment) {
+            this.logger.error('Appointment with that id not found!');
+            throw new NotFoundException('Appointment with that id not found!');
+        }
+        this.logger.log(appointment.toString());
         return appointment;
     }
 }

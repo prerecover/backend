@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
 import { PusherService } from 'nestjs-pusher';
+import { LokiLogger } from 'nestjs-loki-logger';
 
 @Injectable()
 export class NotificationsService {
@@ -12,13 +13,17 @@ export class NotificationsService {
         @InjectRepository(Notification)
         private readonly notificationsRepository: Repository<Notification>,
         private readonly pusherService: PusherService,
-    ) {}
+    ) { }
+    private readonly logger = new LokiLogger(NotificationsService.name);
     async create(createNotificationInput: CreateNotificationInput) {
         const createdNotification = this.notificationsRepository.create({
             text: createNotificationInput.text,
             user: { _id: createNotificationInput.userId },
         });
 
+        this.logger.log(
+            `Отправлено уведомление - ${createdNotification.text}, Пользователю - ${createdNotification.user.email}`,
+        );
         const notification = await this.notificationsRepository.save(createdNotification);
         this.pusherService.trigger(createNotificationInput.userId, 'notification', notification);
         return notification;
@@ -35,6 +40,7 @@ export class NotificationsService {
     async setAsRead(notificationId: string) {
         const notification = await this.notificationsRepository.findOneBy({ _id: notificationId });
         notification.isRead = true;
+        this.logger.log(`Уведомление прочитано - ${notification.text}, ${notification.user.email}`);
         return await this.notificationsRepository.save(notification);
     }
 
