@@ -4,7 +4,7 @@ import { LokiLogger } from 'nestjs-loki-logger';
 
 @Injectable()
 export class MailService {
-    constructor(private readonly smtpService: MailerService) { }
+    constructor(private readonly smtpService: MailerService) {}
 
     private readonly logger = new LokiLogger(MailService.name);
 

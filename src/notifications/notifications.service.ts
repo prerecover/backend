@@ -13,7 +13,7 @@ export class NotificationsService {
         @InjectRepository(Notification)
         private readonly notificationsRepository: Repository<Notification>,
         private readonly pusherService: PusherService,
-    ) { }
+    ) {}
     private readonly logger = new LokiLogger(NotificationsService.name);
     async create(createNotificationInput: CreateNotificationInput) {
         const createdNotification = this.notificationsRepository.create({

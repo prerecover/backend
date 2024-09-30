@@ -14,7 +14,7 @@ export class AvailableDatesService {
         @InjectRepository(Appointment)
         private readonly appointmentsRepository: Repository<Appointment>,
         private readonly notificationService: NotificationsService,
-    ) { }
+    ) {}
     private readonly logger = new LokiLogger(AvailableDatesService.name);
 
     async setDates(appointmentId: string, dates: Date[]): Promise<boolean> {

@@ -6,7 +6,7 @@ import { Stream } from 'stream';
 @Injectable()
 export class MinioService {
     bucket = process.env.MINIO_BUCKET;
-    pathToFile = `http://localhost:9000/${this.bucket}`;
+    pathToFile = `https://${process.env.MINIO_HOST}/${this.bucket}`;
     constructor(@InjectS3() private readonly S3Service: S3) {
         const buckets = this.S3Service.listBuckets().then((bucket) => bucket.Buckets.map((bucket) => bucket.Name));
         buckets.then(

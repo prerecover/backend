@@ -22,7 +22,7 @@ export class SurveysService {
         @InjectRepository(Appointment)
         private readonly appointmentRepository: Repository<Appointment>,
         private readonly notificationService: NotificationsService,
-    ) { }
+    ) {}
     private readonly logger = new LokiLogger(SurveysService.name);
 
     async createSurvey(surveyInput: SurveyInput) {

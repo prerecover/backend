@@ -29,7 +29,7 @@ export class AppointmentsService {
         @InjectRepository(AvailableDate)
         private readonly dateRepository: Repository<AvailableDate>,
         private readonly notificationService: NotificationsService,
-    ) { }
+    ) {}
     private readonly logger = new LokiLogger(AppointmentsService.name);
 
     @Transactional()

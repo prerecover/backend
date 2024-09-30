@@ -6,7 +6,6 @@ pipeline {
             steps {
                 sh "docker build -t prerecover/backend"
                 sh "docker push prerecover/backend"
-
             }    
         }
     }
