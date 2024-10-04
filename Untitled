@@ -1,6 +1,0 @@
-class A {
-  _hidden = 0;
-  m() {
-    return this._hidden;
-  }
-}

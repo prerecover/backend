@@ -92,7 +92,6 @@ import { NotificationsModule } from './notifications/notifications.module';
         LokiLoggerModule.forRootAsync({
             useFactory: () => ({
                 lokiUrl: `http://${process.env.LOGGING_HOST}:${process.env.LOGGING_PORT}`,
-                logToConsole: true,
             }),
             inject: [ConfigService],
         }),
@@ -131,4 +130,4 @@ import { NotificationsModule } from './notifications/notifications.module';
         MinioService,
     ],
 })
-export class AppModule {}
+export class AppModule { }
