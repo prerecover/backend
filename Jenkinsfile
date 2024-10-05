@@ -12,7 +12,7 @@ pipeline {
         stage('Build'){
             steps {
                 script {
-                    dockerImage = docker.build("${env.DOCKERIMAGE}")
+                    dockerImage = docker.build("${env.DOCKER_IMAGE}")
                 }
             }     
         }
