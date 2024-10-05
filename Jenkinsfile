@@ -1,13 +1,20 @@
 pipeline {
     agent any
-
-
+    environment {
+        DOCKER_IMAGE = 'ternyavsky/backend'
+    }
     stages {
-        stage('Docker') {
+        stage('Checkout'){
             steps {
-                sh "docker build -t prerecover/backend"
-                sh "docker push prerecover/backend"
-            }    
+                checkout scm
+            }     
+        }
+        stage('Build'){
+            steps {
+                script {
+                    dockerImage = docker.build("${env.DOCKERIMAGE}")
+                }
+            }     
         }
     }
 }
