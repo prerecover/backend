@@ -6,7 +6,7 @@ import { Column, CreateDateColumn, Entity } from 'typeorm';
 @Entity({ name: 'links' })
 export class Link extends CommonEntity {
     @Field()
-    @Column({ name: 'clinic_email' })
+    @Column({ name: 'clinic_email', nullable: true })
     public clinicEmail: string;
 
     @Field()

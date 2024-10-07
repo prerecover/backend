@@ -252,7 +252,7 @@ type Mutation {
   createSurvey(surveyInput: SurveyInput!): Survey!
   createUser(countryTitle: String!, createUserInput: CreateUserInput!): User!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): Boolean!
-  generateLink(clinicEmail: String!): Link!
+  generateLink(clinicEmail: String): Link!
   newPassword(newPasswordInput: NewPasswordInput!): Boolean!
   registerClinic(registerClinicInput: RegisterClinicInput!): Clinic!
   registrationUser(registrationInput: RegistrationUser!): User!

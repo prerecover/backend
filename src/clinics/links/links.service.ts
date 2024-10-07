@@ -10,7 +10,7 @@ export class LinksService {
         public readonly linkRepository: Repository<Link>,
     ) {}
 
-    async generateLink(clinicEmail: string) {
+    async generateLink(clinicEmail?: string) {
         const link = this.linkRepository.create({ clinicEmail: clinicEmail });
         return await this.linkRepository.save(link);
     }
@@ -27,7 +27,7 @@ export class LinksService {
         if (Date.now() - link.expiredAt.getTime() > ONE_HOUR) {
             throw new BadRequestException('Link time expired!');
         }
-        // link.isUsed = true;
+        link.isUsed = true;
         return await this.linkRepository.save(link);
     }
 }

@@ -7,10 +7,9 @@ export class LinksResolver {
     constructor(private readonly linksService: LinksService) {}
 
     @Mutation(() => Link, { name: 'generateLink' })
-    async generateLink(@Args('clinicEmail') clinicEmail: string) {
+    async generateLink(@Args('clinicEmail', { nullable: true }) clinicEmail?: string) {
         return await this.linksService.generateLink(clinicEmail);
     }
-
     @Query(() => Link, { name: 'validateLink' })
     async validateLink(@Args('_id') _id: string) {
         return await this.linksService.validateLink(_id);

@@ -10,7 +10,7 @@ export class S3Config implements S3ModuleOptionsFactory {
                     accessKeyId: process.env.MINIO_ACCESS_KEY,
                     secretAccessKey: process.env.MINIO_SECRET_KEY,
                 },
-                endpoint: `https://${process.env.MINIO_HOST}`,
+                endpoint: process.env.MINIO_HOST,
                 forcePathStyle: true,
                 region: 'ru-1',
             },

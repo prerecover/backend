@@ -23,7 +23,7 @@ export class UsersService {
         private readonly appointmentsRepository: Repository<Appointment>,
         @Inject()
         private readonly minioService: MinioService,
-    ) {}
+    ) { }
 
     private readonly logger = new LokiLogger(UsersService.name);
     @Transactional()
@@ -50,16 +50,9 @@ export class UsersService {
             const country = await this.countryRepository.findOneBy({ title: countryTitle });
             user.country = country;
         }
-        if (avatar) {
-            this.logger.log(`Обновлено фото пользователя - ${user.email}`);
-            const path = await this.minioService.uploadFile(await avatar, 'users_images');
-            user.avatar = `${this.minioService.pathToFile}/${path}`;
-        }
-        const newUser = await this.userRepository.save({
-            ...user,
-            ...data,
-        });
+        const newUser = await this.userRepository.save({ ...user, ...data });
         this.logger.log(`Обновлен профиль пользователя - ${user.email}`);
+        this.logger.log(`Аватар пользователя - ${avatar}`);
         return newUser;
     }
     async findAll(args?: PaginateArgs): Promise<User[]> {
