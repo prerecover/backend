@@ -23,7 +23,7 @@ export class UsersService {
         private readonly appointmentsRepository: Repository<Appointment>,
         @Inject()
         private readonly minioService: MinioService,
-    ) { }
+    ) {}
 
     private readonly logger = new LokiLogger(UsersService.name);
     @Transactional()

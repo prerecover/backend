@@ -34,19 +34,14 @@ export class ClinicsService {
         this.telegram = this.moduleRef.get(TelegramService, { strict: false });
     }
     async registerClinic(registerClinicInput: RegisterClinicInput) {
-        const { services, countryName, avatar, ...data } = registerClinicInput;
+        const { services, countryName, ...data } = registerClinicInput;
         let clinic = this.clinicRepository.create(data);
         const country = await this.countryRepository.findOneBy({ title: countryName });
         clinic.country = country;
-        if (avatar) {
-            const path = await this.minioService.uploadFile(await avatar, 'users_images');
-            clinic.avatar = `${this.minioService.pathToFile}/${path}`;
-        }
         clinic = await this.clinicRepository.save(clinic);
         services.forEach((service) => {
             const { doctors, ...serviceData } = service;
             const serviceCreated = this.serviceRepository.create(serviceData);
-            console.log(doctors, 41);
             const doctorsArray: Doctor[] = [];
             doctors.forEach((doctor) => {
                 const doctorCreated = this.doctorsRepository.create(doctor);

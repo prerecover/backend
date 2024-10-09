@@ -1,9 +1,9 @@
 import { InputType, Field } from '@nestjs/graphql';
 import { RegisterServiceInput } from './service-input';
 
-import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
-import { FileUpload } from 'src/common/shared/file.interface';
-import { IsEmail } from 'class-validator';
+// import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
+// import { FileUpload } from 'src/common/shared/file.interface';
+// import { IsEmail } from 'class-validator';
 @InputType()
 export class RegisterClinicInput {
     @Field()
@@ -21,15 +21,18 @@ export class RegisterClinicInput {
     @Field()
     public city: string;
 
-    @Field()
-    @IsEmail()
+    @Field({ nullable: true })
+    // @IsEmail({})
     public email: string;
+
+    @Field()
+    public card: string;
 
     @Field()
     public address: string;
 
-    @Field(() => GraphQLUpload, { nullable: true })
-    avatar: Promise<FileUpload>;
+    // @Field(() => GraphQLUpload, { nullable: true })
+    // avatar: Promise<FileUpload>;
 
     @Field()
     public workdays: string;

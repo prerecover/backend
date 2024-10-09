@@ -9,6 +9,8 @@ import { UsersStats } from './dto/users-stats';
 import { AppointmentStats } from './dto/appointment-stats';
 import { ClinicStats } from './dto/clinic-stats';
 import { Survey } from 'src/surveys/entities/survey.entity';
+import { LinksStats } from './dto/links-stats';
+import { Link } from 'src/clinics/links/entities/link.entity';
 
 @Injectable()
 export class StatisticService {
@@ -19,6 +21,8 @@ export class StatisticService {
         private readonly userRepository: Repository<User>,
         @InjectRepository(Appointment)
         private readonly appointmentRepository: Repository<Appointment>,
+        @InjectRepository(Link)
+        private readonly linkRepository: Repository<Link>,
         @InjectRepository(Survey)
         private readonly surveyRepository: Repository<Survey>,
     ) {}
@@ -55,6 +59,16 @@ export class StatisticService {
         return { totalClinics, totalCreated, totalDeleted };
     }
 
+    async getLinksStats(chunk: number): Promise<LinksStats> {
+        const totalGenerated = await this.linkRepository.count({
+            where: { createdAt: MoreThan(chunk == 1 ? this.oneDay : this.week) },
+        });
+        const totalUsed = await this.linkRepository.count({
+            where: { createdAt: MoreThan(chunk == 1 ? this.oneDay : this.week), isUsed: true },
+        });
+        return { totalGenerated, totalUsed };
+    }
+
     async getUserStats(chunk: number): Promise<UsersStats> {
         const totalCreatedUsers = await this.userRepository.count({
             where: { createdAt: MoreThan(chunk == 1 ? this.oneDay : this.week) },
@@ -65,11 +79,14 @@ export class StatisticService {
         const createdSurvey = await this.surveyRepository.count({
             where: { createdAt: MoreThan(chunk == 1 ? this.oneDay : this.week) },
         });
+        const passedSurvey = await this.surveyRepository.count({
+            where: { createdAt: MoreThan(chunk == 1 ? this.oneDay : this.week), passed: true },
+        });
         return {
             totalCreatedUsers,
             totalDeletedUsers,
             createdSurvey: createdSurvey,
-            completedSurvey: 0,
+            completedSurvey: passedSurvey,
         };
     }
 
@@ -77,6 +94,7 @@ export class StatisticService {
         const userStats = await this.getUserStats(chunk);
         const appointmentStats = await this.getAppointmentStats(chunk);
         const clinicStats = await this.getClinicStats(chunk);
-        return { users: userStats, appointments: appointmentStats, clinics: clinicStats };
+        const linksStats = await this.getLinksStats(chunk);
+        return { users: userStats, appointments: appointmentStats, clinics: clinicStats, links: linksStats };
     }
 }

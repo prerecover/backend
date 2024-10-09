@@ -11,6 +11,6 @@ export class PaginateArgs {
     @Field(() => Int)
     @Min(1)
     @IsOptional()
-    @Max(50)
-    public take = 25;
+    @Max(1000)
+    public take = 500;
 }

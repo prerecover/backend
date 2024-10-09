@@ -2,18 +2,13 @@ import { Resolver, Query, Args } from '@nestjs/graphql';
 import { CountriesService } from './countries.service';
 import { Country } from './entities/country.entity';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
-import { PusherService } from 'nestjs-pusher';
 
 @Resolver(() => Country)
 export class CountriesResolver {
-    constructor(
-        private readonly countriesService: CountriesService,
-        private readonly pusherService: PusherService,
-    ) { }
+    constructor(private readonly countriesService: CountriesService) {}
 
     @Query(() => [Country], { name: 'countries' })
     async findAll(@Args({ nullable: true }) args?: PaginateArgs) {
-        this.pusherService.trigger('my-channel', 'my-event', { asd: 123 }).catch((res) => console.log(res));
         return await this.countriesService.findAll(args);
     }
 

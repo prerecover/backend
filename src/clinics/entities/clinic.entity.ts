@@ -35,6 +35,10 @@ export class Clinic extends CommonEntity {
     @Column({ nullable: true })
     public site: string;
 
+    @Field({ nullable: true })
+    @Column({ nullable: true })
+    public card: string;
+
     @Field(() => Int, { nullable: true })
     @Column({ name: 'start_time', nullable: true })
     public startTime: number;

@@ -65,8 +65,8 @@ export class AppointmentsResolver {
     }
 
     @Query(() => [Appointment], { name: 'allAppointments' })
-    async allAppointments(@Args('approoved', { nullable: true }) approoved?: boolean) {
-        return await this.appointmentsService.allAppointments(approoved);
+    async allAppointments(@Args('status', { nullable: true }) status?: string) {
+        return await this.appointmentsService.allAppointments(status);
     }
 
     @Query(() => Appointment, { name: 'appointment' })

@@ -66,6 +66,7 @@ type Clinic {
   adminNumber: String
   appointments: [Appointment!]
   avatar: String
+  card: String
   city: String
   country: Country
 
@@ -232,6 +233,11 @@ type Link {
   updatedAt: Date!
 }
 
+type LinksStats {
+  totalGenerated: Int!
+  totalUsed: Int!
+}
+
 input LoginInput {
   email: String
   number: String
@@ -334,37 +340,37 @@ type Notification {
 }
 
 type Query {
-  allAppointments(approoved: Boolean): [Appointment!]!
+  allAppointments(status: String): [Appointment!]!
   appointment(_id: String!): Appointment!
-  appointments(skip: Int! = 0, take: Int! = 25): [Appointment!]!
+  appointments(skip: Int! = 0, take: Int! = 500): [Appointment!]!
   clinic(_id: String!): Clinic!
-  clinics(skip: Int! = 0, take: Int! = 25): [Clinic!]!
-  countries(skip: Int! = 0, take: Int! = 25): [Country!]!
+  clinics(skip: Int! = 0, take: Int! = 500): [Clinic!]!
+  countries(skip: Int! = 0, take: Int! = 500): [Country!]!
   country(slug: String!): Country!
   doctor(_id: String!): Doctor!
-  doctors(skip: Int! = 0, take: Int! = 25): [Doctor!]!
+  doctors(skip: Int! = 0, take: Int! = 500): [Doctor!]!
   doctorsByClinic(clinicId: String!): [Doctor!]!
   getMe: User!
   history: History!
   like(id: ID!): Like!
-  likes(skip: Int! = 0, take: Int! = 25): [Like!]!
+  likes(skip: Int! = 0, take: Int! = 500): [Like!]!
   news(_id: ID!): News!
-  newsAll(skip: Int! = 0, take: Int! = 25): [News!]!
+  newsAll(skip: Int! = 0, take: Int! = 500): [News!]!
   newsByClinic(clinicId: String!): [News!]!
   notification(id: Int!): Notification!
-  notifications(skip: Int! = 0, take: Int! = 25): [Notification!]!
+  notifications(skip: Int! = 0, take: Int! = 500): [Notification!]!
   notificationsByUser: [Notification!]!
   resendForgotCode(email: String!): Boolean!
   saved(_id: String!): Saved!
-  savedAll(skip: Int! = 0, take: Int! = 25): [Saved!]!
+  savedAll(skip: Int! = 0, take: Int! = 500): [Saved!]!
   search: Search!
   service(_id: String!): Service!
-  services(skip: Int! = 0, take: Int! = 25): [Service!]!
+  services(skip: Int! = 0, take: Int! = 500): [Service!]!
   servicesByClinic(clinicId: String!): [Service!]!
   stats(chunk: Int!): StatsOutput!
-  surveys(skip: Int! = 0, take: Int! = 25): [Survey!]!
+  surveys(skip: Int! = 0, take: Int! = 500): [Survey!]!
   user(_id: ID!): User!
-  users(skip: Int! = 0, take: Int! = 25): [User!]!
+  users(skip: Int! = 0, take: Int! = 500): [User!]!
   validateLink(_id: String!): Link!
 }
 
@@ -389,10 +395,10 @@ input QuestionInput {
 input RegisterClinicInput {
   address: String!
   adminNumber: String!
-  avatar: Upload
+  card: String!
   city: String!
   countryName: String!
-  email: String!
+  email: String
   endTime: Int!
   services: [RegisterServiceInput!]!
   site: String
@@ -477,6 +483,7 @@ type Service {
 type StatsOutput {
   appointments: AppointmentStats!
   clinics: ClinicStats!
+  links: LinksStats!
   users: UsersStats!
 }
 

@@ -64,10 +64,10 @@ export class AppointmentsService {
         return appointments;
     }
 
-    async allAppointments(approoved?: boolean): Promise<Appointment[]> {
+    async allAppointments(status?: string): Promise<Appointment[]> {
         const appointments = await this.appointmentsRepository.find({
             relations: { user: true, clinic: true, doctor: true, service: true, surveys: true, availableDates: true },
-            where: { status: approoved ? 'Approoved' : In(['In process', 'Pending', 'Rejected', 'Approoved']) },
+            where: { status: status || In(['In process', 'Pending', 'Rejected', 'Approoved']) },
         });
         this.logger.log(appointments.toString());
         return appointments;

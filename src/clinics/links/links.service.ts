@@ -27,7 +27,7 @@ export class LinksService {
         if (Date.now() - link.expiredAt.getTime() > ONE_HOUR) {
             throw new BadRequestException('Link time expired!');
         }
-        link.isUsed = true;
+        // link.isUsed = true;
         return await this.linkRepository.save(link);
     }
 }

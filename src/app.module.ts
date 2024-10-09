@@ -130,4 +130,4 @@ import { NotificationsModule } from './notifications/notifications.module';
         MinioService,
     ],
 })
-export class AppModule { }
+export class AppModule {}
