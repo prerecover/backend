@@ -56,9 +56,16 @@ export class SurveysService {
             relations: { user: true, clinic: true, doctor: true, service: true },
         });
     }
+
+    async findByUser(userId: string) {
+        return await this.surveyRepository.find({
+            relations: { questions: true, appointment: true },
+            where: { appointment: { user: { _id: userId } } },
+        });
+    }
     async findAll(args?: PaginateArgs): Promise<Survey[]> {
         return await this.surveyRepository.find({
-            relations: { questions: true },
+            relations: { questions: true, appointment: true },
             take: args.take,
             skip: args.skip,
         });

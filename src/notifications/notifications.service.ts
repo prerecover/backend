@@ -22,7 +22,7 @@ export class NotificationsService {
         });
 
         this.logger.log(
-            `Отправлено уведомление - ${createdNotification.text}, Пользователю - ${createdNotification.user.email}`,
+            `Отправлено уведомление - ${createdNotification.text}, Пользователю - ${createdNotification.user}`,
         );
         const notification = await this.notificationsRepository.save(createdNotification);
         this.pusherService.trigger(createNotificationInput.userId, 'notification', notification);
@@ -40,7 +40,7 @@ export class NotificationsService {
     async setAsRead(notificationId: string) {
         const notification = await this.notificationsRepository.findOneBy({ _id: notificationId });
         notification.isRead = true;
-        this.logger.log(`Уведомление прочитано - ${notification.text}, ${notification.user.email}`);
+        this.logger.log(`Уведомление прочитано - ${notification.text}`);
         return await this.notificationsRepository.save(notification);
     }
 

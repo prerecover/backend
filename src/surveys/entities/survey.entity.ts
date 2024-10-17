@@ -12,7 +12,7 @@ export class Survey extends CommonEntity {
     public appointment: Appointment;
 
     @Field(() => [SurveyQuestion], { nullable: true })
-    @OneToMany(() => SurveyQuestion, (question) => question.survey)
+    @OneToMany(() => SurveyQuestion, (question) => question.survey, { nullable: true })
     public questions: SurveyQuestion[];
 
     @Field()

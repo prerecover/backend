@@ -2,6 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AdminStats {
+  approovedAppointments: Int!
+  inProcessAppointments: Int!
+  pendingAppointments: Int!
+}
+
 input AnswerInput {
   text: String!
 }
@@ -58,6 +64,14 @@ input AvatarUpload {
   avatar: Upload
 }
 
+type CalendarStats {
+  changeByClinic: Int!
+  changeByCompany: Int!
+  inProcessAppointments: Int!
+  noVisitCalendar: Int!
+  visitCalendar: Int!
+}
+
 type Clinic {
   _id: String!
   address: String
@@ -74,7 +88,7 @@ type Clinic {
   createdAt: Date!
 
   """Deleted at timestamp"""
-  deletedAt: Date!
+  deletedAt: Date
   description: String
   doctors: [Doctor!]!
   email: String
@@ -204,8 +218,7 @@ input ForgotPasswordInput {
 
 type History {
   appointments: [Appointment!]!
-  clinics: [Clinic!]!
-  doctors: [Doctor!]!
+  surveys: [Survey!]!
 }
 
 type Like {
@@ -369,6 +382,7 @@ type Query {
   servicesByClinic(clinicId: String!): [Service!]!
   stats(chunk: Int!): StatsOutput!
   surveys(skip: Int! = 0, take: Int! = 500): [Survey!]!
+  surveysByUser: [Survey!]!
   user(_id: ID!): User!
   users(skip: Int! = 0, take: Int! = 500): [User!]!
   validateLink(_id: String!): Link!
@@ -481,7 +495,9 @@ type Service {
 }
 
 type StatsOutput {
+  admin: AdminStats!
   appointments: AppointmentStats!
+  calendar: CalendarStats!
   clinics: ClinicStats!
   links: LinksStats!
   users: UsersStats!

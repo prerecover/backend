@@ -3,6 +3,8 @@ import { AppointmentStats } from './appointment-stats';
 import { ClinicStats } from './clinic-stats';
 import { UsersStats } from './users-stats';
 import { LinksStats } from './links-stats';
+import { CalendarStats } from './calendar-stats';
+import { AdminStats } from './admin-stats';
 
 @ObjectType()
 export class StatsOutput {
@@ -17,4 +19,10 @@ export class StatsOutput {
 
     @Field()
     public links: LinksStats;
+
+    @Field()
+    public calendar: CalendarStats;
+
+    @Field()
+    public admin: AdminStats;
 }

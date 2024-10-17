@@ -49,7 +49,7 @@ export class AppointmentsService {
         const createdAppointment = await this.appointmentsRepository.save(appointment);
         this.notificationService.create({
             userId: appointment.user._id,
-            text: `Создана запись “${createdAppointment.title || 'Без названия'}” на ${new Date(createdAppointment.createdAt).getDate()}.${new Date(createdAppointment.createdAt).getMonth() + 1}.${new Date(createdAppointment.createdAt).getFullYear()}`,
+            text: `Создана запись “${createdAppointment.title || 'Без названия'}” на ${new Date(createdAppointment.timeStart).getDate()}.${new Date(createdAppointment.timeStart).getMonth() + 1}.${new Date(createdAppointment.timeStart).getFullYear()}`,
         });
         return createdAppointment;
     }

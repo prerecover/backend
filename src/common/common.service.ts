@@ -5,6 +5,8 @@ import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { Service } from 'src/services/entities/service.entity';
 import { Repository } from 'typeorm';
+import { History } from './obj-types/history';
+import { Survey } from 'src/surveys/entities/survey.entity';
 
 @Injectable()
 export class CommonService {
@@ -17,6 +19,8 @@ export class CommonService {
         private readonly serviceRepository: Repository<Service>,
         @InjectRepository(Appointment)
         private readonly appointmentRepository: Repository<Appointment>,
+        @InjectRepository(Survey)
+        private readonly surveyRepository: Repository<Survey>,
     ) {}
 
     async search() {
@@ -25,13 +29,15 @@ export class CommonService {
         const services = await this.serviceRepository.find({ relations: { doctors: true, clinic: true } });
         return { clinics, doctors, services };
     }
-    async history(userId: string) {
-        const clinics = await this.clinicRepository.find({ relations: { country: true } });
-        const doctors = await this.doctorRepository.find({ relations: { country: true } });
+    async history(userId: string): Promise<History> {
         const appointments = await this.appointmentRepository.find({
-            relations: { doctor: true, clinic: true, service: true },
+            relations: { doctor: true, clinic: true, service: true, availableDates: true },
             where: { user: { _id: userId } },
         });
-        return { clinics, doctors, appointments };
+        const surveys = await this.surveyRepository.find({
+            where: { appointment: { user: { _id: userId } } },
+            relations: { appointment: true, questions: true },
+        });
+        return { appointments, surveys };
     }
 }

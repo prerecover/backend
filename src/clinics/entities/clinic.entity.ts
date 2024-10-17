@@ -109,8 +109,8 @@ export class Clinic extends CommonEntity {
     @Column({ nullable: true })
     public password: string;
 
-    @Field({ description: 'Deleted at timestamp' })
-    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp with time zone' })
+    @Field({ description: 'Deleted at timestamp', nullable: true })
+    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp with time zone', nullable: true })
     public deletedAt: Date;
 
     @OneToMany(() => Service, (service) => service.clinic, { nullable: true })
