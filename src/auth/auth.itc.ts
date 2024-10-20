@@ -1,4 +1,4 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import { BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
@@ -15,7 +15,7 @@ export class AuthInterceptor implements NestInterceptor {
         const request = ctx.getContext().req;
         const token = this.extractTokenFromHeader(request);
         if (!token) {
-            return next.handle();
+            throw new BadRequestException('Token not found');
         }
         try {
             const payload = await this.jwtService.verifyAsync(token, {

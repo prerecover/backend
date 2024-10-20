@@ -6,7 +6,7 @@ import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { Service } from 'src/services/entities/service.entity';
 import { Survey } from 'src/surveys/entities/survey.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { AvailableDate } from '../available_dates/entities/availableDate.entity';
 
 @ObjectType()
@@ -36,9 +36,10 @@ export class Appointment extends CommonEntity {
     @Column({ nullable: true })
     public file: string;
 
-    @Field(() => [Survey], { nullable: true })
-    @OneToMany(() => Survey, (survey) => survey.appointment)
-    public surveys: Survey[];
+    @Field(() => Survey, { nullable: true })
+    @JoinColumn()
+    @OneToOne(() => Survey, (survey) => survey.appointment, { nullable: true })
+    public survey: Survey;
 
     @Field(() => [AvailableDate], { nullable: true })
     @OneToMany(() => AvailableDate, (avDate) => avDate.appointment)

@@ -23,6 +23,10 @@ export class Clinic extends CommonEntity {
     @Column({ default: 0 })
     public treated: number;
 
+    @Field({ nullable: true })
+    @Column({ nullable: true })
+    public calendar: string;
+
     @Field(() => Float)
     @Column({ type: 'float', default: 5.0 })
     public rating: number;
@@ -47,8 +51,8 @@ export class Clinic extends CommonEntity {
     @Column({ name: 'end_time', nullable: true })
     public endTime: number;
 
-    @Field({ nullable: true })
-    @Column({ name: 'workdays', nullable: true })
+    @Field({})
+    @Column({ name: 'workdays' })
     public workDays: string;
 
     @Field(() => [Doctor])

@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
 import { AppointmentsService } from './appointments.service';
 import { Appointment } from './entities/appointment.entity';
 import { CreateAppointmentInput } from './dto/create-appointment.input';
@@ -9,12 +9,15 @@ import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { TelegramService } from 'nestjs-telegram';
 import { ModuleRef } from '@nestjs/core';
+import { Survey } from 'src/surveys/entities/survey.entity';
+import { SurveysService } from 'src/surveys/surveys.service';
 
 @Resolver(() => Appointment)
 export class AppointmentsResolver {
     constructor(
         private readonly appointmentsService: AppointmentsService,
         private readonly moduleRef: ModuleRef,
+        private readonly surveyService: SurveysService,
     ) {}
 
     private telegram: TelegramService;
@@ -56,6 +59,11 @@ export class AppointmentsResolver {
     @Mutation(() => Boolean)
     async changeDate(@Args('appointmentId') appointmentId: string, @Args('timeStart') timeStart: Date) {
         return await this.appointmentsService.changeDate(appointmentId, timeStart);
+    }
+    @ResolveField('survey', () => [Survey], { nullable: true })
+    async survey(@Parent() appointment: Appointment) {
+        const { _id: appointmentId } = appointment;
+        return await this.surveyService.findByAppointment(appointmentId);
     }
 
     @UseGuards(AuthGuard)

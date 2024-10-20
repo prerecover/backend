@@ -27,7 +27,7 @@ type Appointment {
   service: Service
   specialCheck: Boolean!
   status: String!
-  surveys: [Survey!]
+  survey: Survey
   timeStart: Date
   title: String
 
@@ -80,6 +80,7 @@ type Clinic {
   adminNumber: String
   appointments: [Appointment!]
   avatar: String
+  calendar: String
   card: String
   city: String
   country: Country
@@ -107,7 +108,7 @@ type Clinic {
 
   """Updated at timestamp"""
   updatedAt: Date!
-  workDays: String
+  workDays: String!
 }
 
 type ClinicStats {
@@ -381,6 +382,7 @@ type Query {
   services(skip: Int! = 0, take: Int! = 500): [Service!]!
   servicesByClinic(clinicId: String!): [Service!]!
   stats(chunk: Int!): StatsOutput!
+  surveyByAppointment(appointmentId: String!): Survey!
   surveys(skip: Int! = 0, take: Int! = 500): [Survey!]!
   surveysByUser: [Survey!]!
   user(_id: ID!): User!
@@ -409,6 +411,7 @@ input QuestionInput {
 input RegisterClinicInput {
   address: String!
   adminNumber: String!
+  calendar: String
   card: String!
   city: String!
   countryName: String!

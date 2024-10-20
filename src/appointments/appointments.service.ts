@@ -56,7 +56,7 @@ export class AppointmentsService {
     async findAll(userId: string, args?: PaginateArgs): Promise<Appointment[]> {
         const appointments = await this.appointmentsRepository.find({
             where: { user: { _id: userId }, status: Not('Rejected') },
-            relations: { user: true, clinic: true, doctor: true, service: true, surveys: true, availableDates: true },
+            relations: { user: true, clinic: true, doctor: true, service: true, survey: true, availableDates: true },
             take: args.take,
             skip: args.skip,
         });
@@ -66,7 +66,7 @@ export class AppointmentsService {
 
     async allAppointments(status?: string): Promise<Appointment[]> {
         const appointments = await this.appointmentsRepository.find({
-            relations: { user: true, clinic: true, doctor: true, service: true, surveys: true, availableDates: true },
+            relations: { user: true, clinic: true, doctor: true, service: true, survey: true, availableDates: true },
             where: { status: status || In(['In process', 'Pending', 'Rejected', 'Approoved']) },
         });
         this.logger.log(appointments.toString());
@@ -94,7 +94,7 @@ export class AppointmentsService {
     async findOne(id: string) {
         const appointment = await this.appointmentsRepository.findOne({
             where: { _id: id },
-            relations: { user: true, doctor: true, clinic: true, service: true, surveys: true },
+            relations: { user: true, doctor: true, clinic: true, service: true, survey: true },
         });
         if (!appointment) {
             this.logger.error('Appointment with that id not found!');

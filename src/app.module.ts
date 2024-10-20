@@ -119,10 +119,10 @@ import { NotificationsModule } from './notifications/notifications.module';
             provide: APP_INTERCEPTOR,
             useClass: TimeoutInterceptor,
         },
-        {
-            provide: APP_INTERCEPTOR,
-            useClass: AuthInterceptor,
-        },
+        // {
+        //     provide: APP_INTERCEPTOR,
+        //     useClass: AuthInterceptor,
+        // },
 
         IsUnique,
         IsExist,

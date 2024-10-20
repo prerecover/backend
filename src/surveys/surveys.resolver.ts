@@ -22,6 +22,10 @@ export class SurveysResolver {
         return await this.surveysService.findAll(args);
     }
 
+    @Query(() => Survey, { name: 'surveyByAppointment' })
+    async findByAppointment(@Args('appointmentId') _id: string) {
+        return await this.surveysService.findByAppointment(_id);
+    }
     @UseGuards()
     @Query(() => [Survey], { name: 'surveysByUser' })
     async findByUser(@CurrentUser() user?: User) {

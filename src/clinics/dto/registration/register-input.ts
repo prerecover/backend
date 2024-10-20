@@ -18,6 +18,9 @@ export class RegisterClinicInput {
     @Field()
     public countryName: string;
 
+    @Field({ nullable: true })
+    public calendar: string;
+
     @Field()
     public city: string;
 

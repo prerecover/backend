@@ -35,7 +35,9 @@ export class ClinicsService {
     }
     async registerClinic(registerClinicInput: RegisterClinicInput) {
         const { services, countryName, ...data } = registerClinicInput;
+        console.log(data.workdays);
         let clinic = this.clinicRepository.create(data);
+        clinic.workDays = data.workdays;
         const country = await this.countryRepository.findOneBy({ title: countryName });
         clinic.country = country;
         clinic = await this.clinicRepository.save(clinic);

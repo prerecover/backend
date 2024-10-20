@@ -5,6 +5,8 @@ import { CreateNotificationInput } from './dto/create-notification.input';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { User } from 'src/users/entities/user.entity';
 import { CurrentUser } from 'src/common/shared/user.decorator';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Resolver(() => Notification)
 export class NotificationsResolver {
@@ -25,6 +27,7 @@ export class NotificationsResolver {
         return await this.notificationsService.setAsRead(notificationId);
     }
 
+    @UseGuards(AuthGuard)
     @Query(() => [Notification], { name: 'notificationsByUser' })
     async findByUser(@CurrentUser() user: User) {
         console.log(user);

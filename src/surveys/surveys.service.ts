@@ -50,9 +50,16 @@ export class SurveysService {
         this.logger.log('Отправлено уведомление в телеграмм о опросе');
         return createdSurvey;
     }
+
+    async findByAppointment(appointmentId: string) {
+        return await this.surveyRepository.findOne({
+            where: { appointment: { _id: appointmentId } },
+            relations: { questions: true },
+        });
+    }
     async appointmentsForSurvey(surveyId: string) {
         return await this.appointmentRepository.findOne({
-            where: { surveys: { _id: surveyId } },
+            where: { survey: { _id: surveyId } },
             relations: { user: true, clinic: true, doctor: true, service: true },
         });
     }

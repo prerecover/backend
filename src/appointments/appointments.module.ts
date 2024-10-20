@@ -11,6 +11,7 @@ import { User } from 'src/users/entities/user.entity';
 import { AvailableDatesModule } from './available_dates/available_dates.module';
 import { AvailableDate } from './available_dates/entities/availableDate.entity';
 import { NotificationsModule } from 'src/notifications/notifications.module';
+import { SurveysModule } from 'src/surveys/surveys.module';
 
 @Module({
     imports: [
@@ -18,6 +19,7 @@ import { NotificationsModule } from 'src/notifications/notifications.module';
         UsersModule,
         NotificationsModule,
         AvailableDatesModule,
+        SurveysModule,
     ],
     providers: [AppointmentsResolver, AppointmentsService],
     exports: [AppointmentsService],

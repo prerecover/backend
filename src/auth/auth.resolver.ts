@@ -8,7 +8,7 @@ export class AuthResolver {
     constructor(private readonly authService: AuthService) {}
 
     @Mutation(() => TokenResponse, { name: 'signIn' })
-    async findAll(@Args('signIn') signIn: LoginInput) {
+    async signIn(@Args('signIn') signIn: LoginInput) {
         return await this.authService.signIn(signIn);
     }
 }
