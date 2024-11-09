@@ -8,7 +8,7 @@ export class LinksService {
     constructor(
         @InjectRepository(Link)
         public readonly linkRepository: Repository<Link>,
-    ) { }
+    ) {}
 
     async generateLink(clinicEmail?: string) {
         const link = this.linkRepository.create({ clinicEmail: clinicEmail, isUsed: false });

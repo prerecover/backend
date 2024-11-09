@@ -28,7 +28,6 @@ import { SMTPConfig } from './config/smtp';
 import { MailModule } from './config/smtp/mail.module';
 import { BullModule } from '@nestjs/bull';
 import { BullConfig } from './config/bull';
-import { AuthInterceptor } from './auth/auth.itc';
 import { CommonModule } from './common/common.module';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { LinksModule } from './clinics/links/links.module';
