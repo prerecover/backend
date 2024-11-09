@@ -9,3 +9,12 @@ export class SurveyInput {
     @Field(() => [QuestionInput])
     public questions: QuestionInput[];
 }
+
+@InputType()
+export class SurveyCompleteInput {
+    @Field(() => String)
+    public questionTitle: string;
+
+    @Field(() => String)
+    public answerTitle: string;
+}

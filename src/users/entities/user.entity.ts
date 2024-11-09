@@ -84,6 +84,10 @@ export class User extends CommonEntity {
     @Field()
     public isVerfied: boolean;
 
+    @Column({ name: 'history_studied', default: false })
+    @Field()
+    public historyStudied: boolean;
+
     @Field({ nullable: true })
     @Column({ nullable: true })
     public avatar: string;

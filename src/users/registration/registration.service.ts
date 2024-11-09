@@ -20,7 +20,7 @@ export class RegistrationService {
         private readonly userRepository: Repository<User>,
         @InjectQueue(QUEUE_NAME.mail) private msgQueue: Queue,
         private readonly userService: UsersService,
-    ) {}
+    ) { }
     private readonly logger = new LokiLogger(RegistrationService.name);
     async createUser(registrationInput: RegistrationUser): Promise<User> {
         const user = this.userRepository.create(registrationInput);

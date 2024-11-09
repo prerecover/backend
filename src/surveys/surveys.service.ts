@@ -4,11 +4,15 @@ import { Survey } from './entities/survey.entity';
 import { Repository } from 'typeorm';
 import { SurveyQuestion } from './questions/entities/question.entity';
 import { QuestionAnswer } from './answers/entities/answer.entity';
-import { SurveyInput } from './dto/survey.dto';
+import { SurveyCompleteInput, SurveyInput } from './dto/survey.dto';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { LokiLogger } from 'nestjs-loki-logger';
+import { InjectQueue } from '@nestjs/bull';
+import { QUEUE_NAME } from 'src/config/bull/queue.interface';
+import { Queue } from 'bull';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class SurveysService {
@@ -19,11 +23,31 @@ export class SurveysService {
         private readonly questionRepository: Repository<SurveyQuestion>,
         @InjectRepository(QuestionAnswer)
         private readonly answerRepository: Repository<QuestionAnswer>,
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
         @InjectRepository(Appointment)
         private readonly appointmentRepository: Repository<Appointment>,
         private readonly notificationService: NotificationsService,
+        @InjectQueue(QUEUE_NAME.historyStudy) private historyStudyQueue: Queue,
     ) {}
     private readonly logger = new LokiLogger(SurveysService.name);
+
+    async completeSurvey(surveyData: SurveyCompleteInput[], surveyId: string, userId: string) {
+        const survey = await this.surveyRepository.findOneBy({ _id: surveyId });
+        survey.passed = true;
+        surveyData.map(async (surveyInput) => {
+            const question = await this.questionRepository.findOne({ where: { text: surveyInput.questionTitle } });
+            question.answer = await this.answerRepository.findOne({ where: { text: surveyInput.answerTitle } });
+            await this.questionRepository.save(question);
+        });
+        const user = await this.userRepository.findOneBy({ _id: userId });
+        user.historyStudied = true;
+        await this.userRepository.save(user);
+        await this.notificationService.create({ userId, text: 'Вся ваша история изучается' });
+        await this.surveyRepository.save(survey);
+        await this.historyStudyQueue.add('historyStudyReset', { userId }, { delay: 60000 * 24 });
+        return true;
+    }
 
     async createSurvey(surveyInput: SurveyInput) {
         const surveyAppointment = await this.appointmentRepository.findOne({
@@ -47,7 +71,7 @@ export class SurveysService {
             });
         });
         await this.notificationService.create({ userId: surveyAppointment.user._id, text: 'Пройдите опрос от врача' });
-        this.logger.log('Отправлено уведомление в телеграмм о опросе');
+        this.logger.log('Отправлено уведомление пользователю о новом опросе');
         return createdSurvey;
     }
 

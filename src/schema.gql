@@ -261,6 +261,7 @@ input LoginInput {
 type Mutation {
   changeDate(appointmentId: String!, timeStart: Date!): Boolean!
   changeMe(changeMeInput: UpdateUserInput!): User!
+  completeSurvey(surveyCompleteInput: [SurveyCompleteInput!]!, surveyId: String!): Boolean!
   createAppointment(createAppointmentInput: CreateAppointmentInput!): Appointment!
   createClinic(createClinicInput: CreateClinicInput!): Clinic!
   createDoctor(createDoctorInput: CreateDoctorInput!): Doctor!
@@ -519,6 +520,11 @@ type Survey {
   updatedAt: Date!
 }
 
+input SurveyCompleteInput {
+  answerTitle: String!
+  questionTitle: String!
+}
+
 input SurveyInput {
   questions: [QuestionInput!]!
   title: String
@@ -585,6 +591,7 @@ type User {
   deletedAt: Date
   email: String!
   firstName: String
+  historyStudied: Boolean!
   isStaff: Boolean!
   isVerfied: Boolean!
   lastName: String
