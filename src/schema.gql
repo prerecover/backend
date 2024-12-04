@@ -75,9 +75,6 @@ type CalendarStats {
 type Clinic {
   _id: String!
   address: String
-  adminFirstName: String
-  adminLastName: String
-  adminNumber: String
   appointments: [Appointment!]
   avatar: String
   calendar: String
@@ -94,21 +91,17 @@ type Clinic {
   doctors: [Doctor!]!
   email: String
   employees: Int!
-  endTime: Int
   isVerfied: Boolean!
   news: [News!]!
   number: String
-  rating: Float!
   services: [Service!]!
-  site: String
   specialization: String
-  startTime: Int
   title: String!
   treated: Int!
+  typeTitle: String
 
   """Updated at timestamp"""
   updatedAt: Date!
-  workDays: String!
 }
 
 type ClinicStats {

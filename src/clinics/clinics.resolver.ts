@@ -36,7 +36,6 @@ export class ClinicsResolver {
                     chat_id: '1034093866',
                     text: ` Создана новая клиника! 
                     Название - ${clinic.title} 
-                    Номер администратора - ${clinic.adminNumber} 
         `,
                 })
                 .toPromise();

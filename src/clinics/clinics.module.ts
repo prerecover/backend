@@ -11,10 +11,11 @@ import { LinksModule } from './links/links.module';
 import { Service } from 'src/services/entities/service.entity';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { MinioService } from 'src/config/s3/minio.service';
+import { ClinicDetail } from './entities/clinicDetail.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Clinic, News, Country, Service, Doctor]),
+        TypeOrmModule.forFeature([Clinic, News, Country, Service, Doctor, ClinicDetail]),
         forwardRef(() => ServicesModule),
         NewsModule,
         LinksModule,
