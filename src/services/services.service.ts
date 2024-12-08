@@ -5,15 +5,31 @@ import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { Service } from './entities/service.entity';
 import { CreateServiceInput } from './dto/create-service.input';
 import { SelectServiceInput } from './dto/select-service.input';
+import { ServiceCategory } from './entities/serviceCategory.entity';
+import { categoryList } from 'src/config/data';
 
 @Injectable()
 export class ServicesService {
     constructor(
         @InjectRepository(Service)
         private readonly servicesRepository: Repository<Service>,
-    ) {}
+        @InjectRepository(ServiceCategory)
+        private readonly serviceCategoriesRepository: Repository<ServiceCategory>,
+    ) {
+
+        this.serviceCategoriesRepository.find().then((list) => list.length === 0 && this.initCategories());
+    }
     async create(createServiceInput: CreateServiceInput) {
         return this.servicesRepository.save(this.servicesRepository.create(createServiceInput));
+    }
+    async findAllServiceCategories(args: PaginateArgs): Promise<ServiceCategory[]> {
+        return await this.serviceCategoriesRepository.find({
+            take: args.take,
+            skip: args.skip,
+        });
+    }
+    async findOneServiceCategory(slug: string) {
+        return await this.serviceCategoriesRepository.findOneBy({ slug: slug });
     }
 
     async findAll(args: PaginateArgs): Promise<Service[]> {
@@ -59,5 +75,11 @@ export class ServicesService {
         });
         if (!services) throw new NotFoundException('Service with that doctorId not found!');
         return services;
+    }
+    // called on first init, don't use in smth other!!!
+    async initCategories() {
+        categoryList.forEach((el) => {
+            this.serviceCategoriesRepository.save(this.serviceCategoriesRepository.create({ title: el.text}));
+        });
     }
 }

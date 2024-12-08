@@ -11,6 +11,7 @@ import { NewsService } from 'src/news/news.service';
 import { RegisterClinicInput } from './dto/registration/register-input';
 import { ModuleRef } from '@nestjs/core';
 import { TelegramService } from 'nestjs-telegram';
+import { ClinicDetail } from './entities/clinicDetail.entity';
 
 @Resolver(() => Clinic)
 export class ClinicsResolver {
@@ -67,6 +68,11 @@ export class ClinicsResolver {
     async clinic(@Parent() clinic: Clinic) {
         const { _id: clinicId } = clinic;
         return await this.servicesService.findByClinic(clinicId);
+    }
+    @ResolveField('detail', () => [ClinicDetail])
+    async detail(@Parent() clinic: Clinic) {
+        const { _id: clinicId } = clinic;
+        return await this.clinicsService.findDetailByClinic(clinicId);
     }
 
     @ResolveField('news', () => [News])

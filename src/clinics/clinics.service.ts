@@ -12,6 +12,7 @@ import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { MinioService } from 'src/config/s3/minio.service';
 import { TelegramService } from 'nestjs-telegram';
 import { ModuleRef } from '@nestjs/core';
+import { ClinicDetail } from './entities/clinicDetail.entity';
 
 @Injectable()
 export class ClinicsService {
@@ -20,6 +21,8 @@ export class ClinicsService {
         private readonly clinicRepository: Repository<Clinic>,
         @InjectRepository(Country)
         private readonly countryRepository: Repository<Country>,
+        @InjectRepository(ClinicDetail)
+        private readonly clinicDetailRepository: Repository<ClinicDetail>,
         @InjectRepository(Service)
         private readonly serviceRepository: Repository<Service>,
         @InjectRepository(Doctor)
@@ -35,7 +38,6 @@ export class ClinicsService {
     }
     async registerClinic(registerClinicInput: RegisterClinicInput) {
         const { services, countryName, ...data } = registerClinicInput;
-        console.log(data.workdays);
         let clinic = this.clinicRepository.create(data);
         const country = await this.countryRepository.findOneBy({ title: countryName });
         clinic.country = country;
@@ -60,7 +62,6 @@ export class ClinicsService {
                     text: ` Создана новая клиника! 
                     Название - ${clinic.title} 
                     Почта - ${clinic.email} 
-                    Номер - ${clinic.number}
         `,
                 })
                 .toPromise();
@@ -71,8 +72,7 @@ export class ClinicsService {
         const clinic = this.clinicRepository.create(createClinicInput);
         return await this.clinicRepository.save(clinic);
     }
-
-    async findAll(args?: PaginateArgs): Promise<Clinic[]> {
+async findAll(args?: PaginateArgs): Promise<Clinic[]> {
         return await this.clinicRepository.find({
             relations: { country: true, doctors: true, services: true },
             take: args.take,
@@ -94,6 +94,9 @@ export class ClinicsService {
             relations: { country: true, doctors: true },
         });
         return clinic;
+    }
+    async findDetailByClinic(clinicId: string): Promise<ClinicDetail>{
+        return await this.clinicDetailRepository.findOne({where: {clinic: {_id: clinicId}}})
     }
     async findByDoctor(doctorId: string): Promise<Clinic> {
         const clinic = await this.clinicRepository.findOne({

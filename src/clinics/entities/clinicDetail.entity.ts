@@ -1,10 +1,10 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
-import { IsPhoneNumber } from 'class-validator';
+// import { IsPhoneNumber } from 'class-validator';
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Clinic } from './clinic.entity';
 
 @ObjectType()
-@Entity({ name: 'clinics' })
+@Entity({ name: 'clinic_details' })
 export class ClinicDetail {
     @Field()
     @PrimaryGeneratedColumn('uuid')
@@ -75,6 +75,23 @@ export class ClinicDetail {
     public sundayTime: number;
 
     @Field({ nullable: true })
+    @Column({ nullable: true })
+    public calendar: string;
+
+    @Field({ nullable: true })
+    @Column({ name: 'registry_number', nullable: true })
+    public registryNumber: string;
+
+    @Field(() => [String], { nullable: true })
+    // @IsPhoneNumber('UZ')
+    @Column({ nullable: true, type: 'text', array: true })
+    public numbers: string[];
+
+    @Field({ nullable: true })
+    @Column({ name: 'language', nullable: true })
+    public language: string;
+
+    @Field({ nullable: true })
     @Column({ name: 'admin_firstname', length: 30, nullable: true })
     public adminFirstName: string;
 
@@ -87,6 +104,6 @@ export class ClinicDetail {
     @Column({ name: 'admin_number', nullable: true })
     public adminNumber: string;
 
-    @OneToOne(() => Clinic, (clinic) => clinic.clinicDetail)
-    public clinic: Clinic
+    @OneToOne(() => Clinic, (clinic) => clinic.detail)
+    public clinic: Clinic;
 }

@@ -9,7 +9,7 @@ export class UsersStats {
     public completedSurvey: number;
 
     @Field(() => Int)
-    public createdSurvey: number;
+    public totalUsers: number;
 
     @Field(() => Float)
     public totalDeletedUsers: number;

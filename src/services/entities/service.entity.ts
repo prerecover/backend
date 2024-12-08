@@ -5,6 +5,7 @@ import { CommonEntity } from 'src/common/common.entity';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { News } from 'src/news/entities/news.entity';
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+import { ServiceCategory } from './serviceCategory.entity';
 
 @ObjectType()
 @Entity({ name: 'services' })
@@ -43,6 +44,9 @@ export class Service extends CommonEntity {
 
     @ManyToOne(() => Clinic, (clinic) => clinic.services, { onDelete: 'CASCADE' })
     public clinic: Clinic;
+    
+    @ManyToOne(() => ServiceCategory, (serviceCategory) => serviceCategory.services, { onDelete: 'SET NULL' })
+    public category: ServiceCategory;
 
     @Field(() => [Doctor])
     @ManyToMany(() => Doctor, (doctor) => doctor.services, { cascade: true })

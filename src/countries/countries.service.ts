@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Country } from './entities/country.entity';
 import { Repository } from 'typeorm';
-import { countriesList } from 'countries';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
+import { countriesList } from 'src/config/data';
 
 @Injectable()
 export class CountriesService {
@@ -12,6 +12,7 @@ export class CountriesService {
         private readonly countriesRepository: Repository<Country>,
     ) {
         this.countriesRepository.find().then((list) => list.length === 0 && this.initCountries());
+
     }
 
     async findAll(args?: PaginateArgs) {

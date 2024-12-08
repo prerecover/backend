@@ -5,6 +5,7 @@
 type AdminStats {
   approovedAppointments: Int!
   inProcessAppointments: Int!
+  inProcessSurveys: Int!
   pendingAppointments: Int!
 }
 
@@ -64,20 +65,12 @@ input AvatarUpload {
   avatar: Upload
 }
 
-type CalendarStats {
-  changeByClinic: Int!
-  changeByCompany: Int!
-  inProcessAppointments: Int!
-  noVisitCalendar: Int!
-  visitCalendar: Int!
-}
-
 type Clinic {
   _id: String!
   address: String
+  age: Int
   appointments: [Appointment!]
   avatar: String
-  calendar: String
   card: String
   city: String
   country: Country
@@ -88,12 +81,12 @@ type Clinic {
   """Deleted at timestamp"""
   deletedAt: Date
   description: String
+  detail: [ClinicDetail!]!
   doctors: [Doctor!]!
   email: String
   employees: Int!
   isVerfied: Boolean!
   news: [News!]!
-  number: String
   services: [Service!]!
   specialization: String
   title: String!
@@ -102,6 +95,33 @@ type Clinic {
 
   """Updated at timestamp"""
   updatedAt: Date!
+}
+
+type ClinicDetail {
+  _id: String!
+  adminFirstName: String
+  adminLastName: String
+  adminNumber: String
+  calendar: String
+  computerHave: Boolean!
+  elevatorHave: Boolean!
+  fridayTime: Int
+  internetHave: Boolean!
+  language: String
+  mondayTime: Int
+  numberOfFloors: Int!
+  numbers: [String!]
+  rating: Float!
+  registryNumber: String
+  saturdayTime: Int
+  site: String
+  square: Float!
+  sundayTime: Int
+  thursdayTime: Int
+  totalDoctors: Int!
+  totalServices: Int!
+  tuesdayTime: Int
+  wednesdayTime: Int
 }
 
 type ClinicStats {
@@ -240,11 +260,6 @@ type Link {
   updatedAt: Date!
 }
 
-type LinksStats {
-  totalGenerated: Int!
-  totalUsed: Int!
-}
-
 input LoginInput {
   email: String
   number: String
@@ -373,6 +388,8 @@ type Query {
   savedAll(skip: Int! = 0, take: Int! = 500): [Saved!]!
   search: Search!
   service(_id: String!): Service!
+  serviceCategories(skip: Int! = 0, take: Int! = 500): [ServiceCategory!]!
+  serviceCategory(slug: String!): [ServiceCategory!]!
   services(skip: Int! = 0, take: Int! = 500): [Service!]!
   servicesByClinic(clinicId: String!): [Service!]!
   stats(chunk: Int!): StatsOutput!
@@ -405,17 +422,22 @@ input QuestionInput {
 input RegisterClinicInput {
   address: String!
   adminNumber: String!
-  calendar: String
-  card: String!
+  age: Int!
   city: String!
+  computerHave: Boolean!
   countryName: String!
-  email: String
-  endTime: Int!
+  elevatorHave: Boolean!
+  internetHave: Boolean!
+  language: String!
+  numberOfFloors: Int!
+  numbers: [String!]!
+  registryNumber: String!
   services: [RegisterServiceInput!]!
-  site: String
-  startTime: Int!
+  square: Int!
   title: String!
-  workdays: String!
+  totalDoctors: Int!
+  totalServices: Int!
+  typeTitle: String!
 }
 
 input RegisterDoctorInput {
@@ -491,12 +513,16 @@ type Service {
   updatedAt: Date!
 }
 
+type ServiceCategory {
+  _id: String!
+  slug: String!
+  title: String!
+}
+
 type StatsOutput {
   admin: AdminStats!
   appointments: AppointmentStats!
-  calendar: CalendarStats!
   clinics: ClinicStats!
-  links: LinksStats!
   users: UsersStats!
 }
 
@@ -602,9 +628,9 @@ type User {
 
 type UsersStats {
   completedSurvey: Int!
-  createdSurvey: Int!
   totalCreatedUsers: Int!
   totalDeletedUsers: Float!
+  totalUsers: Int!
 }
 
 input VerifyCodeInput {

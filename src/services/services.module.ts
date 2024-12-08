@@ -6,9 +6,10 @@ import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { Service } from './entities/service.entity';
 import { NewsModule } from 'src/news/news.module';
 import { ClinicsModule } from 'src/clinics/clinics.module';
+import { ServiceCategory } from './entities/serviceCategory.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Doctor, Service]), NewsModule, ClinicsModule],
+    imports: [TypeOrmModule.forFeature([Doctor, Service, ServiceCategory]), NewsModule, ClinicsModule],
     providers: [ServicesResolver, ServicesService],
     exports: [ServicesService],
 })

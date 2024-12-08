@@ -8,6 +8,7 @@ import { NewsService } from 'src/news/news.service';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { ClinicsService } from 'src/clinics/clinics.service';
 import { SelectServiceInput } from './dto/select-service.input';
+import { ServiceCategory } from './entities/serviceCategory.entity';
 
 @Resolver(() => Service)
 export class ServicesResolver {
@@ -17,6 +18,15 @@ export class ServicesResolver {
         private readonly clinicService: ClinicsService,
     ) {}
 
+    @Query(() => [ServiceCategory], { name: 'serviceCategories' })
+    async findAllServiceCategories(@Args({ nullable: true }) args?: PaginateArgs) {
+        return await this.servicesService.findAllServiceCategories(args);
+    }
+
+    @Query(() => [ServiceCategory], { name: 'serviceCategory' })
+    async findOneServiceCategory(@Args('slug') slug: string) {
+        return await this.servicesService.findOneServiceCategory(slug);
+    }
     @Mutation(() => Service)
     async createService(@Args('createServiceInput') createServiceInput: CreateServiceInput) {
         return await this.servicesService.create(createServiceInput);

@@ -22,8 +22,10 @@ export class UsersResolver {
         return await this.usersService.create(createUserInput, countryTitle);
     }
 
+    @UseGuards(AuthGuard)
     @Mutation(() => String, { name: 'uploadAvatar' })
     async uploadAvatar(@CurrentUser() user: User, @Args('avatarUpload') avatar: AvatarUpload) {
+        console.log(user)
         return this.usersService.uploadAvatar(avatar, user._id);
     }
 

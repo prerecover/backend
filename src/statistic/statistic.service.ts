@@ -9,10 +9,8 @@ import { UsersStats } from './dto/users-stats';
 import { AppointmentStats } from './dto/appointment-stats';
 import { ClinicStats } from './dto/clinic-stats';
 import { Survey } from 'src/surveys/entities/survey.entity';
-import { LinksStats } from './dto/links-stats';
 import { Link } from 'src/clinics/links/entities/link.entity';
 import { AdminStats } from './dto/admin-stats';
-import { CalendarStats } from './dto/calendar-stats';
 
 @Injectable()
 export class StatisticService {
@@ -56,7 +54,15 @@ export class StatisticService {
         const inProcessAppointments = await this.appointmentRepository.count({
             where: { status: 'In process', timeStart: MoreThan(chunk == 1 ? this.oneDay : this.week) },
         });
-        return { approovedAppointments: acceptedAppointments, pendingAppointments, inProcessAppointments };
+        const inProcessSurveys = await this.surveyRepository.count({
+            where: { passed: false, createdAt: MoreThan(chunk == 1 ? this.oneDay : this.week) },
+        });
+        return {
+            approovedAppointments: acceptedAppointments,
+            pendingAppointments,
+            inProcessAppointments,
+            inProcessSurveys,
+        };
     }
 
     async getClinicStats(chunk: number): Promise<ClinicStats> {
@@ -72,27 +78,6 @@ export class StatisticService {
         return { totalClinics, totalCreated, totalDeleted };
     }
 
-    async getLinksStats(chunk: number): Promise<LinksStats> {
-        const totalGenerated = await this.linkRepository.count({
-            where: { createdAt: MoreThan(chunk == 1 ? this.oneDay : this.week) },
-        });
-        const totalUsed = await this.linkRepository.count({
-            where: { createdAt: MoreThan(chunk == 1 ? this.oneDay : this.week), isUsed: true },
-        });
-        return { totalGenerated, totalUsed };
-    }
-
-    async getCalendarStats(chunk: number): Promise<CalendarStats> {
-        console.log(chunk);
-        return {
-            inProcessAppointments: 0,
-            visitCalendar: 0,
-            changeByClinic: 0,
-            changeByCompany: 0,
-            noVisitCalendar: 0,
-        };
-    }
-
     async getUserStats(chunk: number): Promise<UsersStats> {
         const totalCreatedUsers = await this.userRepository.count({
             where: { createdAt: MoreThan(chunk == 1 ? this.oneDay : this.week) },
@@ -100,6 +85,7 @@ export class StatisticService {
         const totalDeletedUsers = await this.userRepository.count({
             where: { deletedAt: Not(IsNull()) && MoreThan(chunk == 1 ? this.oneDay : this.week) },
         });
+        const totalUsers = await this.userRepository.count({});
         const createdSurvey = await this.surveyRepository.count({
             where: { createdAt: MoreThan(chunk == 1 ? this.oneDay : this.week) },
         });
@@ -108,8 +94,8 @@ export class StatisticService {
         });
         return {
             totalCreatedUsers,
+            totalUsers,
             totalDeletedUsers,
-            createdSurvey: createdSurvey,
             completedSurvey: passedSurvey,
         };
     }
@@ -118,16 +104,12 @@ export class StatisticService {
         const userStats = await this.getUserStats(chunk);
         const appointmentStats = await this.getAppointmentStats(chunk);
         const clinicStats = await this.getClinicStats(chunk);
-        const linksStats = await this.getLinksStats(chunk);
-        const calendarStats = await this.getCalendarStats(chunk);
         const adminStats = await this.getAdminStats(chunk);
         return {
             users: userStats,
             appointments: appointmentStats,
             clinics: clinicStats,
-            links: linksStats,
             admin: adminStats,
-            calendar: calendarStats,
         };
     }
 }

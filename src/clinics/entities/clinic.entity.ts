@@ -17,6 +17,10 @@ export class Clinic extends CommonEntity {
     public title: string;
     
     @Field({nullable: true})
+    @Column({ name: 'age', nullable: true})
+    public age: number;
+    
+    @Field({nullable: true})
     @Column({ length: 225, nullable: true })
     public typeTitle: string;
 
@@ -28,9 +32,6 @@ export class Clinic extends CommonEntity {
     @Column({ default: 0 })
     public treated: number;
 
-    @Field({ nullable: true })
-    @Column({ nullable: true })
-    public calendar: string;
 
     @Field({ nullable: true })
     @Column({ nullable: true })
@@ -70,10 +71,6 @@ export class Clinic extends CommonEntity {
     @Column({ name: 'address', length: 225, nullable: true })
     public address: string;
 
-    @Field({ nullable: true })
-    @IsPhoneNumber('UZ')
-    @Column({ nullable: true })
-    public number: string;
 
     @Field({ nullable: true })
     @Column({ length: 225, unique: true, nullable: true })
@@ -95,7 +92,7 @@ export class Clinic extends CommonEntity {
     public services: Service[];
 
     @OneToOne(() => ClinicDetail, (clinicDetail) => clinicDetail.clinic, {onDelete: 'SET NULL'})
-    public clinicDetail: ClinicDetail
+    public detail: ClinicDetail
 
     @OneToMany(() => News, (news) => news.clinic, { nullable: true })
     public news: News[];
