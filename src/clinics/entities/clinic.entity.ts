@@ -91,6 +91,7 @@ export class Clinic extends CommonEntity {
     @OneToMany(() => Service, (service) => service.clinic, { nullable: true })
     public services: Service[];
 
+    @Field(() => ClinicDetail)
     @OneToOne(() => ClinicDetail, (clinicDetail) => clinicDetail.clinic, {onDelete: 'SET NULL'})
     public detail: ClinicDetail
 

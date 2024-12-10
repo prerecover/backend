@@ -7,24 +7,24 @@ import { RegisterServiceInput } from './service-input';
 export class RegisterClinicInput {
     @Field()
     public title: string;
-    
+
     @Field()
     public typeTitle: string;
 
     @Field()
-    public age: number
-    
+    public age: number;
+
     @Field()
-    public square: number
-    
+    public square: number;
+
     @Field()
-    public numberOfFloors: number
-    
+    public numberOfFloors: number;
+
     @Field()
-    public totalServices: number
-    
+    public totalServices: number;
+
     @Field()
-    public totalDoctors: number
+    public totalDoctors: number;
 
     @Field()
     public adminNumber: string;
@@ -32,23 +32,44 @@ export class RegisterClinicInput {
     @Field()
     public countryName: string;
 
-    @Field(() => [String])
-    public numbers: string[]
-    
+    @Field(() => [String || null])
+    public numbers: string[];
+
     @Field()
     public registryNumber: string;
-    
+
     @Field()
     public language: string;
 
     @Field()
-    public computerHave: boolean
-    
+    public computerHave: boolean;
+
     @Field()
-    public elevatorHave: boolean
-    
+    public elevatorHave: boolean;
+
     @Field()
-    public internetHave: boolean
+    public internetHave: boolean;
+
+    @Field({ nullable: true })
+    public mondayTime: string;
+
+    @Field({ nullable: true })
+    public tuesdayTime: string;
+
+    @Field({ nullable: true })
+    public wednesdayTime: string;
+
+    @Field({ nullable: true })
+    public thursdayTime: string;
+
+    @Field({ nullable: true })
+    public fridayTime: string;
+
+    @Field({ nullable: true })
+    public saturdayTime: string;
+
+    @Field({ nullable: true })
+    public sundayTime: string;
 
     @Field()
     public city: string;

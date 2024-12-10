@@ -81,7 +81,7 @@ type Clinic {
   """Deleted at timestamp"""
   deletedAt: Date
   description: String
-  detail: [ClinicDetail!]!
+  detail: ClinicDetail!
   doctors: [Doctor!]!
   email: String
   employees: Int!
@@ -105,23 +105,23 @@ type ClinicDetail {
   calendar: String
   computerHave: Boolean!
   elevatorHave: Boolean!
-  fridayTime: Int
+  fridayTime: String
   internetHave: Boolean!
   language: String
-  mondayTime: Int
+  mondayTime: String
   numberOfFloors: Int!
   numbers: [String!]
   rating: Float!
   registryNumber: String
-  saturdayTime: Int
+  saturdayTime: String
   site: String
   square: Float!
-  sundayTime: Int
-  thursdayTime: Int
+  sundayTime: String
+  thursdayTime: String
   totalDoctors: Int!
   totalServices: Int!
-  tuesdayTime: Int
-  wednesdayTime: Int
+  tuesdayTime: String
+  wednesdayTime: String
 }
 
 type ClinicStats {
@@ -427,17 +427,24 @@ input RegisterClinicInput {
   computerHave: Boolean!
   countryName: String!
   elevatorHave: Boolean!
+  fridayTime: String
   internetHave: Boolean!
   language: String!
+  mondayTime: String
   numberOfFloors: Int!
   numbers: [String!]!
   registryNumber: String!
+  saturdayTime: String
   services: [RegisterServiceInput!]!
   square: Int!
+  sundayTime: String
+  thursdayTime: String
   title: String!
   totalDoctors: Int!
   totalServices: Int!
+  tuesdayTime: String
   typeTitle: String!
+  wednesdayTime: String
 }
 
 input RegisterDoctorInput {
@@ -448,6 +455,7 @@ input RegisterDoctorInput {
 }
 
 input RegisterServiceInput {
+  category: String!
   description: String!
   doctors: [RegisterDoctorInput!]!
   duration: Int!

@@ -1,6 +1,6 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 // import { IsPhoneNumber } from 'class-validator';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Clinic } from './clinic.entity';
 
 @ObjectType()
@@ -46,33 +46,33 @@ export class ClinicDetail {
     @Column({ nullable: true })
     public site: string;
 
-    @Field(() => Int, { nullable: true })
+    @Field( { nullable: true })
     @Column({ name: 'monday_time', nullable: true })
-    public mondayTime: number;
+    public mondayTime: string;
 
-    @Field(() => Int, { nullable: true })
+    @Field({ nullable: true })
     @Column({ name: 'tuesday_time', nullable: true })
-    public tuesdayTime: number;
+    public tuesdayTime: string;
 
-    @Field(() => Int, { nullable: true })
+    @Field({ nullable: true })
     @Column({ name: 'wednesday_time', nullable: true })
-    public wednesdayTime: number;
+    public wednesdayTime: string;
 
-    @Field(() => Int, { nullable: true })
+    @Field( { nullable: true })
     @Column({ name: 'thursday_time', nullable: true })
-    public thursdayTime: number;
+    public thursdayTime: string;
 
-    @Field(() => Int, { nullable: true })
+    @Field({ nullable: true })
     @Column({ name: 'friday_time', nullable: true })
-    public fridayTime: number;
+    public fridayTime: string;
 
-    @Field(() => Int, { nullable: true })
+    @Field({ nullable: true })
     @Column({ name: 'saturday_time', nullable: true })
-    public saturdayTime: number;
+    public saturdayTime: string;
 
-    @Field(() => Int, { nullable: true })
+    @Field({ nullable: true })
     @Column({ name: 'sunday_time', nullable: true })
-    public sundayTime: number;
+    public sundayTime: string;
 
     @Field({ nullable: true })
     @Column({ nullable: true })
@@ -82,7 +82,7 @@ export class ClinicDetail {
     @Column({ name: 'registry_number', nullable: true })
     public registryNumber: string;
 
-    @Field(() => [String], { nullable: true })
+    @Field(() => [String || null], { nullable: true })
     // @IsPhoneNumber('UZ')
     @Column({ nullable: true, type: 'text', array: true })
     public numbers: string[];
@@ -104,6 +104,7 @@ export class ClinicDetail {
     @Column({ name: 'admin_number', nullable: true })
     public adminNumber: string;
 
-    @OneToOne(() => Clinic, (clinic) => clinic.detail)
+    @OneToOne(() => Clinic, (clinic) => clinic.detail, {onDelete: 'CASCADE'})
+    @JoinColumn()
     public clinic: Clinic;
 }

@@ -31,17 +31,7 @@ export class ClinicsResolver {
     async registerClinic(@Args('registerClinicInput') registerClinicInput: RegisterClinicInput) {
         console.log(registerClinicInput.services);
         const clinic = await this.clinicsService.registerClinic(registerClinicInput);
-        if (clinic) {
-            this.telegram
-                .sendMessage({
-                    chat_id: '1034093866',
-                    text: ` Создана новая клиника! 
-                    Название - ${clinic.title} 
-        `,
-                })
-                .toPromise();
-            return clinic;
-        }
+        return clinic;
     }
 
     @Mutation(() => Clinic)

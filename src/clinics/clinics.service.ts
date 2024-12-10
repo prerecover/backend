@@ -13,6 +13,7 @@ import { MinioService } from 'src/config/s3/minio.service';
 import { TelegramService } from 'nestjs-telegram';
 import { ModuleRef } from '@nestjs/core';
 import { ClinicDetail } from './entities/clinicDetail.entity';
+import { ServiceCategory } from 'src/services/entities/serviceCategory.entity';
 
 @Injectable()
 export class ClinicsService {
@@ -25,6 +26,8 @@ export class ClinicsService {
         private readonly clinicDetailRepository: Repository<ClinicDetail>,
         @InjectRepository(Service)
         private readonly serviceRepository: Repository<Service>,
+        @InjectRepository(ServiceCategory)
+        private readonly serviceCategoryRepository: Repository<ServiceCategory>,
         @InjectRepository(Doctor)
         private readonly doctorsRepository: Repository<Doctor>,
         @Inject()
@@ -37,13 +40,57 @@ export class ClinicsService {
         this.telegram = this.moduleRef.get(TelegramService, { strict: false });
     }
     async registerClinic(registerClinicInput: RegisterClinicInput) {
-        const { services, countryName, ...data } = registerClinicInput;
+        const {
+            services,
+            countryName,
+            registryNumber,
+            square,
+            numbers,
+            language,
+            adminNumber,
+            computerHave,
+            elevatorHave,
+            internetHave,
+            mondayTime,
+            tuesdayTime,
+            wednesdayTime,
+            thursdayTime,
+            fridayTime,
+            sundayTime,
+            saturdayTime,
+            totalDoctors,
+            totalServices,
+            numberOfFloors,
+            ...data
+        } = registerClinicInput;
         let clinic = this.clinicRepository.create(data);
         const country = await this.countryRepository.findOneBy({ title: countryName });
+        const detail = this.clinicDetailRepository.create({
+            registryNumber,
+            square,
+            numbers,
+            adminNumber,
+            computerHave,
+            elevatorHave,
+            internetHave,
+            mondayTime,
+            tuesdayTime,
+            wednesdayTime,
+            thursdayTime,
+            fridayTime,
+            saturdayTime,
+            sundayTime,
+            totalDoctors,
+            totalServices,
+            numberOfFloors,
+        });
+        clinic.detail = detail;
         clinic.country = country;
+        await this.clinicDetailRepository.save(detail);
         clinic = await this.clinicRepository.save(clinic);
-        services.forEach((service) => {
-            const { doctors, ...serviceData } = service;
+        services.forEach(async (service) => {
+            const { category: categoryTitle, doctors, ...serviceData } = service;
+            const category = await this.serviceCategoryRepository.findOneBy({ title: categoryTitle });
             const serviceCreated = this.serviceRepository.create(serviceData);
             const doctorsArray: Doctor[] = [];
             doctors.forEach((doctor) => {
@@ -53,15 +100,18 @@ export class ClinicsService {
             });
             serviceCreated.clinic = clinic;
             serviceCreated.doctors = doctorsArray;
+            serviceCreated.category = category;
             this.serviceRepository.save(serviceCreated);
         });
         if (clinic) {
             this.telegram
                 .sendMessage({
+                    // chat_id: '595366190',
                     chat_id: '1034093866',
-                    text: ` Создана новая клиника! 
+                    text: `Создана новая клиника! 
                     Название - ${clinic.title} 
-                    Почта - ${clinic.email} 
+                    Возраст клиники- ${clinic.age} лет
+                    Досвидания Темур, хорошего дня!, жду 100$
         `,
                 })
                 .toPromise();
@@ -72,7 +122,7 @@ export class ClinicsService {
         const clinic = this.clinicRepository.create(createClinicInput);
         return await this.clinicRepository.save(clinic);
     }
-async findAll(args?: PaginateArgs): Promise<Clinic[]> {
+    async findAll(args?: PaginateArgs): Promise<Clinic[]> {
         return await this.clinicRepository.find({
             relations: { country: true, doctors: true, services: true },
             take: args.take,
@@ -95,8 +145,8 @@ async findAll(args?: PaginateArgs): Promise<Clinic[]> {
         });
         return clinic;
     }
-    async findDetailByClinic(clinicId: string): Promise<ClinicDetail>{
-        return await this.clinicDetailRepository.findOne({where: {clinic: {_id: clinicId}}})
+    async findDetailByClinic(clinicId: string): Promise<ClinicDetail> {
+        return await this.clinicDetailRepository.findOne({ where: { clinic: { _id: clinicId } } });
     }
     async findByDoctor(doctorId: string): Promise<Clinic> {
         const clinic = await this.clinicRepository.findOne({
