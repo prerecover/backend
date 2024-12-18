@@ -213,7 +213,7 @@ type Doctor {
   email: String
   firstName: String
   lastName: String
-  mainStatus: Boolean!
+  mainStatus: Boolean
   number: String
   online: Boolean!
   services: [Service!]
@@ -298,6 +298,7 @@ type Mutation {
   setAvailableDates(availableDateInput: AvailableDateInput!): Boolean!
   setStatusAppointment(appointmentId: String!, status: String!): Appointment!
   signIn(signIn: LoginInput!): TokenResponse!
+  updateClinic(_id: String!, updateClinicInput: UpdateClinicInput!): Clinic!
   updateDoctor(updateDoctorInput: UpdateDoctorInput!): Doctor!
   uploadAvatar(avatarUpload: AvatarUpload!): String!
   verifyCode(verifyCodeInput: VerifyCodeInput!): Boolean!
@@ -451,6 +452,7 @@ input RegisterDoctorInput {
   firstName: String!
   lastName: String!
   specialization: String!
+  surname: String!
   workExp: Float!
 }
 
@@ -573,6 +575,34 @@ type SurveyQuestion {
 
 type TokenResponse {
   access_token: String!
+}
+
+input UpdateClinicInput {
+  address: String
+  adminNumber: String
+  age: Int
+  city: String
+  computerHave: Boolean
+  countryName: String
+  elevatorHave: Boolean
+  fridayTime: String
+  internetHave: Boolean
+  language: String
+  mondayTime: String
+  numberOfFloors: Int
+  numbers: [String!]
+  registryNumber: String
+  saturdayTime: String
+  services: [RegisterServiceInput!]
+  square: Int
+  sundayTime: String
+  thursdayTime: String
+  title: String
+  totalDoctors: Int
+  totalServices: Int
+  tuesdayTime: String
+  typeTitle: String
+  wednesdayTime: String
 }
 
 input UpdateDoctorInput {

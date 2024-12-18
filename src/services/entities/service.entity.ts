@@ -44,7 +44,7 @@ export class Service extends CommonEntity {
 
     @ManyToOne(() => Clinic, (clinic) => clinic.services, { onDelete: 'CASCADE' })
     public clinic: Clinic;
-    
+
     @ManyToOne(() => ServiceCategory, (serviceCategory) => serviceCategory.services, { onDelete: 'SET NULL' })
     public category: ServiceCategory;
 

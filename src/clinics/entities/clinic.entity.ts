@@ -1,8 +1,7 @@
-import { ObjectType, Field, Int, HideField, Float } from '@nestjs/graphql';
+import { ObjectType, Field, Int, HideField } from '@nestjs/graphql';
 import { CommonEntity } from 'src/common/common.entity';
 import { News } from 'src/news/entities/news.entity';
 import { Column, DeleteDateColumn, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
-import { IsPhoneNumber } from 'class-validator';
 import { Country } from 'src/countries/entities/country.entity';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
@@ -15,12 +14,12 @@ export class Clinic extends CommonEntity {
     @Field()
     @Column({ unique: true, length: 225 })
     public title: string;
-    
-    @Field({nullable: true})
-    @Column({ name: 'age', nullable: true})
+
+    @Field({ nullable: true })
+    @Column({ nullable: true })
     public age: number;
-    
-    @Field({nullable: true})
+
+    @Field({ nullable: true })
     @Column({ length: 225, nullable: true })
     public typeTitle: string;
 
@@ -32,11 +31,9 @@ export class Clinic extends CommonEntity {
     @Column({ default: 0 })
     public treated: number;
 
-
     @Field({ nullable: true })
     @Column({ nullable: true })
     public specialization: string;
-
 
     @Field({ nullable: true })
     @Column({ nullable: true })
@@ -66,11 +63,9 @@ export class Clinic extends CommonEntity {
     @Column({ length: 225, nullable: true })
     public description: string;
 
-
     @Field({ nullable: true })
     @Column({ name: 'address', length: 225, nullable: true })
     public address: string;
-
 
     @Field({ nullable: true })
     @Column({ length: 225, unique: true, nullable: true })
@@ -92,8 +87,8 @@ export class Clinic extends CommonEntity {
     public services: Service[];
 
     @Field(() => ClinicDetail)
-    @OneToOne(() => ClinicDetail, (clinicDetail) => clinicDetail.clinic, {onDelete: 'SET NULL'})
-    public detail: ClinicDetail
+    @OneToOne(() => ClinicDetail, (clinicDetail) => clinicDetail.clinic, { onDelete: 'SET NULL' })
+    public detail: ClinicDetail;
 
     @OneToMany(() => News, (news) => news.clinic, { nullable: true })
     public news: News[];

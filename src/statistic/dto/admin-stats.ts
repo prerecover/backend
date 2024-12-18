@@ -10,8 +10,7 @@ export class AdminStats {
 
     @Field()
     public pendingAppointments: number;
-    
+
     @Field()
     public inProcessSurveys: number;
-
 }

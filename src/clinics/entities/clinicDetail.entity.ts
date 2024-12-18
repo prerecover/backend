@@ -1,4 +1,4 @@
-import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Float, ObjectType } from '@nestjs/graphql';
 // import { IsPhoneNumber } from 'class-validator';
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Clinic } from './clinic.entity';
@@ -46,7 +46,7 @@ export class ClinicDetail {
     @Column({ nullable: true })
     public site: string;
 
-    @Field( { nullable: true })
+    @Field({ nullable: true })
     @Column({ name: 'monday_time', nullable: true })
     public mondayTime: string;
 
@@ -58,7 +58,7 @@ export class ClinicDetail {
     @Column({ name: 'wednesday_time', nullable: true })
     public wednesdayTime: string;
 
-    @Field( { nullable: true })
+    @Field({ nullable: true })
     @Column({ name: 'thursday_time', nullable: true })
     public thursdayTime: string;
 
@@ -104,7 +104,7 @@ export class ClinicDetail {
     @Column({ name: 'admin_number', nullable: true })
     public adminNumber: string;
 
-    @OneToOne(() => Clinic, (clinic) => clinic.detail, {onDelete: 'CASCADE'})
+    @OneToOne(() => Clinic, (clinic) => clinic.detail, { onDelete: 'CASCADE' })
     @JoinColumn()
     public clinic: Clinic;
 }

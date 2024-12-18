@@ -14,6 +14,7 @@ import { TelegramService } from 'nestjs-telegram';
 import { ModuleRef } from '@nestjs/core';
 import { ClinicDetail } from './entities/clinicDetail.entity';
 import { ServiceCategory } from 'src/services/entities/serviceCategory.entity';
+import { UpdateClinicInput } from './dto/update-clinic.input';
 
 @Injectable()
 export class ClinicsService {
@@ -39,6 +40,56 @@ export class ClinicsService {
     onModuleInit() {
         this.telegram = this.moduleRef.get(TelegramService, { strict: false });
     }
+
+    async update(updateClinicInput: UpdateClinicInput, clinicId: string) {
+        const {
+            countryName,
+            city,
+            registryNumber,
+            age,
+            square,
+            numbers,
+            language,
+            adminNumber,
+            computerHave,
+            elevatorHave,
+            internetHave,
+            // mondayTime,
+            // tuesdayTime,
+            // wednesdayTime,
+            // thursdayTime,
+            // fridayTime,
+            // sundayTime,
+            // saturdayTime,
+            totalDoctors,
+            totalServices,
+            numberOfFloors,
+            address,
+            title,
+            typeTitle,
+        } = updateClinicInput;
+        const country = await this.countryRepository.findOneBy({ title: countryName });
+
+        this.clinicDetailRepository.update(
+            { clinic: { _id: clinicId } },
+            {
+                registryNumber,
+                numberOfFloors,
+                totalServices,
+                totalDoctors,
+                square,
+                numbers,
+                language,
+                computerHave,
+                elevatorHave,
+                internetHave,
+                adminNumber,
+            },
+        );
+        await this.clinicRepository.update({ _id: clinicId }, { title, typeTitle, city, country, address, age });
+        return await this.clinicRepository.findOneBy({ _id: clinicId });
+    }
+
     async registerClinic(registerClinicInput: RegisterClinicInput) {
         const {
             services,
@@ -71,6 +122,7 @@ export class ClinicsService {
             numbers,
             adminNumber,
             computerHave,
+            language,
             elevatorHave,
             internetHave,
             mondayTime,

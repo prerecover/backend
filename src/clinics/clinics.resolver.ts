@@ -12,6 +12,7 @@ import { RegisterClinicInput } from './dto/registration/register-input';
 import { ModuleRef } from '@nestjs/core';
 import { TelegramService } from 'nestjs-telegram';
 import { ClinicDetail } from './entities/clinicDetail.entity';
+import { UpdateClinicInput } from './dto/update-clinic.input';
 
 @Resolver(() => Clinic)
 export class ClinicsResolver {
@@ -37,6 +38,10 @@ export class ClinicsResolver {
     @Mutation(() => Clinic)
     async createClinic(@Args('createClinicInput') createClinicInput: CreateClinicInput) {
         return await this.clinicsService.create(createClinicInput);
+    }
+    @Mutation(() => Clinic)
+    async updateClinic(@Args('updateClinicInput') updateClinicInput: UpdateClinicInput, @Args('_id') clinicId: string) {
+        return await this.clinicsService.update(updateClinicInput, clinicId);
     }
 
     @Query(() => [Clinic], { name: 'clinics' })

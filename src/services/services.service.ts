@@ -16,7 +16,6 @@ export class ServicesService {
         @InjectRepository(ServiceCategory)
         private readonly serviceCategoriesRepository: Repository<ServiceCategory>,
     ) {
-
         this.serviceCategoriesRepository.find().then((list) => list.length === 0 && this.initCategories());
     }
     async create(createServiceInput: CreateServiceInput) {
@@ -59,10 +58,6 @@ export class ServicesService {
         const services = await this.servicesRepository.find({
             where: { clinic: { _id: clinicId } },
             relations: { clinic: true, news: true, doctors: true },
-            select: {
-                news: { _id: true },
-                doctors: { _id: true, firstName: true, lastName: true, surname: true, avatar: true },
-            },
         });
         if (!services) throw new NotFoundException('Service with that clinicId not found!');
         return services;
@@ -79,7 +74,7 @@ export class ServicesService {
     // called on first init, don't use in smth other!!!
     async initCategories() {
         categoryList.forEach((el) => {
-            this.serviceCategoriesRepository.save(this.serviceCategoriesRepository.create({ title: el.text}));
+            this.serviceCategoriesRepository.save(this.serviceCategoriesRepository.create({ title: el.text }));
         });
     }
 }

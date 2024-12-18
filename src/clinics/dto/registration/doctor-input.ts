@@ -9,6 +9,9 @@ export class RegisterDoctorInput {
     public lastName: string;
 
     @Field()
+    public surname: string;
+
+    @Field()
     public specialization: string;
 
     @Field(() => Float)

@@ -25,7 +25,7 @@ export class UsersResolver {
     @UseGuards(AuthGuard)
     @Mutation(() => String, { name: 'uploadAvatar' })
     async uploadAvatar(@CurrentUser() user: User, @Args('avatarUpload') avatar: AvatarUpload) {
-        console.log(user)
+        console.log(user);
         return this.usersService.uploadAvatar(avatar, user._id);
     }
 

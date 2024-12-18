@@ -12,7 +12,6 @@ export class CountriesService {
         private readonly countriesRepository: Repository<Country>,
     ) {
         this.countriesRepository.find().then((list) => list.length === 0 && this.initCountries());
-
     }
 
     async findAll(args?: PaginateArgs) {

@@ -9,7 +9,6 @@ import { UsersStats } from './dto/users-stats';
 import { AppointmentStats } from './dto/appointment-stats';
 import { ClinicStats } from './dto/clinic-stats';
 import { Survey } from 'src/surveys/entities/survey.entity';
-import { Link } from 'src/clinics/links/entities/link.entity';
 import { AdminStats } from './dto/admin-stats';
 
 @Injectable()
@@ -21,8 +20,6 @@ export class StatisticService {
         private readonly userRepository: Repository<User>,
         @InjectRepository(Appointment)
         private readonly appointmentRepository: Repository<Appointment>,
-        @InjectRepository(Link)
-        private readonly linkRepository: Repository<Link>,
         @InjectRepository(Survey)
         private readonly surveyRepository: Repository<Survey>,
     ) {}
@@ -86,9 +83,6 @@ export class StatisticService {
             where: { deletedAt: Not(IsNull()) && MoreThan(chunk == 1 ? this.oneDay : this.week) },
         });
         const totalUsers = await this.userRepository.count({});
-        const createdSurvey = await this.surveyRepository.count({
-            where: { createdAt: MoreThan(chunk == 1 ? this.oneDay : this.week) },
-        });
         const passedSurvey = await this.surveyRepository.count({
             where: { createdAt: MoreThan(chunk == 1 ? this.oneDay : this.week), passed: true },
         });

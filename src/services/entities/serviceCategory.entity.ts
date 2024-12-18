@@ -1,23 +1,22 @@
-import { ObjectType, Field } from "@nestjs/graphql";
-import { Clinic } from "src/clinics/entities/clinic.entity";
-import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Service } from "./service.entity";
-import { slugify } from "src/common/shared/slug";
+import { ObjectType, Field } from '@nestjs/graphql';
+import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Service } from './service.entity';
+import { slugify } from 'src/common/shared/slug';
 
 @ObjectType()
 @Entity({ name: 'service_categories' })
-export class ServiceCategory{
+export class ServiceCategory {
     @Field()
     @PrimaryGeneratedColumn('uuid')
     public readonly _id: string;
-    
+
     @Field()
     @Column()
     public readonly title: string;
 
     @OneToMany(() => Service, (service) => service.category)
     public services: Service[];
-    
+
     @Field()
     @Column()
     public slug: string;

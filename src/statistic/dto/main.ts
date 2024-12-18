@@ -15,7 +15,6 @@ export class StatsOutput {
     @Field()
     public users: UsersStats;
 
-
     @Field()
     public admin: AdminStats;
 }

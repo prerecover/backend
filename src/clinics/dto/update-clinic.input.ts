@@ -1,8 +1,5 @@
-import { CreateClinicInput } from './create-clinic.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { InputType, PartialType } from '@nestjs/graphql';
+import { RegisterClinicInput } from './registration/register-input';
 
 @InputType()
-export class UpdateClinicInput extends PartialType(CreateClinicInput) {
-    @Field(() => Int)
-    id: number;
-}
+export class UpdateClinicInput extends PartialType(RegisterClinicInput) {}

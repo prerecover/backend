@@ -38,8 +38,8 @@ export class Doctor extends CommonEntity {
     @ManyToOne(() => Clinic, (clinic) => clinic.doctors, { onDelete: 'CASCADE', nullable: true })
     public clinic: Clinic;
 
-    @Field()
-    @Column({ default: false, name: 'main_status' })
+    @Field({ nullable: true })
+    @Column({ default: false, name: 'main_status', nullable: true })
     mainStatus: boolean;
 
     @Field({ nullable: true })
