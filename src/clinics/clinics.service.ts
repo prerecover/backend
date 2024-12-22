@@ -193,7 +193,7 @@ export class ClinicsService {
     async findForService(serviceId: string): Promise<Clinic> {
         const clinic = await this.clinicRepository.findOne({
             where: { services: { _id: serviceId } },
-            relations: { country: true, doctors: true },
+            relations: { country: true, doctors: true, detail: true },
         });
         return clinic;
     }
@@ -210,7 +210,7 @@ export class ClinicsService {
     async findOne(id: string) {
         const clinic = await this.clinicRepository.findOne({
             where: { _id: id },
-            relations: { country: true, doctors: true, news: true, appointments: true, services: true },
+            relations: { country: true, doctors: true, news: true, appointments: true, services: true, detail: true },
         });
         if (!clinic) throw new NotFoundException('Clinic with that id not found!');
         return clinic;

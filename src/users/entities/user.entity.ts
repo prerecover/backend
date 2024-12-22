@@ -1,6 +1,6 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 import { CommonEntity } from '../../common/common.entity';
-import { Column, DeleteDateColumn, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { BeforeInsert, Column, DeleteDateColumn, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Country } from 'src/countries/entities/country.entity';
 import { IsPhoneNumber, Validate } from 'class-validator';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
@@ -8,10 +8,15 @@ import { IsUnique } from 'src/common/shared/unique.validator';
 import { Like } from 'src/likes/entities/like.entity';
 import { Saved } from 'src/saved/entities/saved.entity';
 import { Notification } from 'src/notifications/entities/notification.entity';
+import { getRandomInt } from 'src/common/shared/utils';
 
 @ObjectType()
 @Entity({ name: 'users' })
 export class User extends CommonEntity {
+    @Field()
+    @Column({ name: 'user_id', unique: true })
+    public userId: string;
+
     @Field({ nullable: true })
     @Validate(IsUnique, ['users', 'login'])
     @Column({ unique: true, length: 30, nullable: true })
@@ -73,7 +78,7 @@ export class User extends CommonEntity {
     public notifications: Notification[];
 
     @HideField()
-    @Column({})
+    @Column()
     public password: string;
 
     @Field({ nullable: true })
@@ -105,4 +110,9 @@ export class User extends CommonEntity {
 
     @OneToMany(() => Like, (like) => like.author)
     public likes: Like[];
+
+    @BeforeInsert()
+    assignUserId() {
+        this.userId = getRandomInt(10 ** 12, 10 ** 12 + 9 * 11111111111).toString();
+    }
 }

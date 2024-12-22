@@ -661,6 +661,7 @@ type User {
 
   """Updated at timestamp"""
   updatedAt: Date!
+  userId: String!
   verificationCode: Int
 }
 
