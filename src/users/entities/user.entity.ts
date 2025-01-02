@@ -105,7 +105,8 @@ export class User extends CommonEntity {
     @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp with time zone' })
     public deletedAt: Date;
 
-    @OneToMany(() => Saved, (saved) => saved.author)
+    @Field(() => Saved, { nullable: true })
+    @OneToMany(() => Saved, (saved) => saved.user, { nullable: true })
     public saved: Saved[];
 
     @OneToMany(() => Like, (like) => like.author)

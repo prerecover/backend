@@ -7,6 +7,7 @@ import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
 import { Service } from 'src/services/entities/service.entity';
 import { ClinicDetail } from './clinicDetail.entity';
+import { Saved } from 'src/saved/entities/saved.entity';
 
 @ObjectType()
 @Entity({ name: 'clinics' })
@@ -46,6 +47,9 @@ export class Clinic extends CommonEntity {
     @Field(() => Country, { nullable: true })
     @ManyToOne(() => Country, (country) => country.clinics, { onDelete: 'SET NULL' })
     public country: Country;
+
+    @OneToMany(() => Saved, (saved) => saved.clinic, { nullable: true })
+    public saved: Saved[];
 
     @Field({ nullable: true })
     @Column({ length: 225, nullable: true })

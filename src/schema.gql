@@ -173,8 +173,10 @@ input CreateNotificationInput {
 }
 
 input CreateSavedInput {
-  authorId: String!
-  newsId: String!
+  clinicId: String
+  doctorId: String
+  serviceId: String
+  userId: String!
 }
 
 input CreateServiceInput {
@@ -318,7 +320,6 @@ type News {
   like: Like
   newsImages: [NewsImage!]!
   newsVideos: [NewsVideo!]!
-  saved: Saved
   text: String!
   title: String!
 
@@ -473,15 +474,11 @@ input RegistrationUser {
 }
 
 type Saved {
-  _id: String!
-  author: User!
-
-  """Created at timestamp"""
-  createdAt: Date!
-  news: News!
-
-  """Updated at timestamp"""
-  updatedAt: Date!
+  _id: String
+  clinic: Clinic
+  doctor: Doctor
+  service: Service
+  user: User
 }
 
 type Search {
@@ -656,6 +653,7 @@ type User {
   notifications: [Notification!]
   number: String
   online: Boolean!
+  saved: Saved
   sex: Boolean
   surname: String
 

@@ -10,36 +10,38 @@ export class SavedService {
     constructor(
         @InjectRepository(Saved)
         private readonly savedRepository: Repository<Saved>,
-    ) {}
+    ) { }
     async create(createSavedInput: CreateSavedInput) {
+        const { userId, clinicId, doctorId, serviceId } = createSavedInput;
         const saved = this.savedRepository.create({
-            author: { _id: createSavedInput.authorId },
-            news: { _id: createSavedInput.newsId },
+            user: { _id: userId },
+            clinic: clinicId && { _id: clinicId },
+            doctor: doctorId && { _id: doctorId },
+            service: serviceId && { _id: serviceId },
         });
         return await this.savedRepository.save(saved);
     }
 
     async findAll(userId: string, args?: PaginateArgs): Promise<Saved[]> {
         return await this.savedRepository.find({
-            relations: { author: true, news: true },
-            where: { author: { _id: userId } },
+            relations: { user: true, clinic: true, doctor: true, service: true },
+            where: { user: { _id: userId } },
             take: args.take,
             skip: args.skip,
         });
     }
-    async findForCard(newsId: string, userId: string) {
-        if (!userId) {
-            return null;
-        }
-        const saved = await this.savedRepository.findOne({
-            where: { news: { _id: newsId }, author: { _id: userId } },
-            relations: { author: true },
+    async savedForUser(userId: string) {
+        return await this.savedRepository.find({
+            where: { user: { _id: userId } },
+            relations: { clinic: true, doctor: true, service: true },
         });
-        return saved;
     }
 
     async findOne(id: string) {
-        const saved = await this.savedRepository.findOne({ where: { _id: id }, relations: { author: true } });
+        const saved = await this.savedRepository.findOne({
+            where: { _id: id },
+            relations: { user: true, clinic: true, doctor: true, service: true },
+        });
         if (!saved) throw new NotFoundException('Saved with that id not found!');
         return saved;
     }

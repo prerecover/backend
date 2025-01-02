@@ -13,10 +13,11 @@ import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { MinioService } from 'src/config/s3/minio.service';
 import { ClinicDetail } from './entities/clinicDetail.entity';
 import { ServiceCategory } from 'src/services/entities/serviceCategory.entity';
+import { Saved } from 'src/saved/entities/saved.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Clinic, News, Country, Service, Doctor, ClinicDetail, ServiceCategory]),
+        TypeOrmModule.forFeature([Clinic, News, Country, Service, Doctor, ClinicDetail, ServiceCategory, Saved]),
         forwardRef(() => ServicesModule),
         NewsModule,
         LinksModule,
@@ -24,4 +25,4 @@ import { ServiceCategory } from 'src/services/entities/serviceCategory.entity';
     providers: [ClinicsResolver, ClinicsService, MinioService],
     exports: [ClinicsService],
 })
-export class ClinicsModule {}
+export class ClinicsModule { }

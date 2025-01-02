@@ -2,7 +2,6 @@ import { ObjectType, Field } from '@nestjs/graphql';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { CommonEntity } from 'src/common/common.entity';
 import { Like } from 'src/likes/entities/like.entity';
-import { Saved } from 'src/saved/entities/saved.entity';
 import { Service } from 'src/services/entities/service.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { NewsImage } from '../news-images/entities/news-image.entity';
@@ -21,9 +20,6 @@ export class News extends CommonEntity {
 
     @OneToMany(() => Like, (like) => like.news, { nullable: true })
     public likes: Like[];
-
-    @OneToMany(() => Saved, (saved) => saved.news, { nullable: true })
-    public saved: Saved[];
 
     @Field(() => [NewsImage])
     @OneToMany(() => NewsImage, (ni) => ni.news, { nullable: true })

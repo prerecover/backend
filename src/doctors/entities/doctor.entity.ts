@@ -6,6 +6,7 @@ import { Country } from 'src/countries/entities/country.entity';
 import { Column, Entity, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 import { Service } from 'src/services/entities/service.entity';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
+import { Saved } from 'src/saved/entities/saved.entity';
 
 @ObjectType()
 @Entity({ name: 'doctors' })
@@ -24,7 +25,7 @@ export class Doctor extends CommonEntity {
 
     @Field()
     @Column({ default: false })
-    online: boolean;
+    public online: boolean;
 
     @Field({ nullable: true })
     @Column({ nullable: true })
@@ -37,6 +38,9 @@ export class Doctor extends CommonEntity {
     @Field(() => Clinic, { nullable: true })
     @ManyToOne(() => Clinic, (clinic) => clinic.doctors, { onDelete: 'CASCADE', nullable: true })
     public clinic: Clinic;
+
+    @OneToMany(() => Saved, (saved) => saved.doctor, { nullable: true })
+    public saved: Saved[];
 
     @Field({ nullable: true })
     @Column({ default: false, name: 'main_status', nullable: true })

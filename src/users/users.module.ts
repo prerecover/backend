@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersResolver } from './users.resolver';
 import { DateScalar } from 'src/common/shared/date.scalar';
@@ -8,9 +8,10 @@ import { MinioService } from 'src/config/s3/minio.service';
 import { Country } from 'src/countries/entities/country.entity';
 import { RegistrationModule } from './registration/registration.module';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
+import { SavedModule } from 'src/saved/saved.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([User, Country, Appointment]), RegistrationModule],
+    imports: [TypeOrmModule.forFeature([User, Country, Appointment]), RegistrationModule, SavedModule],
     providers: [UsersResolver, UsersService, DateScalar, MinioService],
     exports: [UsersService],
 })

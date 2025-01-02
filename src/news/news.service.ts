@@ -19,7 +19,7 @@ export class NewsService {
 
     async findAll(args: PaginateArgs): Promise<News[]> {
         const news = await this.newsRepository.find({
-            relations: { newsImages: true, newsVideos: true, saved: true, likes: true, clinic: true },
+            relations: { newsImages: true, newsVideos: true, likes: true, clinic: true },
             take: args.take,
             skip: args.skip,
         });
@@ -30,14 +30,14 @@ export class NewsService {
     async findByClinic(clinicId: string): Promise<News[]> {
         const news = await this.newsRepository.find({
             where: { clinic: { _id: clinicId } },
-            relations: { likes: true, saved: true, newsImages: true, newsVideos: true, clinic: true },
+            relations: { likes: true, newsImages: true, newsVideos: true, clinic: true },
         });
         return news;
     }
     async findForService(serviceId: string): Promise<News[]> {
         const news = await this.newsRepository.find({
             where: { service: { _id: serviceId } },
-            relations: { likes: true, saved: true, newsImages: true, newsVideos: true, clinic: true },
+            relations: { likes: true, newsImages: true, newsVideos: true, clinic: true },
         });
         return news;
     }
@@ -45,7 +45,7 @@ export class NewsService {
     async findOne(id: string) {
         const news = await this.newsRepository.findOne({
             where: { _id: id },
-            relations: { newsImages: true, newsVideos: true, likes: true, saved: true, clinic: true },
+            relations: { newsImages: true, newsVideos: true, likes: true, clinic: true },
         });
         if (!news) throw new NotFoundException('News with that id not found!');
         return news;

@@ -8,7 +8,6 @@ import { LikesService } from 'src/likes/likes.service';
 import { SavedService } from 'src/saved/saved.service';
 import { CurrentUser } from 'src/common/shared/user.decorator';
 import { User } from 'src/users/entities/user.entity';
-import { Saved } from 'src/saved/entities/saved.entity';
 
 @Resolver(() => News)
 export class NewsResolver {
@@ -29,12 +28,6 @@ export class NewsResolver {
         const userId = user ? user._id : null;
         console.log(userId);
         return await this.likeService.findForCard(newsId, userId);
-    }
-    @ResolveField('saved', () => Saved, { nullable: true })
-    async saved(@CurrentUser() user: User, @Parent() news: News) {
-        const { _id: newsId } = news;
-        const userId = user ? user._id : null;
-        return await this.savedService.findForCard(newsId, userId);
     }
     @Query(() => [News], { name: 'newsAll' })
     async findAll(@Args({ nullable: true }) args?: PaginateArgs) {

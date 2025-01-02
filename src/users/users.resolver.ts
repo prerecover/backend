@@ -9,10 +9,15 @@ import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AvatarUpload } from './dto/avatar-upload';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
+import { Saved } from 'src/saved/entities/saved.entity';
+import { SavedService } from 'src/saved/saved.service';
 
 @Resolver(() => User)
 export class UsersResolver {
-    constructor(private readonly usersService: UsersService) {}
+    constructor(
+        private readonly usersService: UsersService,
+        private readonly savedService: SavedService,
+    ) {}
 
     @Mutation(() => User)
     async createUser(
@@ -49,6 +54,11 @@ export class UsersResolver {
     async appointments(@Parent() user: User) {
         const { _id: userId } = user;
         return await this.usersService.appointmentsForUser(userId);
+    }
+    @ResolveField('saved', () => [Saved])
+    async saved(@Parent() user: User) {
+        const { _id: userId } = user;
+        return await this.savedService.savedForUser(userId);
     }
 
     @UseGuards(AuthGuard)

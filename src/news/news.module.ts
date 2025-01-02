@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { NewsService } from './news.service';
 import { NewsResolver } from './news.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -12,9 +12,13 @@ import { LikesModule } from 'src/likes/likes.module';
 import { SavedModule } from 'src/saved/saved.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([News, Like, Saved, Service, NewsImage, NewsVideo]), LikesModule, SavedModule],
+    imports: [
+        TypeOrmModule.forFeature([News, Like, Saved, Service, NewsImage, NewsVideo]),
+        LikesModule,
+        forwardRef(() => SavedModule),
+    ],
 
     providers: [NewsResolver, NewsService],
     exports: [NewsService],
 })
-export class NewsModule {}
+export class NewsModule { }
