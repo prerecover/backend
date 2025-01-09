@@ -10,7 +10,6 @@ import { News } from 'src/news/entities/news.entity';
 import { NewsService } from 'src/news/news.service';
 import { RegisterClinicInput } from './dto/registration/register-input';
 import { ModuleRef } from '@nestjs/core';
-import { TelegramService } from 'nestjs-telegram';
 import { ClinicDetail } from './entities/clinicDetail.entity';
 import { UpdateClinicInput } from './dto/update-clinic.input';
 
@@ -22,11 +21,6 @@ export class ClinicsResolver {
         private readonly newsService: NewsService,
         private readonly moduleRef: ModuleRef,
     ) {}
-    private telegram: TelegramService;
-
-    onModuleInit() {
-        this.telegram = this.moduleRef.get(TelegramService, { strict: false });
-    }
 
     @Mutation(() => Clinic)
     async registerClinic(@Args('registerClinicInput') registerClinicInput: RegisterClinicInput) {

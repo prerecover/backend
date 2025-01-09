@@ -1,6 +1,6 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 import { CommonEntity } from '../../common/common.entity';
-import { BeforeInsert, Column, DeleteDateColumn, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { BeforeInsert, Column, DeleteDateColumn, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { Country } from 'src/countries/entities/country.entity';
 import { IsPhoneNumber, Validate } from 'class-validator';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
@@ -9,12 +9,17 @@ import { Like } from 'src/likes/entities/like.entity';
 import { Saved } from 'src/saved/entities/saved.entity';
 import { Notification } from 'src/notifications/entities/notification.entity';
 import { getRandomInt } from 'src/common/shared/utils';
+import { UserDetail } from './userDetail.entity';
 
 @ObjectType()
 @Entity({ name: 'users' })
 export class User extends CommonEntity {
-    @Field()
-    @Column({ name: 'user_id', unique: true })
+    @Field({ nullable: true })
+    @Column({
+        name: 'user_id',
+        unique: true,
+        nullable: true,
+    })
     public userId: string;
 
     @Field({ nullable: true })
@@ -68,9 +73,21 @@ export class User extends CommonEntity {
     @Column({ name: 'verification_code', nullable: true })
     public verificationCode: number;
 
-    @Field()
+    @Field({ nullable: true })
+    @Column({ name: 'telegram_id', nullable: true })
+    public telegramId: number;
+
+    @Field({ nullable: true })
+    @Column({ name: 'apple_id', nullable: true })
+    public appleId: number;
+
+    @Field({ nullable: true })
+    @Column({ name: 'google_id', nullable: true })
+    public googleId: number;
+
+    @Field({ nullable: true })
     @Validate(IsUnique, ['users', 'email'])
-    @Column({ length: 225, unique: true })
+    @Column({ length: 225, unique: true, nullable: true })
     public email: string;
 
     @Field(() => [Notification], { nullable: true })
@@ -111,6 +128,10 @@ export class User extends CommonEntity {
 
     @OneToMany(() => Like, (like) => like.author)
     public likes: Like[];
+
+    @Field(() => UserDetail, { nullable: true })
+    @OneToOne(() => UserDetail, (userDetail) => userDetail.user, { onDelete: 'SET NULL', nullable: true })
+    public detail: UserDetail;
 
     @BeforeInsert()
     assignUserId() {

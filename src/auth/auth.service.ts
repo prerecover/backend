@@ -5,13 +5,19 @@ import { LoginInput } from './dto/login-input';
 import * as bcrypt from 'bcrypt';
 import { LokiLogger } from 'nestjs-loki-logger';
 import { User } from 'src/users/entities/user.entity';
+import { TelegramAuthInput } from './dto/telegram-auth.input';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { GoogleAuthInput } from './dto/google-auth.input';
 
 @Injectable()
 export class AuthService {
     constructor(
         private userService: UsersService,
         private readonly jwtService: JwtService,
-    ) {}
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+    ) { }
 
     private readonly logger = new LokiLogger(AuthService.name);
     async signIn({ email, number, password }: LoginInput): Promise<any> {
@@ -36,5 +42,66 @@ export class AuthService {
         return {
             access_token: await this.jwtService.signAsync(payload),
         };
+    }
+
+    private async generateCode(): Promise<number> {
+        return Math.floor(1000 + Math.random() * 9000);
+    }
+    async authByGoogle(googleData: GoogleAuthInput) {
+        const { email, id, name, image } = googleData;
+        const payload = {};
+        const user = await this.userRepository.findOneBy({ googleId: id });
+        if (user) {
+            user.firstName = name;
+            user.avatar = image;
+            payload['_id'] = user._id;
+            payload['firstName'] = name;
+            await this.userRepository.save(user);
+            return {
+                access_token: await this.jwtService.signAsync(payload),
+            };
+        } else {
+            const user = this.userRepository.create({ firstName: name, googleId: id });
+            const code = await this.generateCode();
+            user.verificationCode = code;
+            user.password = await bcrypt.hash(id.toString(), 10);
+            user.avatar = image;
+            user.email = email;
+            const resultUser = await this.userRepository.save(user);
+            this.logger.log(`Создан новый пользователь - ${resultUser.firstName}`);
+            payload['_id'] = user._id;
+            payload['firstName'] = user.firstName;
+            return {
+                access_token: await this.jwtService.signAsync(payload),
+            };
+        }
+    }
+    async authByTelegram(tgData: TelegramAuthInput) {
+        const { first_name, photo_url, id } = tgData;
+        const payload = {};
+        const user = await this.userRepository.findOneBy({ telegramId: id });
+        if (user) {
+            user.firstName = first_name;
+            user.avatar = photo_url;
+            payload['_id'] = user._id;
+            payload['firstName'] = first_name;
+            await this.userRepository.save(user);
+            return {
+                access_token: await this.jwtService.signAsync(payload),
+            };
+        } else {
+            const user = this.userRepository.create({ firstName: first_name, telegramId: id });
+            const code = await this.generateCode();
+            user.verificationCode = code;
+            user.password = await bcrypt.hash(id.toString(), 10);
+            user.avatar = photo_url;
+            const resultUser = await this.userRepository.save(user);
+            this.logger.log(`Создан новый пользователь - ${resultUser.firstName}`);
+            payload['_id'] = user._id;
+            payload['firstName'] = user.firstName;
+            return {
+                access_token: await this.jwtService.signAsync(payload),
+            };
+        }
     }
 }

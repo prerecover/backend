@@ -9,9 +9,10 @@ import { Country } from 'src/countries/entities/country.entity';
 import { RegistrationModule } from './registration/registration.module';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
 import { SavedModule } from 'src/saved/saved.module';
+import { UserDetail } from './entities/userDetail.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([User, Country, Appointment]), RegistrationModule, SavedModule],
+    imports: [TypeOrmModule.forFeature([User, Country, Appointment, UserDetail]), RegistrationModule, SavedModule],
     providers: [UsersResolver, UsersService, DateScalar, MinioService],
     exports: [UsersService],
 })

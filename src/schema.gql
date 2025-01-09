@@ -203,6 +203,18 @@ input CreateUserInput {
 """Date type"""
 scalar Date
 
+input DetailUserInput {
+  allergy: String
+  height: Int
+  oxygen: Int
+  pressureEnd: Int
+  pressureStart: Int
+  pulse: Int
+  sleepTime: Int
+  temperature: Int
+  weight: Int
+}
+
 type Doctor {
   _id: String!
   appointments: Appointment
@@ -269,6 +281,7 @@ input LoginInput {
 }
 
 type Mutation {
+  authByTelegram(authByTelegram: TelegramAuthInput!): TokenResponse!
   changeDate(appointmentId: String!, timeStart: Date!): Boolean!
   changeMe(changeMeInput: UpdateUserInput!): User!
   completeSurvey(surveyCompleteInput: [SurveyCompleteInput!]!, surveyId: String!): Boolean!
@@ -570,6 +583,15 @@ type SurveyQuestion {
   updatedAt: Date!
 }
 
+input TelegramAuthInput {
+  auth_date: Int!
+  first_name: String!
+  hash: String!
+  id: Int!
+  photo_url: String
+  username: String!
+}
+
 type TokenResponse {
   access_token: String!
 }
@@ -616,6 +638,7 @@ input UpdateUserInput {
   birthday: Date
   city: String
   countryTitle: String
+  detail: DetailUserInput!
   email: String
   firstName: String
   lastName: String
@@ -632,6 +655,7 @@ scalar Upload
 type User {
   _id: String!
   address: String
+  appleId: Int
   appointments: [Appointment!]!
   avatar: String
   birthday: Date
@@ -643,8 +667,10 @@ type User {
 
   """Deleted at timestamp"""
   deletedAt: Date
-  email: String!
+  detail: UserDetail
+  email: String
   firstName: String
+  googleId: Int
   historyStudied: Boolean!
   isStaff: Boolean!
   isVerfied: Boolean!
@@ -656,11 +682,25 @@ type User {
   saved: Saved
   sex: Boolean
   surname: String
+  telegramId: Int
 
   """Updated at timestamp"""
   updatedAt: Date!
-  userId: String!
+  userId: String
   verificationCode: Int
+}
+
+type UserDetail {
+  _id: String!
+  allergey: String
+  height: Int
+  oxygen: Int
+  pressureEnd: Int
+  pressureStart: Int
+  pulse: Int
+  sleepTime: Int
+  temperature: Int
+  weight: Int
 }
 
 type UsersStats {

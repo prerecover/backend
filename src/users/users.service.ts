@@ -11,6 +11,7 @@ import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { AvatarUpload } from './dto/avatar-upload';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
 import { LokiLogger } from 'nestjs-loki-logger';
+import { UserDetail } from './entities/userDetail.entity';
 
 @Injectable()
 export class UsersService {
@@ -21,15 +22,18 @@ export class UsersService {
         private readonly countryRepository: Repository<Country>,
         @InjectRepository(Appointment)
         private readonly appointmentsRepository: Repository<Appointment>,
+        @InjectRepository(UserDetail)
+        private readonly userDetailRepository: Repository<UserDetail>,
         @Inject()
         private readonly minioService: MinioService,
-    ) {}
+    ) { }
 
     private readonly logger = new LokiLogger(UsersService.name);
     @Transactional()
     async create(createUserInput: CreateUserInput, countryTitle: string): Promise<User> {
         const { avatar, ...data } = createUserInput;
         const user = this.userRepository.create(data);
+        const userDetail = this.userDetailRepository.create();
 
         const country = await this.countryRepository.findOneBy({ title: countryTitle });
         if (avatar) {
@@ -38,6 +42,7 @@ export class UsersService {
             user.avatar = `${this.minioService.pathToFile}/${path}`;
         }
         user.country = country;
+        user.detail = userDetail;
         this.logger.log(`Создан пользователь - ${user.email}`);
         return await this.userRepository.save(user);
     }
@@ -70,7 +75,7 @@ export class UsersService {
     async findOne(id: string) {
         const user = await this.userRepository.findOne({
             where: { _id: id },
-            relations: { country: true, appointments: true, saved: true },
+            relations: { country: true, appointments: true, saved: true, detail: true },
         });
         if (!user) throw new NotFoundException('User with that id not found!');
         return user;
@@ -84,12 +89,12 @@ export class UsersService {
     }
 
     async findOneByNumber(number: string): Promise<User> {
-        const user = await this.userRepository.findOneBy({ number: number });
+        const user = await this.userRepository.findOneBy({ number });
         if (!user) throw new NotFoundException('User with that number not found!');
         return user;
     }
     async findOneByEmail(email: string): Promise<User> {
-        const user = await this.userRepository.findOneBy({ email: email });
+        const user = await this.userRepository.findOneBy({ email });
         if (!user) throw new NotFoundException('User with that email not found!');
         return user;
     }
