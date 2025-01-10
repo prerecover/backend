@@ -1,18 +1,16 @@
-import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
-import { SavedService } from './saved.service';
-import { Saved } from './entities/saved.entity';
-import { CreateSavedInput } from './dto/create-saved.input';
-import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { UseGuards } from '@nestjs/common';
+import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { CurrentUser } from 'src/common/shared/user.decorator';
-import { User } from 'src/users/entities/user.entity';
-import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { ClinicsService } from 'src/clinics/clinics.service';
-import { DoctorsService } from 'src/doctors/doctors.service';
-import { Doctor } from 'src/doctors/entities/doctor.entity';
+import { Clinic } from 'src/clinics/entities/clinic.entity';
+import { PaginateArgs } from 'src/common/args/paginateArgs';
+import { CurrentUser } from 'src/common/shared/user.decorator';
 import { Service } from 'src/services/entities/service.entity';
 import { ServicesService } from 'src/services/services.service';
+import { User } from 'src/users/entities/user.entity';
+import { CreateSavedInput } from './dto/create-saved.input';
+import { Saved } from './entities/saved.entity';
+import { SavedService } from './saved.service';
 
 @Resolver(() => Saved)
 export class SavedResolver {
@@ -20,7 +18,7 @@ export class SavedResolver {
         private readonly savedService: SavedService,
         private readonly clinicService: ClinicsService,
         private readonly servicesService: ServicesService,
-    ) { }
+    ) {}
 
     @Mutation(() => Saved)
     // @UseGuards(AuthGuard)

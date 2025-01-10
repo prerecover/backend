@@ -15,7 +15,7 @@ export class TelegramAuthInput {
     public hash: string;
 
     @Field()
-    public id: number;
+    public id: string;
 
     @Field({ nullable: true })
     public photo_url: string;

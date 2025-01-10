@@ -25,4 +25,4 @@ import { Saved } from 'src/saved/entities/saved.entity';
     providers: [ClinicsResolver, ClinicsService, MinioService],
     exports: [ClinicsService],
 })
-export class ClinicsModule { }
+export class ClinicsModule {}

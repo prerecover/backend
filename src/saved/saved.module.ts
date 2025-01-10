@@ -23,4 +23,4 @@ import { ServicesModule } from 'src/services/services.module';
     providers: [SavedResolver, SavedService],
     exports: [SavedService],
 })
-export class SavedModule { }
+export class SavedModule {}

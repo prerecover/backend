@@ -17,4 +17,4 @@ import { ServiceCategory } from './entities/serviceCategory.entity';
     providers: [ServicesResolver, ServicesService],
     exports: [ServicesService],
 })
-export class ServicesModule { }
+export class ServicesModule {}

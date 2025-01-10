@@ -281,6 +281,7 @@ input LoginInput {
 }
 
 type Mutation {
+  authByOther(authByOther: OtherAuthInput!, key: String!): TokenResponse!
   authByTelegram(authByTelegram: TelegramAuthInput!): TokenResponse!
   changeDate(appointmentId: String!, timeStart: Date!): Boolean!
   changeMe(changeMeInput: UpdateUserInput!): User!
@@ -375,6 +376,13 @@ type Notification {
   """Updated at timestamp"""
   updatedAt: Date!
   user: User!
+}
+
+input OtherAuthInput {
+  email: String
+  id: String!
+  image: String!
+  name: String!
 }
 
 type Query {
@@ -587,7 +595,7 @@ input TelegramAuthInput {
   auth_date: Int!
   first_name: String!
   hash: String!
-  id: Int!
+  id: String!
   photo_url: String
   username: String!
 }
@@ -655,7 +663,6 @@ scalar Upload
 type User {
   _id: String!
   address: String
-  appleId: Int
   appointments: [Appointment!]!
   avatar: String
   birthday: Date
@@ -670,7 +677,7 @@ type User {
   detail: UserDetail
   email: String
   firstName: String
-  googleId: Int
+  googleId: String
   historyStudied: Boolean!
   isStaff: Boolean!
   isVerfied: Boolean!
@@ -682,12 +689,13 @@ type User {
   saved: Saved
   sex: Boolean
   surname: String
-  telegramId: Int
+  telegramId: String
 
   """Updated at timestamp"""
   updatedAt: Date!
   userId: String
   verificationCode: Int
+  vkId: String
 }
 
 type UserDetail {

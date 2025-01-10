@@ -8,7 +8,7 @@ import { User } from 'src/users/entities/user.entity';
 import { TelegramAuthInput } from './dto/telegram-auth.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { GoogleAuthInput } from './dto/google-auth.input';
+import { OtherAuthInput } from './dto/other-auth.input';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +17,7 @@ export class AuthService {
         private readonly jwtService: JwtService,
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-    ) { }
+    ) {}
 
     private readonly logger = new LokiLogger(AuthService.name);
     async signIn({ email, number, password }: LoginInput): Promise<any> {
@@ -47,35 +47,41 @@ export class AuthService {
     private async generateCode(): Promise<number> {
         return Math.floor(1000 + Math.random() * 9000);
     }
-    async authByGoogle(googleData: GoogleAuthInput) {
-        const { email, id, name, image } = googleData;
-        const payload = {};
-        const user = await this.userRepository.findOneBy({ googleId: id });
+    async authByOther(authData: OtherAuthInput, key: 'google' | 'vk') {
+        const { email, id, name, image } = authData;
+        const payload: Record<string, any> = {};
+
+        const idField = key === 'google' ? 'googleId' : 'vkId';
+
+        let user = await this.userRepository.findOne({ where: { [idField]: id } });
+
         if (user) {
             user.firstName = name;
             user.avatar = image;
             payload['_id'] = user._id;
             payload['firstName'] = name;
             await this.userRepository.save(user);
-            return {
-                access_token: await this.jwtService.signAsync(payload),
-            };
         } else {
-            const user = this.userRepository.create({ firstName: name, googleId: id });
-            const code = await this.generateCode();
-            user.verificationCode = code;
-            user.password = await bcrypt.hash(id.toString(), 10);
-            user.avatar = image;
-            user.email = email;
+            user = this.userRepository.create({
+                firstName: name,
+                [idField]: id,
+                email: email,
+                avatar: image,
+                password: await bcrypt.hash(id.toString(), 10),
+                verificationCode: await this.generateCode(),
+            });
+
             const resultUser = await this.userRepository.save(user);
             this.logger.log(`Создан новый пользователь - ${resultUser.firstName}`);
-            payload['_id'] = user._id;
-            payload['firstName'] = user.firstName;
-            return {
-                access_token: await this.jwtService.signAsync(payload),
-            };
+            payload['_id'] = resultUser._id;
+            payload['firstName'] = resultUser.firstName;
         }
+
+        return {
+            access_token: await this.jwtService.signAsync(payload),
+        };
     }
+
     async authByTelegram(tgData: TelegramAuthInput) {
         const { first_name, photo_url, id } = tgData;
         const payload = {};

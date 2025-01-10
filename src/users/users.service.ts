@@ -26,7 +26,7 @@ export class UsersService {
         private readonly userDetailRepository: Repository<UserDetail>,
         @Inject()
         private readonly minioService: MinioService,
-    ) { }
+    ) {}
 
     private readonly logger = new LokiLogger(UsersService.name);
     @Transactional()

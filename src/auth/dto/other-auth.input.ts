@@ -1,14 +1,14 @@
 import { InputType, Field } from '@nestjs/graphql';
 @InputType()
-export class GoogleAuthInput {
+export class OtherAuthInput {
     @Field()
-    public id: number;
+    public id: string;
 
     @Field()
     public name: string;
 
-    @Field()
-    public email: string;
+    @Field({ nullable: true })
+    public email?: string;
 
     @Field()
     public image: string;

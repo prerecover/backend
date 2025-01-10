@@ -75,15 +75,15 @@ export class User extends CommonEntity {
 
     @Field({ nullable: true })
     @Column({ name: 'telegram_id', nullable: true })
-    public telegramId: number;
+    public telegramId: string;
 
     @Field({ nullable: true })
-    @Column({ name: 'apple_id', nullable: true })
-    public appleId: number;
+    @Column({ name: 'vk_id', nullable: true })
+    public vkId: string;
 
     @Field({ nullable: true })
     @Column({ name: 'google_id', nullable: true })
-    public googleId: number;
+    public googleId: string;
 
     @Field({ nullable: true })
     @Validate(IsUnique, ['users', 'email'])

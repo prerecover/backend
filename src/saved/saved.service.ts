@@ -10,7 +10,7 @@ export class SavedService {
     constructor(
         @InjectRepository(Saved)
         private readonly savedRepository: Repository<Saved>,
-    ) { }
+    ) {}
     async create(createSavedInput: CreateSavedInput) {
         const { userId, clinicId, doctorId, serviceId } = createSavedInput;
         const saved = this.savedRepository.create({

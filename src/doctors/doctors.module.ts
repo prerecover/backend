@@ -13,4 +13,4 @@ import { Saved } from 'src/saved/entities/saved.entity';
     providers: [DoctorsResolver, DoctorsService],
     exports: [DoctorsService],
 })
-export class DoctorsModule { }
+export class DoctorsModule {}

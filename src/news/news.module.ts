@@ -21,4 +21,4 @@ import { SavedModule } from 'src/saved/saved.module';
     providers: [NewsResolver, NewsService],
     exports: [NewsService],
 })
-export class NewsModule { }
+export class NewsModule {}
