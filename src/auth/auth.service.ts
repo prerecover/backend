@@ -17,7 +17,7 @@ export class AuthService {
         private readonly jwtService: JwtService,
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-    ) {}
+    ) { }
 
     private readonly logger = new LokiLogger(AuthService.name);
     async signIn({ email, number, password }: LoginInput): Promise<any> {
@@ -52,6 +52,15 @@ export class AuthService {
         const payload: Record<string, any> = {};
 
         const idField = key === 'google' ? 'googleId' : 'vkId';
+        if (email) {
+            const user = await this.userRepository.findOne({ where: { email } });
+            if (user) {
+                user.avatar = image;
+                payload['_id'] = user._id;
+                payload['firstName'] = name;
+                await this.userRepository.save(user);
+            }
+        }
 
         let user = await this.userRepository.findOne({ where: { [idField]: id } });
 

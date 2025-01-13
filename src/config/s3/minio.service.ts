@@ -6,7 +6,7 @@ import { Stream } from 'stream';
 @Injectable()
 export class MinioService {
     bucket = process.env.MINIO_BUCKET;
-    pathToFile = `${process.env.MINIO_URL}/${this.bucket}`;
+    pathToFile = process.env.MINIO_DOMAIN;
     constructor(@InjectS3() private readonly S3Service: S3) {
         const buckets = this.S3Service.listBuckets().then((bucket) => bucket.Buckets.map((bucket) => bucket.Name));
         buckets.then(
@@ -34,10 +34,12 @@ export class MinioService {
     public async uploadFile(file: FileUpload, pathPrefix: string) {
         const { filename, createReadStream } = file;
         const pathFile = `${pathPrefix}/${filename}`;
+        console.log(pathFile);
         await this.loadFile(pathFile, createReadStream());
         return pathFile;
     }
     private async loadFile(fileName: string, data: Stream) {
+        console.log(fileName);
         const buffer = await this.streamToBuffer(data);
         this.S3Service.putObject({
             Bucket: this.bucket,

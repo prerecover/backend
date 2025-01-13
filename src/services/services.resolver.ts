@@ -43,10 +43,10 @@ export class ServicesResolver {
         return await this.clinicService.findForService(serviceId);
     }
 
-    @Mutation(() => [Service], { name: 'selectServices' })
-    async selectServices(@Args('selectServiceInput') selectServiceInput: SelectServiceInput) {
-        return await this.servicesService.selectService(selectServiceInput);
-    }
+    // @Mutation(() => [Service], { name: 'selectServices' })
+    // async selectServices(@Args('selectServiceInput') selectServiceInput: SelectServiceInput) {
+    //     return await this.servicesService.selectService(selectServiceInput);
+    // }
 
     @ResolveField('news', () => [News], { nullable: true })
     async news(@Parent() service: Service) {

@@ -42,132 +42,67 @@ export class ClinicsService {
     }
 
     async update(updateClinicInput: UpdateClinicInput, clinicId: string) {
-        const {
-            countryName,
-            city,
-            registryNumber,
-            age,
-            square,
-            numbers,
-            language,
-            adminNumber,
-            computerHave,
-            elevatorHave,
-            internetHave,
-            // mondayTime,
-            // tuesdayTime,
-            // wednesdayTime,
-            // thursdayTime,
-            // fridayTime,
-            // sundayTime,
-            // saturdayTime,
-            totalDoctors,
-            totalServices,
-            numberOfFloors,
-            address,
-            title,
-            typeTitle,
-        } = updateClinicInput;
+        const { countryName, detail, avatar, services, ...data } = updateClinicInput;
         const country = await this.countryRepository.findOneBy({ title: countryName });
-
-        this.clinicDetailRepository.update(
-            { clinic: { _id: clinicId } },
-            {
-                registryNumber,
-                numberOfFloors,
-                totalServices,
-                totalDoctors,
-                square,
-                numbers,
-                language,
-                computerHave,
-                elevatorHave,
-                internetHave,
-                adminNumber,
-            },
-        );
-        await this.clinicRepository.update({ _id: clinicId }, { title, typeTitle, city, country, address, age });
+        this.clinicDetailRepository.update({ clinic: { _id: clinicId } }, detail);
+        await this.clinicRepository.update({ _id: clinicId }, { country: country, ...data });
         return await this.clinicRepository.findOneBy({ _id: clinicId });
     }
-
     async registerClinic(registerClinicInput: RegisterClinicInput) {
-        const {
-            services,
-            countryName,
-            registryNumber,
-            square,
-            numbers,
-            language,
-            adminNumber,
-            computerHave,
-            elevatorHave,
-            internetHave,
-            mondayTime,
-            tuesdayTime,
-            wednesdayTime,
-            thursdayTime,
-            fridayTime,
-            sundayTime,
-            saturdayTime,
-            totalDoctors,
-            totalServices,
-            numberOfFloors,
-            ...data
-        } = registerClinicInput;
-        let clinic = this.clinicRepository.create(data);
-        const country = await this.countryRepository.findOneBy({ title: countryName });
-        const detail = this.clinicDetailRepository.create({
-            registryNumber,
-            square,
-            numbers,
-            adminNumber,
-            computerHave,
-            language,
-            elevatorHave,
-            internetHave,
-            mondayTime,
-            tuesdayTime,
-            wednesdayTime,
-            thursdayTime,
-            fridayTime,
-            saturdayTime,
-            sundayTime,
-            totalDoctors,
-            totalServices,
-            numberOfFloors,
-        });
-        clinic.detail = detail;
+        const { services, countryName, detail, avatar, ...data } = registerClinicInput;
+
+        // Создание клиники и зависимостей
+        const clinic = this.clinicRepository.create(data);
+        const [country, clinicDetail, avatarPath] = await Promise.all([
+            this.countryRepository.findOneBy({ title: countryName }),
+            this.clinicDetailRepository.save(this.clinicDetailRepository.create(detail)),
+            this.minioService.uploadFile(await avatar, 'clinics_images'),
+        ]);
+
+        clinic.detail = clinicDetail;
         clinic.country = country;
-        await this.clinicDetailRepository.save(detail);
-        clinic = await this.clinicRepository.save(clinic);
-        services.forEach(async (service) => {
-            const { category: categoryTitle, doctors, ...serviceData } = service;
-            const category = await this.serviceCategoryRepository.findOneBy({ title: categoryTitle });
-            const serviceCreated = this.serviceRepository.create(serviceData);
-            const doctorsArray: Doctor[] = [];
-            doctors.forEach((doctor) => {
+        clinic.avatar = `${this.minioService.pathToFile}/${avatarPath}`;
+        await this.clinicRepository.save(clinic);
+
+        // Обработка услуг
+        for (const service of services) {
+            const { category: categoryTitle, doctors, img, ...serviceData } = service;
+
+            const [category, imgPath] = await Promise.all([
+                this.serviceCategoryRepository.findOneBy({ title: categoryTitle }),
+                this.minioService.uploadFile(await img, 'services_images'),
+            ]);
+
+            const serviceCreated = this.serviceRepository.create({
+                ...serviceData,
+                clinic,
+                category,
+                img: `${this.minioService.pathToFile}/${imgPath}`,
+            });
+
+            const doctorsArray = doctors.map((doctor) => {
                 const doctorCreated = this.doctorsRepository.create(doctor);
                 doctorCreated.clinic = clinic;
-                doctorsArray.push(doctorCreated);
+                return doctorCreated;
             });
-            serviceCreated.clinic = clinic;
+
             serviceCreated.doctors = doctorsArray;
-            serviceCreated.category = category;
-            this.serviceRepository.save(serviceCreated);
-        });
+
+            await this.serviceRepository.save(serviceCreated);
+        }
+
+        // Уведомление в Telegram
         if (clinic) {
-            this.telegram
+            await this.telegram
                 .sendMessage({
-                    // chat_id: '595366190',
                     chat_id: '1034093866',
                     text: `Создана новая клиника! 
-                    Название - ${clinic.title} 
-                    Возраст клиники- ${clinic.age} лет
-                    Досвидания Темур, хорошего дня!, жду 100$
-        `,
+Название - ${clinic.title} 
+Возраст клиники - ${clinic.age} лет`,
                 })
                 .toPromise();
         }
+
         return clinic;
     }
     async create(createClinicInput: CreateClinicInput) {

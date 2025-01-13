@@ -10,6 +10,6 @@ export class OtherAuthInput {
     @Field({ nullable: true })
     public email?: string;
 
-    @Field()
-    public image: string;
+    @Field({ nullable: true })
+    public image?: string;
 }

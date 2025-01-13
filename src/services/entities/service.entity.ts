@@ -8,6 +8,14 @@ import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typ
 import { ServiceCategory } from './serviceCategory.entity';
 import { Saved } from 'src/saved/entities/saved.entity';
 
+export enum PAYMENT_METHOD {
+    ONLINE = 'Онлайн',
+    CASHBOX = 'В кассу',
+    TO_DOCTOR = 'Врачу',
+    INSTALLMENT = 'В рассрочку',
+    CREDIT = 'В кредит',
+}
+
 @ObjectType()
 @Entity({ name: 'services' })
 export class Service extends CommonEntity {
@@ -27,9 +35,13 @@ export class Service extends CommonEntity {
     @Column({ length: 225 })
     public description: string;
 
-    @Field(() => Int)
-    @Column()
-    public duration: number;
+    @Field(() => Int, { nullable: true })
+    @Column({ name: 'duration_min', nullable: true })
+    public durationMin: number;
+
+    @Field(() => Int, { nullable: true })
+    @Column({ name: 'duration_max', nullable: true })
+    public durationMax: number;
 
     @Field()
     @Column({ default: 0 })
@@ -39,9 +51,17 @@ export class Service extends CommonEntity {
     @Column({ nullable: true })
     public img: string;
 
-    @Field(() => Float)
-    @Column({ type: 'float' })
-    public price: number;
+    @Field(() => [String])
+    @Column({ name: 'payment_methods', type: 'text', array: true, nullable: true })
+    public paymentMethods: PAYMENT_METHOD[];
+
+    @Field(() => Float, { nullable: true })
+    @Column({ name: 'price_min', type: 'float', nullable: true })
+    public priceMin: number;
+
+    @Field(() => Float, { nullable: true })
+    @Column({ name: 'price_max', type: 'float', nullable: true })
+    public priceMax: number;
 
     @ManyToOne(() => Clinic, (clinic) => clinic.services, { onDelete: 'CASCADE' })
     public clinic: Clinic;

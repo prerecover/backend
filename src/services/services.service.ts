@@ -48,12 +48,12 @@ export class ServicesService {
         return service;
     }
 
-    async selectService(selectServiceInput: SelectServiceInput) {
-        const { countryTitle, startPrice, endPrice } = selectServiceInput;
-        return await this.servicesRepository.find({
-            where: { price: Between(startPrice, endPrice), clinic: { country: { title: countryTitle } } },
-        });
-    }
+    // async selectService(selectServiceInput: SelectServiceInput) {
+    //     const { countryTitle, startPrice, endPrice } = selectServiceInput;
+    //     return await this.servicesRepository.find({
+    //         where: { price: Between(startPrice, endPrice), clinic: { country: { title: countryTitle } } },
+    //     });
+    // }
     async findByClinic(clinicId: string) {
         const services = await this.servicesRepository.find({
             where: { clinic: { _id: clinicId } },

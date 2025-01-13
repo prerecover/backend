@@ -1,5 +1,8 @@
-import { InputType, Field, Int, Float } from '@nestjs/graphql';
+import { Field, Float, InputType, Int } from '@nestjs/graphql';
 import { RegisterDoctorInput } from './doctor-input';
+import { FileUpload } from 'src/common/shared/file.interface';
+import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
+import { PAYMENT_METHOD } from 'src/services/entities/service.entity';
 @InputType()
 export class RegisterServiceInput {
     @Field()
@@ -14,14 +17,26 @@ export class RegisterServiceInput {
     @Field()
     public category: string;
 
+    @Field(() => GraphQLUpload, { nullable: true })
+    img: Promise<FileUpload>;
+
     @Field()
     public description: string;
 
-    @Field(() => Int)
-    public duration: number;
+    @Field()
+    public paymentMethod: PAYMENT_METHOD;
 
-    @Field(() => Float)
-    public price: number;
+    @Field(() => Int, { nullable: true })
+    public durationMin: number;
+
+    @Field(() => Int, { nullable: true })
+    public durationMax: number;
+
+    @Field(() => Float, { nullable: true })
+    public priceMin: number;
+
+    @Field(() => Float, { nullable: true })
+    public priceMax: number;
 
     @Field(() => [RegisterDoctorInput])
     public doctors: RegisterDoctorInput[];

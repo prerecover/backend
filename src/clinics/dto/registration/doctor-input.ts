@@ -1,4 +1,6 @@
 import { InputType, Field, Float } from '@nestjs/graphql';
+import { FileUpload } from 'src/common/shared/file.interface';
+import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 
 @InputType()
 export class RegisterDoctorInput {
@@ -13,6 +15,9 @@ export class RegisterDoctorInput {
 
     @Field()
     public specialization: string;
+
+    @Field(() => GraphQLUpload, { nullable: true })
+    img: Promise<FileUpload>;
 
     @Field(() => Float)
     public workExp: number;
