@@ -73,6 +73,7 @@ export class RegisterClinicInput {
 
     @Field()
     public countryName: string;
+    
 
     @Field()
     public city: string;

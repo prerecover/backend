@@ -8,23 +8,24 @@ export class RegisterServiceInput {
     @Field()
     public title: string;
 
-    @Field()
+    @Field({nullable: true, defaultValue: false})
     public online: boolean;
 
-    @Field()
+    @Field({nullable: true, defaultValue: false})
     public offline: boolean;
 
     @Field()
     public category: string;
+    
+    @Field(() => [String || null])
+    public paymentMethods: PAYMENT_METHOD[];
 
     @Field(() => GraphQLUpload, { nullable: true })
-    img: Promise<FileUpload>;
+    avatar: Promise<FileUpload>;
 
     @Field()
     public description: string;
 
-    @Field()
-    public paymentMethod: PAYMENT_METHOD;
 
     @Field(() => Int, { nullable: true })
     public durationMin: number;

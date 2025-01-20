@@ -15,6 +15,8 @@ import { ModuleRef } from '@nestjs/core';
 import { ClinicDetail } from './entities/clinicDetail.entity';
 import { ServiceCategory } from 'src/services/entities/serviceCategory.entity';
 import { UpdateClinicInput } from './dto/update-clinic.input';
+import { Transactional } from 'typeorm-transactional';
+import { FileUpload } from 'src/common/shared/file.interface';
 
 @Injectable()
 export class ClinicsService {
@@ -48,60 +50,66 @@ export class ClinicsService {
         await this.clinicRepository.update({ _id: clinicId }, { country: country, ...data });
         return await this.clinicRepository.findOneBy({ _id: clinicId });
     }
+    @Transactional()
     async registerClinic(registerClinicInput: RegisterClinicInput) {
         const { services, countryName, detail, avatar, ...data } = registerClinicInput;
 
         // Создание клиники и зависимостей
         const clinic = this.clinicRepository.create(data);
-        const [country, clinicDetail, avatarPath] = await Promise.all([
+        const [country, clinicDetail] = await Promise.all([
             this.countryRepository.findOneBy({ title: countryName }),
             this.clinicDetailRepository.save(this.clinicDetailRepository.create(detail)),
-            this.minioService.uploadFile(await avatar, 'clinics_images'),
         ]);
+        if (avatar) {
+            const avatarPath = await this.minioService.uploadFile(await avatar, 'clinics_images');
+            clinic.avatar = `${this.minioService.pathToFile}/${avatarPath}`;
+        }
 
         clinic.detail = clinicDetail;
         clinic.country = country;
-        clinic.avatar = `${this.minioService.pathToFile}/${avatarPath}`;
         await this.clinicRepository.save(clinic);
 
         // Обработка услуг
         for (const service of services) {
-            const { category: categoryTitle, doctors, img, ...serviceData } = service;
-
-            const [category, imgPath] = await Promise.all([
-                this.serviceCategoryRepository.findOneBy({ title: categoryTitle }),
-                this.minioService.uploadFile(await img, 'services_images'),
-            ]);
-
+            const { category: categoryTitle, doctors, avatar, ...serviceData } = service;
+            const category = await this.serviceCategoryRepository.findOneBy({ title: categoryTitle });
             const serviceCreated = this.serviceRepository.create({
                 ...serviceData,
                 clinic,
                 category,
-                img: `${this.minioService.pathToFile}/${imgPath}`,
             });
+            if (avatar) {
+                const imgPath = await this.minioService.uploadFile(await avatar, 'services_images');
+                serviceCreated.avatar = `${this.minioService.pathToFile}/${imgPath}`;
+            }
 
-            const doctorsArray = doctors.map((doctor) => {
-                const doctorCreated = this.doctorsRepository.create(doctor);
-                doctorCreated.clinic = clinic;
-                return doctorCreated;
-            });
+            const doctorsArray = await Promise.all(
+                doctors.map(async (doctor) => {
+                    const { avatar, ...data } = doctor;
+                    const doctorCreated = this.doctorsRepository.create(data);
 
+                    if (avatar) {
+                        const imgPath = await this.minioService.uploadFile(await avatar, 'doctors_images');
+                        doctorCreated.avatar = `${this.minioService.pathToFile}/${imgPath}`;
+                    }
+
+                    doctorCreated.clinic = clinic;
+                    return doctorCreated;
+                }),
+            );
             serviceCreated.doctors = doctorsArray;
-
             await this.serviceRepository.save(serviceCreated);
         }
-
-        // Уведомление в Telegram
-        if (clinic) {
-            await this.telegram
-                .sendMessage({
-                    chat_id: '1034093866',
-                    text: `Создана новая клиника! 
-Название - ${clinic.title} 
-Возраст клиники - ${clinic.age} лет`,
-                })
-                .toPromise();
-        }
+        // if (clinic) {
+        //     await this.telegram
+        //         .sendMessage({
+        //             chat_id: '1364527977',
+        //             text: `Создана новая клиника!
+        // Название - ${clinic.title}
+        // Возраст клиники - ${clinic.age} лет`,
+        //         })
+        //         .toPromise();
+        // }
 
         return clinic;
     }

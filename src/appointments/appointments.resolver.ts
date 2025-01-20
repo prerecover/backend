@@ -53,7 +53,10 @@ export class AppointmentsResolver {
         appointmentId: string,
         @Args('status') status: string,
     ) {
-        return await this.appointmentsService.setStatus(appointmentId, status);
+        return await this.appointmentsService.setStatus(
+            appointmentId,
+            status as 'Approoved' | 'Rejected' | 'In process' | 'Pending',
+        );
     }
 
     @Mutation(() => Boolean)

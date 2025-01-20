@@ -9,10 +9,11 @@ export class AuthInterceptor implements NestInterceptor {
     constructor(
         private jwtService: JwtService,
         private readonly userService: UsersService,
-    ) { }
+    ) {}
 
     async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
         const ctx = GqlExecutionContext.create(context);
+
         const request = ctx.getContext().req;
         const token = this.extractTokenFromHeader(request);
         if (!token) {

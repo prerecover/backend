@@ -53,16 +53,22 @@ export class AuthService {
 
         const idField = key === 'google' ? 'googleId' : 'vkId';
         if (email) {
+            console.log('email find');
             const user = await this.userRepository.findOne({ where: { email } });
+            console.log('user with email find');
             if (user) {
                 user.avatar = image;
                 payload['_id'] = user._id;
                 payload['firstName'] = name;
                 await this.userRepository.save(user);
+                return {
+                    access_token: await this.jwtService.signAsync(payload),
+                };
             }
         }
 
         let user = await this.userRepository.findOne({ where: { [idField]: id } });
+        console.log('after email');
 
         if (user) {
             user.firstName = name;

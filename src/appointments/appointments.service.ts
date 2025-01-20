@@ -12,6 +12,9 @@ import { AvailableDate } from './available_dates/entities/availableDate.entity';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { LokiLogger } from 'nestjs-loki-logger';
 import { Transactional } from 'typeorm-transactional';
+import { InjectQueue } from '@nestjs/bull';
+import { QUEUE_NAME } from 'src/config/bull/queue.interface';
+import { Queue } from 'bull';
 
 @Injectable()
 export class AppointmentsService {
@@ -29,6 +32,7 @@ export class AppointmentsService {
         @InjectRepository(AvailableDate)
         private readonly dateRepository: Repository<AvailableDate>,
         private readonly notificationService: NotificationsService,
+        @InjectQueue(QUEUE_NAME.sms) private readonly smsQueue: Queue,
     ) {}
     private readonly logger = new LokiLogger(AppointmentsService.name);
 
@@ -44,6 +48,7 @@ export class AppointmentsService {
         await this.servicesRepository.save(service);
         appointment.service = service;
         appointment.clinic = clinic;
+
         appointment.doctor = doctor;
         appointment.user = user;
         const createdAppointment = await this.appointmentsRepository.save(appointment);
@@ -73,9 +78,14 @@ export class AppointmentsService {
         return appointments;
     }
 
-    async setStatus(appointmentId: string, status: string) {
+    async setStatus(appointmentId: string, status: 'Approoved' | 'Rejected' | 'In process' | 'Pending') {
         const appointment = await this.findOne(appointmentId);
         appointment.status = status;
+        await this.smsQueue.add('changeAppointmentStatus', {
+            number: appointment.user.number,
+            appointmentTitle: appointment.title || 'Без названия',
+            status: status,
+        });
         this.logger.log(appointment.toString());
         return await this.appointmentsRepository.save(appointment);
     }

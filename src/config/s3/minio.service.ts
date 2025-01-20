@@ -32,10 +32,10 @@ export class MinioService {
     }
 
     public async uploadFile(file: FileUpload, pathPrefix: string) {
-        const { filename, createReadStream } = file;
-        const pathFile = `${pathPrefix}/${filename}`;
+        console.log(file, 'MINIO');
+        const pathFile = `${pathPrefix}/${file.filename}`;
         console.log(pathFile);
-        await this.loadFile(pathFile, createReadStream());
+        await this.loadFile(pathFile, file.createReadStream());
         return pathFile;
     }
     private async loadFile(fileName: string, data: Stream) {

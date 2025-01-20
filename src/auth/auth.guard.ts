@@ -9,7 +9,7 @@ export class AuthGuard implements CanActivate {
     constructor(
         private jwtService: JwtService,
         private readonly userService: UsersService,
-    ) {}
+    ) { }
     private readonly logger = new LokiLogger(AuthGuard.name);
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const ctx = GqlExecutionContext.create(context);

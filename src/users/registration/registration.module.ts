@@ -7,16 +7,14 @@ import { User } from '../entities/user.entity';
 import { forwardRef } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
 import { QUEUE_NAME } from 'src/config/bull/queue.interface';
-import { MailModule } from 'src/config/smtp/mail.module';
-import { MailConsumer } from './registration.consumer';
 
 @Module({
     imports: [
         forwardRef(() => UsersModule),
         TypeOrmModule.forFeature([User]),
         BullModule.registerQueue({ name: QUEUE_NAME.mail }),
-        MailModule,
+        BullModule.registerQueue({ name: QUEUE_NAME.sms }),
     ],
-    providers: [RegistrationResolver, RegistrationService, MailConsumer],
+    providers: [RegistrationResolver, RegistrationService],
 })
 export class RegistrationModule {}

@@ -12,6 +12,8 @@ import { AvailableDatesModule } from './available_dates/available_dates.module';
 import { AvailableDate } from './available_dates/entities/availableDate.entity';
 import { NotificationsModule } from 'src/notifications/notifications.module';
 import { SurveysModule } from 'src/surveys/surveys.module';
+import { BullModule } from '@nestjs/bull';
+import { QUEUE_NAME } from 'src/config/bull/queue.interface';
 
 @Module({
     imports: [
@@ -20,6 +22,7 @@ import { SurveysModule } from 'src/surveys/surveys.module';
         NotificationsModule,
         AvailableDatesModule,
         SurveysModule,
+        BullModule.registerQueue({ name: QUEUE_NAME.sms }),
     ],
     providers: [AppointmentsResolver, AppointmentsService],
     exports: [AppointmentsService],

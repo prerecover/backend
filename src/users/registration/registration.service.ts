@@ -18,8 +18,9 @@ export class RegistrationService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-        @InjectQueue(QUEUE_NAME.mail) private msgQueue: Queue,
+        @InjectQueue(QUEUE_NAME.mail) private emailQueue: Queue,
         private readonly userService: UsersService,
+        @InjectQueue(QUEUE_NAME.sms) private smsQueue: Queue,
     ) {}
     private readonly logger = new LokiLogger(RegistrationService.name);
     async createUser(registrationInput: RegistrationUser): Promise<User> {
@@ -28,7 +29,7 @@ export class RegistrationService {
         user.verificationCode = code;
         user.password = await bcrypt.hash(registrationInput.password, 10);
         const resultUser = await this.userRepository.save(user);
-        await this.msgQueue.add('registrationMessage', { email: registrationInput.email, code: code });
+        await this.emailQueue.add('registrationMessage', { email: registrationInput.email, code: code });
         this.logger.log(`Создан новый пользователь - ${resultUser.email}`);
         return resultUser;
     }
@@ -50,7 +51,7 @@ export class RegistrationService {
         const code = this.generateCode();
         await this.setVerificationCode(email, null, code);
         this.logger.log(`Переотправка кода подтверждения регистрации, ${email}`);
-        return Boolean(await this.msgQueue.add('registrationMessage', { email: email, code: code }));
+        return Boolean(await this.emailQueue.add('registrationMessage', { email: email, code: code }));
     }
 
     async forgotPassword(forgotPassword: ForgotPasswordInput) {
@@ -59,7 +60,7 @@ export class RegistrationService {
             await this.setVerificationCode(forgotPassword.email, null, code);
             this.logger.log(`Отправка кода сброса пароля - ${forgotPassword.email}`);
             return Boolean(
-                await this.msgQueue.add('forgotPasswordMessage', { email: forgotPassword.email, code: code }),
+                await this.emailQueue.add('forgotPasswordMessage', { email: forgotPassword.email, code: code }),
             );
         }
         if (forgotPassword.number) {
@@ -70,7 +71,7 @@ export class RegistrationService {
     async resendForgotCode(email: string) {
         const code = this.generateCode();
         await this.setVerificationCode(email, null, code);
-        return Boolean(await this.msgQueue.add('forgotPasswordMessage', { email: email, code: code }));
+        return Boolean(await this.emailQueue.add('forgotPasswordMessage', { email: email, code: code }));
     }
 
     async newPassword(newPasswordInput: NewPasswordInput) {

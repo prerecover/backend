@@ -17,7 +17,7 @@ export class RegisterDoctorInput {
     public specialization: string;
 
     @Field(() => GraphQLUpload, { nullable: true })
-    img: Promise<FileUpload>;
+    avatar: Promise<FileUpload>;
 
     @Field(() => Float)
     public workExp: number;

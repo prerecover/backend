@@ -49,7 +49,7 @@ export class Service extends CommonEntity {
 
     @Field({ nullable: true })
     @Column({ nullable: true })
-    public img: string;
+    public avatar: string;
 
     @Field(() => [String])
     @Column({ name: 'payment_methods', type: 'text', array: true, nullable: true })

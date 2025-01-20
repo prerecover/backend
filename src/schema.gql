@@ -475,8 +475,8 @@ input RegisterClinicInput {
 }
 
 input RegisterDoctorInput {
+  avatar: Upload
   firstName: String!
-  img: Upload
   lastName: String!
   specialization: String!
   surname: String!
@@ -484,15 +484,15 @@ input RegisterDoctorInput {
 }
 
 input RegisterServiceInput {
+  avatar: Upload
   category: String!
   description: String!
   doctors: [RegisterDoctorInput!]!
   durationMax: Int
   durationMin: Int
-  img: Upload
-  offline: Boolean!
-  online: Boolean!
-  paymentMethod: String!
+  offline: Boolean = false
+  online: Boolean = false
+  paymentMethods: [String!]!
   priceMax: Float
   priceMin: Float
   title: String!
@@ -525,6 +525,7 @@ input SelectClinicInput {
 
 type Service {
   _id: String!
+  avatar: String
   clinic: Clinic!
 
   """Created at timestamp"""
@@ -533,7 +534,6 @@ type Service {
   doctors: [Doctor!]!
   durationMax: Int
   durationMin: Int
-  img: String
   news: [News!]
   offline: Boolean!
   online: Boolean!
