@@ -160,7 +160,6 @@ type Country {
 input CreateAppointmentInput {
   clinicId: String!
   doctorId: String!
-  duration: Int!
   online: Boolean! = true
   serviceId: String!
   timeStart: Date!

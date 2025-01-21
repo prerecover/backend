@@ -14,9 +14,6 @@ export class CreateAppointmentInput {
     @Field()
     public doctorId: string;
 
-    @Field(() => Int)
-    public duration: number;
-
     @Field()
     public timeStart: Date;
 }

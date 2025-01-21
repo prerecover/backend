@@ -18,7 +18,7 @@ export class AppointmentsResolver {
         private readonly appointmentsService: AppointmentsService,
         private readonly moduleRef: ModuleRef,
         private readonly surveyService: SurveysService,
-    ) {}
+    ) { }
 
     private telegram: TelegramService;
 
@@ -33,16 +33,16 @@ export class AppointmentsResolver {
     ) {
         const appointment = await this.appointmentsService.create(createAppointmentInput, user._id);
         if (appointment) {
-            this.telegram
-                .sendMessage({
-                    chat_id: '1034093866',
-                    text: ` Создана новая запись! 
-                    Название - ${appointment.title} 
-                    Пользователь - ${appointment.user.firstName} ${appointment.user.lastName} ${appointment.user.surname}
-                    Клиника - ${appointment.clinic.title}
-        `,
-                })
-                .toPromise();
+            //     this.telegram
+            //         .sendMessage({
+            //             chat_id: '1034093866',
+            //             text: ` Создана новая запись!
+            //             Название - ${appointment.title}
+            //             Пользователь - ${appointment.user.firstName} ${appointment.user.lastName} ${appointment.user.surname}
+            //             Клиника - ${appointment.clinic.title}
+            // `,
+            //         })
+            //         .toPromise();
             return appointment;
         }
     }

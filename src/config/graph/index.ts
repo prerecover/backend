@@ -6,10 +6,10 @@ import { join } from 'path';
 @Injectable()
 export class GqlConfig implements GqlOptionsFactory {
     createGqlOptions(): ApolloDriverConfig {
-        return {
+        return { 
             autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
             sortSchema: true,
-            playground: true,
+            playground: true, 
             debug: true,
             buildSchemaOptions: {
                 numberScalarMode: 'integer',
