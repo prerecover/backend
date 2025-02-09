@@ -31,6 +31,7 @@ type Appointment {
   survey: Survey
   timeStart: Date
   title: String
+  undergoings: [Undergoing!]
 
   """Updated at timestamp"""
   updatedAt: Date!
@@ -237,7 +238,7 @@ input DetailUserInput {
 
 type Doctor {
   _id: String!
-  appointments: Appointment
+  appointments: [Appointment!]
   avatar: String
   clinic: Clinic
   country: Country
@@ -251,12 +252,18 @@ type Doctor {
   number: String
   online: Boolean!
   services: [Service!]
-  specialization: String
+  specialization: DoctorSpecialization!
   surname: String
 
   """Updated at timestamp"""
   updatedAt: Date!
   workExp: Float
+}
+
+type DoctorSpecialization {
+  _id: String!
+  slug: String!
+  title: String!
 }
 
 input ForgotPasswordInput {
@@ -326,9 +333,11 @@ type Mutation {
   removeNews(id: Int!): News!
   removeNotification(id: Int!): Notification!
   removeSaved(_id: String!): Saved!
+  removeSavedArray(ids: [String!]!): Boolean
   removeUser(_id: String!): User!
   resendVerifyCode(email: String!): Boolean!
   selectClinics(selectClinicInput: SelectClinicInput!): [Clinic!]!
+  selectServices(selectServiceInput: SelectServiceInput!): [Service!]!
   setAsRead(notificationId: String!): Notification!
   setAvailableDates(availableDateInput: AvailableDateInput!): Boolean!
   setStatusAppointment(appointmentId: String!, status: String!): Appointment!
@@ -413,6 +422,7 @@ type Query {
   countries(skip: Int! = 0, take: Int! = 500): [Country!]!
   country(slug: String!): Country!
   doctor(_id: String!): Doctor!
+  doctorSpecializations(skip: Int! = 0, take: Int! = 500): [DoctorSpecialization!]!
   doctors(skip: Int! = 0, take: Int! = 500): [Doctor!]!
   doctorsByClinic(clinicId: String!): [Doctor!]!
   getMe: User!
@@ -438,6 +448,7 @@ type Query {
   surveyByAppointment(appointmentId: String!): Survey!
   surveys(skip: Int! = 0, take: Int! = 500): [Survey!]!
   surveysByUser: [Survey!]!
+  undergoings(skip: Int! = 0, take: Int! = 500): [Undergoing!]!
   user(_id: ID!): User!
   users(skip: Int! = 0, take: Int! = 500): [User!]!
   validateLink(_id: String!): Link!
@@ -507,6 +518,7 @@ type Saved {
   clinic: Clinic
   doctor: Doctor
   service: Service
+  undergoing: Undergoing
   user: User
 }
 
@@ -514,17 +526,28 @@ type Search {
   clinics: [Clinic!]!
   doctors: [Doctor!]!
   services: [Service!]!
+  undergoings: [Undergoing!]!
 }
 
 input SelectClinicInput {
   countryTitle: String!
+  treated: Int!
+}
+
+input SelectServiceInput {
+  countryTitle: String!
+  endPrice: Int!
   offline: Boolean!
   online: Boolean!
+  startPrice: Int!
+  treated: Int!
 }
 
 type Service {
   _id: String!
+  appointments: [Appointment!]!
   avatar: String
+  category: ServiceCategory!
   clinic: Clinic!
 
   """Created at timestamp"""
@@ -607,6 +630,18 @@ input TelegramAuthInput {
 
 type TokenResponse {
   access_token: String!
+}
+
+type Undergoing {
+  _id: String!
+  appointment: Appointment
+
+  """Created at timestamp"""
+  createdAt: Date!
+  rating: Float!
+
+  """Updated at timestamp"""
+  updatedAt: Date!
 }
 
 input UpdateClinicInput {

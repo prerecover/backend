@@ -11,12 +11,14 @@ import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { ClinicsModule } from 'src/clinics/clinics.module';
 import { DoctorsModule } from 'src/doctors/doctors.module';
 import { ServicesModule } from 'src/services/services.module';
+import { UndergoingsModule } from 'src/undergoings/undergoings.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([News, User, Saved, Clinic, Doctor]),
         forwardRef(() => UsersModule),
-        ClinicsModule,
+        forwardRef(() => ClinicsModule),
+        forwardRef(() => UndergoingsModule),
         DoctorsModule,
         ServicesModule,
     ],

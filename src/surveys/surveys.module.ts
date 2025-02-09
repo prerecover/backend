@@ -23,8 +23,9 @@ import { HistoryStudyConsumer } from './surveys.consumer';
         NotificationsModule,
         BullModule.registerQueue({ name: QUEUE_NAME.historyStudy }),
         QuestionsModule,
-        UsersModule,
+        forwardRef(() => UsersModule),
         NotificationsModule,
+
         AnswersModule,
     ],
     providers: [SurveysResolver, SurveysService, HistoryStudyConsumer],

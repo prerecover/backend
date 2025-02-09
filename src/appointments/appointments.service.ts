@@ -101,6 +101,27 @@ export class AppointmentsService {
         return true;
     }
 
+    async findByUndergoing(id: string) {
+        const appointment = await this.appointmentsRepository.findOne({
+            where: { undergoings: { _id: id } },
+            relations: { user: true, doctor: true, clinic: true, service: true, survey: true },
+        });
+        return appointment;
+    }
+    async findByService(id: string) {
+        const appointment = await this.appointmentsRepository.find({
+            where: { service: { _id: id } },
+            relations: { user: true, doctor: true, clinic: true, service: true, survey: true },
+        });
+        return appointment;
+    }
+    async findByDoctor(id: string) {
+        const appointment = await this.appointmentsRepository.find({
+            where: { doctor: { _id: id } },
+            relations: { user: true, doctor: true, clinic: true, service: true, survey: true, undergoings: true },
+        });
+        return appointment;
+    }
     async findOne(id: string) {
         const appointment = await this.appointmentsRepository.findOne({
             where: { _id: id },

@@ -2,6 +2,7 @@ import { ObjectType, Field } from '@nestjs/graphql';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { Service } from 'src/services/entities/service.entity';
+import { Undergoing } from 'src/undergoings/entities/undergoing.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -23,6 +24,10 @@ export class Saved {
     @Field(() => Service, { nullable: true })
     @ManyToOne(() => Service, (service) => service.saved, { onDelete: 'CASCADE', nullable: true })
     public service: Service;
+
+    @Field(() => Undergoing, { nullable: true })
+    @ManyToOne(() => Undergoing, (undergoing) => undergoing.saved, { onDelete: 'CASCADE', nullable: true })
+    public undergoing: Undergoing;
 
     @Field(() => User, { nullable: true })
     @ManyToOne(() => User, (user) => user.saved, { onDelete: 'CASCADE', nullable: false })

@@ -11,6 +11,8 @@ import { User } from 'src/users/entities/user.entity';
 import { CreateSavedInput } from './dto/create-saved.input';
 import { Saved } from './entities/saved.entity';
 import { SavedService } from './saved.service';
+import { Undergoing } from 'src/undergoings/entities/undergoing.entity';
+import { UndergoingsService } from 'src/undergoings/undergoings.service';
 
 @Resolver(() => Saved)
 export class SavedResolver {
@@ -18,6 +20,7 @@ export class SavedResolver {
         private readonly savedService: SavedService,
         private readonly clinicService: ClinicsService,
         private readonly servicesService: ServicesService,
+        private readonly undergoingService: UndergoingsService,
     ) {}
 
     @Mutation(() => Saved)
@@ -44,6 +47,12 @@ export class SavedResolver {
         if (service) return await this.servicesService.findOne(service._id);
         else return null;
     }
+    @ResolveField('undergoing', () => Undergoing, { nullable: true })
+    async undergoing(@Parent() saved: Saved) {
+        const { undergoing } = saved;
+        if (undergoing) return await this.undergoingService.findOne(undergoing._id);
+        else return null;
+    }
     @Query(() => Saved, { name: 'saved' })
     findOne(@Args('_id') _id: string) {
         return this.savedService.findOne(_id);
@@ -52,5 +61,9 @@ export class SavedResolver {
     @Mutation(() => Saved)
     async removeSaved(@Args('_id') _id: string) {
         return await this.savedService.remove(_id);
+    }
+    @Mutation(() => Boolean, { nullable: true })
+    async removeSavedArray(@Args('ids', { type: () => [String] }) ids: string[]) {
+        return await this.savedService.removeArray(ids);
     }
 }

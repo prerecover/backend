@@ -3,7 +3,7 @@ import { CreateClinicInput } from './dto/create-clinic.input';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { Clinic } from './entities/clinic.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { SelectClinicInput } from './dto/select-clinic-input';
 import { RegisterClinicInput } from './dto/registration/register-input';
 import { Country } from 'src/countries/entities/country.entity';
@@ -16,7 +16,7 @@ import { ClinicDetail } from './entities/clinicDetail.entity';
 import { ServiceCategory } from 'src/services/entities/serviceCategory.entity';
 import { UpdateClinicInput } from './dto/update-clinic.input';
 import { Transactional } from 'typeorm-transactional';
-import { FileUpload } from 'src/common/shared/file.interface';
+import { DoctorSpecialization } from 'src/doctors/entities/doctorSpecialization.entity';
 
 @Injectable()
 export class ClinicsService {
@@ -33,6 +33,8 @@ export class ClinicsService {
         private readonly serviceCategoryRepository: Repository<ServiceCategory>,
         @InjectRepository(Doctor)
         private readonly doctorsRepository: Repository<Doctor>,
+        @InjectRepository(DoctorSpecialization)
+        private readonly doctorSpecializationsRepository: Repository<DoctorSpecialization>,
         @Inject()
         private readonly minioService: MinioService,
         private readonly moduleRef: ModuleRef,
@@ -85,15 +87,19 @@ export class ClinicsService {
 
             const doctorsArray = await Promise.all(
                 doctors.map(async (doctor) => {
-                    const { avatar, ...data } = doctor;
+                    const { specialization, avatar, ...data } = doctor;
                     const doctorCreated = this.doctorsRepository.create(data);
 
                     if (avatar) {
                         const imgPath = await this.minioService.uploadFile(await avatar, 'doctors_images');
                         doctorCreated.avatar = `${this.minioService.pathToFile}/${imgPath}`;
                     }
+                    const doctorSpecialization = await this.doctorSpecializationsRepository.findOneBy({
+                        title: specialization,
+                    });
 
                     doctorCreated.clinic = clinic;
+                    doctorCreated.specialization = doctorSpecialization;
                     return doctorCreated;
                 }),
             );
@@ -126,10 +132,12 @@ export class ClinicsService {
     }
 
     async selectClinic(selectClinicInput: SelectClinicInput) {
-        const { countryTitle, online, offline } = selectClinicInput;
+        const { countryTitle, treated } = selectClinicInput;
         return await this.clinicRepository.find({
-            where: { services: { online: online, offline: offline }, country: { title: countryTitle } },
-            select: { _id: true, title: true },
+            where: {
+                country: { title: countryTitle },
+                treated: MoreThan(treated - 1),
+            },
         });
     }
 

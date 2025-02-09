@@ -7,6 +7,7 @@ import { Column, Entity, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 import { Service } from 'src/services/entities/service.entity';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
 import { Saved } from 'src/saved/entities/saved.entity';
+import { DoctorSpecialization } from './doctorSpecialization.entity';
 
 @ObjectType()
 @Entity({ name: 'doctors' })
@@ -27,9 +28,9 @@ export class Doctor extends CommonEntity {
     @Column({ default: false })
     public online: boolean;
 
-    @Field({ nullable: true })
-    @Column({ nullable: true })
-    public specialization: string;
+    @Field(() => DoctorSpecialization)
+    @ManyToOne(() => DoctorSpecialization, (spec) => spec.doctors, { onDelete: 'SET NULL' })
+    public specialization: DoctorSpecialization;
 
     @Field(() => Float, { nullable: true })
     @Column({ name: 'work_experience', nullable: true })
@@ -67,7 +68,7 @@ export class Doctor extends CommonEntity {
     @ManyToOne(() => Country, (country) => country.doctors, { onDelete: 'SET NULL', nullable: true })
     public country: Country;
 
-    @Field(() => Appointment, { nullable: true })
+    @Field(() => [Appointment], { nullable: true })
     @OneToMany(() => Appointment, (appointment) => appointment.doctor)
     public appointments: Appointment[];
 

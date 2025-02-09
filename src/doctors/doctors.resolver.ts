@@ -8,12 +8,16 @@ import { Service } from 'src/services/entities/service.entity';
 import { ServicesService } from 'src/services/services.service';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { ClinicsService } from 'src/clinics/clinics.service';
+import { Appointment } from 'src/appointments/entities/appointment.entity';
+import { AppointmentsService } from 'src/appointments/appointments.service';
+import { DoctorSpecialization } from './entities/doctorSpecialization.entity';
 
 @Resolver(() => Doctor)
 export class DoctorsResolver {
     constructor(
         private readonly doctorsService: DoctorsService,
         private readonly servicesService: ServicesService,
+        private readonly appointmentsService: AppointmentsService,
         private readonly clinicService: ClinicsService,
     ) {}
 
@@ -22,6 +26,10 @@ export class DoctorsResolver {
         return await this.doctorsService.create(createDoctorInput);
     }
 
+    @Query(() => [DoctorSpecialization], { name: 'doctorSpecializations' })
+    async findAllDoctorSpecializations(@Args({ nullable: true }) args?: PaginateArgs) {
+        return await this.doctorsService.findAllDoctorsSpecializations(args);
+    }
     @Query(() => [Doctor], { name: 'doctors' })
     async findAll(@Args({ nullable: true }) args?: PaginateArgs) {
         return await this.doctorsService.findAll(args);
@@ -30,6 +38,11 @@ export class DoctorsResolver {
     async services(@Parent() doctor: Doctor) {
         const { _id: doctorId } = doctor;
         return await this.servicesService.findByDoctor(doctorId);
+    }
+    @ResolveField('appointments', () => [Appointment], { nullable: true })
+    async appointments(@Parent() doctor: Doctor) {
+        const { _id: doctorId } = doctor;
+        return await this.appointmentsService.findByDoctor(doctorId);
     }
     @ResolveField('clinic', () => Clinic, { nullable: true })
     async clinic(@Parent() doctor: Doctor) {

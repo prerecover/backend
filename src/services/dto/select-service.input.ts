@@ -10,4 +10,13 @@ export class SelectServiceInput {
 
     @Field()
     public endPrice: number;
+
+    @Field()
+    public online: boolean;
+
+    @Field()
+    public offline: boolean;
+
+    @Field()
+    public treated: number;
 }

@@ -6,8 +6,5 @@ export class SelectClinicInput {
     public countryTitle: string;
 
     @Field()
-    public offline: boolean;
-
-    @Field()
-    public online: boolean;
+    public treated: number;
 }

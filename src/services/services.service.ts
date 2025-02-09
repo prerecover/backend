@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, Repository } from 'typeorm';
+import { Between, Brackets, LessThan, MoreThan, Repository } from 'typeorm';
 import { PaginateArgs } from 'src/common/args/paginateArgs';
 import { Service } from './entities/service.entity';
 import { CreateServiceInput } from './dto/create-service.input';
@@ -33,7 +33,7 @@ export class ServicesService {
 
     async findAll(args: PaginateArgs): Promise<Service[]> {
         return await this.servicesRepository.find({
-            relations: { clinic: true, news: true, doctors: true },
+            relations: { clinic: true, news: true, doctors: true, category: true },
             take: args.take,
             skip: args.skip,
         });
@@ -42,18 +42,30 @@ export class ServicesService {
     async findOne(id: string) {
         const service = await this.servicesRepository.findOne({
             where: { _id: id },
-            relations: { clinic: true, news: true, doctors: true },
+            relations: { clinic: true, news: true, doctors: true, category: true },
         });
         if (!service) throw new NotFoundException('Service with that id not found!');
         return service;
     }
 
-    // async selectService(selectServiceInput: SelectServiceInput) {
-    //     const { countryTitle, startPrice, endPrice } = selectServiceInput;
-    //     return await this.servicesRepository.find({
-    //         where: { price: Between(startPrice, endPrice), clinic: { country: { title: countryTitle } } },
-    //     });
-    // }
+    async selectService(selectServiceInput: SelectServiceInput) {
+        const { countryTitle, startPrice, endPrice, online, offline, treated } = selectServiceInput;
+        const query = this.servicesRepository
+            .createQueryBuilder('service')
+            .innerJoin('service.clinic', 'clinic') // JOIN с таблицей clinic
+            .innerJoin('clinic.country', 'country') // JOIN с таблицей country
+            .where('service.priceMin > :startPrice', { startPrice })
+            .where('service.treated >= :treated', { treated })
+            .andWhere('country.title = :countryTitle', { countryTitle });
+
+        query.andWhere(
+            new Brackets((qb) => {
+                qb.where('service.online = :online', { online }).orWhere('service.offline = :offline', { offline });
+            }),
+        );
+
+        return await query.getMany();
+    }
     async findByClinic(clinicId: string) {
         const services = await this.servicesRepository.find({
             where: { clinic: { _id: clinicId } },

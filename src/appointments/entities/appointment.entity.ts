@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { IsDate } from 'class-validator';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { CommonEntity } from 'src/common/common.entity';
@@ -8,6 +8,7 @@ import { Survey } from 'src/surveys/entities/survey.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { AvailableDate } from '../available_dates/entities/availableDate.entity';
+import { Undergoing } from 'src/undergoings/entities/undergoing.entity';
 
 @ObjectType()
 @Entity({ name: 'appointments' })
@@ -40,6 +41,10 @@ export class Appointment extends CommonEntity {
     @JoinColumn()
     @OneToOne(() => Survey, (survey) => survey.appointment, { nullable: true })
     public survey: Survey;
+
+    @OneToMany(() => Undergoing, (undergoing) => undergoing.appointment)
+    @Field(() => [Undergoing], { nullable: true })
+    undergoings: Undergoing[];
 
     @Field(() => [AvailableDate], { nullable: true })
     @OneToMany(() => AvailableDate, (avDate) => avDate.appointment)

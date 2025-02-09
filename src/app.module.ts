@@ -40,6 +40,7 @@ import { SurveysModule } from './surveys/surveys.module';
 import { AvailableDatesModule } from './appointments/available_dates/available_dates.module';
 import { PusherModule } from 'nestjs-pusher';
 import { NotificationsModule } from './notifications/notifications.module';
+import { UndergoingsModule } from './undergoings/undergoings.module';
 
 @Module({
     imports: [
@@ -111,6 +112,7 @@ import { NotificationsModule } from './notifications/notifications.module';
         SurveysModule,
         AvailableDatesModule,
         NotificationsModule,
+        UndergoingsModule,
     ],
     controllers: [AppController],
     providers: [

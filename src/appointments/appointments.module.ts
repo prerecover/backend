@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AppointmentsService } from './appointments.service';
 import { AppointmentsResolver } from './appointments.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -18,7 +18,7 @@ import { QUEUE_NAME } from 'src/config/bull/queue.interface';
 @Module({
     imports: [
         TypeOrmModule.forFeature([Appointment, Clinic, Doctor, Service, User, AvailableDate]),
-        UsersModule,
+        forwardRef(() => UsersModule),
         NotificationsModule,
         AvailableDatesModule,
         SurveysModule,

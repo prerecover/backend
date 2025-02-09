@@ -24,7 +24,7 @@ export class SavedService {
 
     async findAll(userId: string, args?: PaginateArgs): Promise<Saved[]> {
         return await this.savedRepository.find({
-            relations: { user: true, clinic: true, doctor: true, service: true },
+            relations: { user: true, clinic: true, doctor: true, service: true, undergoing: true },
             where: { user: { _id: userId } },
             take: args.take,
             skip: args.skip,
@@ -50,5 +50,10 @@ export class SavedService {
         const saved = await this.findOne(id);
         await this.savedRepository.delete({ _id: id });
         return saved;
+    }
+    async removeArray(ids: string[]) {
+        for (const id of ids) {
+            await this.savedRepository.delete({ _id: id });
+        }
     }
 }

@@ -9,6 +9,10 @@ import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { ClinicsService } from 'src/clinics/clinics.service';
 import { SelectServiceInput } from './dto/select-service.input';
 import { ServiceCategory } from './entities/serviceCategory.entity';
+import { Doctor } from 'src/doctors/entities/doctor.entity';
+import { DoctorsService } from 'src/doctors/doctors.service';
+import { AppointmentsService } from 'src/appointments/appointments.service';
+import { Appointment } from 'src/appointments/entities/appointment.entity';
 
 @Resolver(() => Service)
 export class ServicesResolver {
@@ -16,6 +20,8 @@ export class ServicesResolver {
         private readonly servicesService: ServicesService,
         private readonly newsService: NewsService,
         private readonly clinicService: ClinicsService,
+        private readonly doctorService: DoctorsService,
+        private readonly appointmentService: AppointmentsService,
     ) {}
 
     @Query(() => [ServiceCategory], { name: 'serviceCategories' })
@@ -42,12 +48,22 @@ export class ServicesResolver {
         const { _id: serviceId } = service;
         return await this.clinicService.findForService(serviceId);
     }
+    @ResolveField('appointments', () => [Appointment])
+    async appointments(@Parent() service: Service) {
+        const { _id: serviceId } = service;
+        return await this.appointmentService.findByService(serviceId);
+    }
 
-    // @Mutation(() => [Service], { name: 'selectServices' })
-    // async selectServices(@Args('selectServiceInput') selectServiceInput: SelectServiceInput) {
-    //     return await this.servicesService.selectService(selectServiceInput);
-    // }
+    @Mutation(() => [Service], { name: 'selectServices' })
+    async selectServices(@Args('selectServiceInput') selectServiceInput: SelectServiceInput) {
+        return await this.servicesService.selectService(selectServiceInput);
+    }
 
+    @ResolveField('doctors', () => [Doctor])
+    async doctors(@Parent() service: Service) {
+        const { _id: serviceId } = service;
+        return await this.doctorService.findForService(serviceId);
+    }
     @ResolveField('news', () => [News], { nullable: true })
     async news(@Parent() service: Service) {
         const { _id: serviceId } = service;
