@@ -11,4 +11,10 @@ export class RegistrationUser {
 
     @Field()
     public password: string;
+
+    @Field()
+    public city: string;
+
+    @Field()
+    public country: string;
 }

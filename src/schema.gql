@@ -509,6 +509,8 @@ input RegisterServiceInput {
 }
 
 input RegistrationUser {
+  city: String!
+  country: String!
   email: String!
   password: String!
 }

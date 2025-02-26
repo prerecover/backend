@@ -49,7 +49,11 @@ export class UsersService {
 
     async changeMe(userId: string, changeMe: UpdateUserInput) {
         const user = await this.findOne(userId);
-        const { avatar, countryTitle, ...data } = changeMe;
+        const { avatar, countryTitle, detail, ...data } = changeMe;
+        const userDetail = await this.userDetailRepository.findOneBy({ user: { _id: user._id } });
+        console.log(detail);
+        await this.userDetailRepository.save({ _id: userDetail._id, ...userDetail, ...detail });
+
         if (countryTitle) {
             this.logger.log(`Обновлена страна - ${user.email}, ${countryTitle}`);
             const country = await this.countryRepository.findOneBy({ title: countryTitle });

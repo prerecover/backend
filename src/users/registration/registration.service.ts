@@ -12,21 +12,27 @@ import { ForgotPasswordInput } from './dto/forgot-password.input';
 import { NewPasswordInput } from './dto/new-password.input';
 import * as bcrypt from 'bcrypt';
 import { LokiLogger } from 'nestjs-loki-logger';
+import { Country } from 'src/countries/entities/country.entity';
 
 @Injectable()
 export class RegistrationService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+        @InjectRepository(Country)
+        private readonly countriesRepository: Repository<Country>,
         @InjectQueue(QUEUE_NAME.mail) private emailQueue: Queue,
         private readonly userService: UsersService,
         @InjectQueue(QUEUE_NAME.sms) private smsQueue: Queue,
     ) {}
     private readonly logger = new LokiLogger(RegistrationService.name);
     async createUser(registrationInput: RegistrationUser): Promise<User> {
-        const user = this.userRepository.create(registrationInput);
+        const { country: countryTitle, ...regInput } = registrationInput;
+        const user = this.userRepository.create(regInput);
+        const country = await this.countriesRepository.findOneBy({ title: countryTitle });
         const code = this.generateCode();
         user.verificationCode = code;
+        user.country = country;
         user.password = await bcrypt.hash(registrationInput.password, 10);
         const resultUser = await this.userRepository.save(user);
         await this.emailQueue.add('registrationMessage', { email: registrationInput.email, code: code });
