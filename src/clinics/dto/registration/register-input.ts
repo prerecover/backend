@@ -68,18 +68,17 @@ export class RegisterClinicInput {
     @Field()
     public typeTitle: string;
 
+    @Field(() => ClinicDetailInput)
+    public detail: ClinicDetailInput;
+
     @Field()
     public age: number;
 
     @Field()
     public countryName: string;
-    
 
     @Field()
     public city: string;
-
-    @Field(() => ClinicDetailInput)
-    public detail: ClinicDetailInput;
 
     @Field()
     public address: string;

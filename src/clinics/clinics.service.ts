@@ -46,7 +46,7 @@ export class ClinicsService {
     }
 
     async update(updateClinicInput: UpdateClinicInput, clinicId: string) {
-        const { countryName, detail, avatar, services, ...data } = updateClinicInput;
+        const { countryName, avatar, detail, services, ...data } = updateClinicInput;
         const country = await this.countryRepository.findOneBy({ title: countryName });
         this.clinicDetailRepository.update({ clinic: { _id: clinicId } }, detail);
         await this.clinicRepository.update({ _id: clinicId }, { country: country, ...data });
@@ -161,7 +161,14 @@ export class ClinicsService {
     async findOne(id: string) {
         const clinic = await this.clinicRepository.findOne({
             where: { _id: id },
-            relations: { country: true, doctors: true, news: true, appointments: true, services: true, detail: true },
+            relations: {
+                country: true,
+                doctors: { specialization: true },
+                news: true,
+                appointments: true,
+                services: true,
+                detail: true,
+            },
         });
         if (!clinic) throw new NotFoundException('Clinic with that id not found!');
         return clinic;

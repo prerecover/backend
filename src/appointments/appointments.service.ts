@@ -61,7 +61,14 @@ export class AppointmentsService {
     async findAll(userId: string, args?: PaginateArgs): Promise<Appointment[]> {
         const appointments = await this.appointmentsRepository.find({
             where: { user: { _id: userId }, status: Not('Rejected') },
-            relations: { user: true, clinic: true, doctor: true, service: true, survey: true, availableDates: true },
+            relations: {
+                user: true,
+                clinic: true,
+                doctor: { specialization: true },
+                service: true,
+                survey: true,
+                availableDates: true,
+            },
             take: args.take,
             skip: args.skip,
         });

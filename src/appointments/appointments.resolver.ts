@@ -18,13 +18,14 @@ export class AppointmentsResolver {
         private readonly appointmentsService: AppointmentsService,
         private readonly moduleRef: ModuleRef,
         private readonly surveyService: SurveysService,
-    ) { }
+    ) {}
 
     private telegram: TelegramService;
 
     onModuleInit() {
         this.telegram = this.moduleRef.get(TelegramService, { strict: false });
     }
+
     @UseGuards(AuthGuard)
     @Mutation(() => Appointment)
     async createAppointment(
